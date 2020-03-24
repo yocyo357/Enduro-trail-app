@@ -3,11 +3,6 @@ import { render } from "react-dom";
 import firebase, { storage } from 'firebase';
 import { config } from '../Firebase/index';
 import '../styles/postRaces.css';
-// import Navbar from 'react-bootstrap/Navbar';
-// import Nav from 'react-bootstrap/Nav';
-// import Form from 'react-bootstrap/Form';
-// import FormControl from 'react-bootstrap//FormControl';
-// import Button from 'react-bootstrap/Button';
 
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
@@ -184,12 +179,6 @@ class postraces extends Component {
                                 
                             </div>
                         </div>
-                       
-                        {/* <div className="col">
-                            <div className="form-group">
-                                
-                            </div>
-                        </div> */}
                     </div>
 
                     <div className="row">
@@ -236,13 +225,8 @@ class postraces extends Component {
                         <div className="col">
                             <button type="button" class="btn btn-success btn-post" onClick={() => this.handleOnclickSubmit()}>Post Now</button>
                         </div>
-                        <div/>
-                        {/* //lahi mani na workspace imong gigamit sa vscode */}
-                        {/* sdsds */}
                     </div>
                 </div>
-
-                
             </div>
         );
     }
