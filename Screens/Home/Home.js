@@ -21,6 +21,9 @@ class Home extends Component{
             ]
         };
     }
+    read(){
+        
+    }
     writeUserData(email,fname,lname){
         firebase.database().ref('Users/').set({
             email,
