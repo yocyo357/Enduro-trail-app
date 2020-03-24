@@ -1,22 +1,33 @@
 
 @media only screen and (max-width: 1366px) {
     .postRaces_container {
-        padding-top: 1%;
+        padding-top: 3%; 
+        margin-bottom: 3%;   
+    }
+
+    .header-text {
+        margin-left: 7%;
         
     }
 
     .container {
-        border: 1px solid tomato;
+        border: 1px solid #5b8c85;
+        background-color: #5b8c85;
+        border-radius: 18px;
         padding-left: 8% !important;
         padding-right: 8% !important;
         padding-top: 3% !important;
         padding-bottom: 3% !important;
     }
 
+    label {
+        color: white;
+    }
+
     .btn-post {
         width: 80%;
         float: right;
-        /* margin-left: 10%; */
+        background-color: tomato;
     }
 }
 

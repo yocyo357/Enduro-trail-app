@@ -135,6 +135,7 @@ class postraces extends Component {
     render() {
         return (
             <div className="postRaces_container container-fluid">
+                <h2 className="header-text">Ready to Post?</h2>
                 <div className="container">
                     <div className="row">
                         <div className="col">
@@ -223,7 +224,7 @@ class postraces extends Component {
                         </div>
 
                         <div className="col">
-                            <button type="button" class="btn btn-success btn-post" onClick={() => this.handleOnclickSubmit()}>Post Now</button>
+                            <button type="button" class="btn btn-post" onClick={() => this.handleOnclickSubmit()}>Post Now</button>
                         </div>
                     </div>
                 </div>
