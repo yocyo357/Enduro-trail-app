@@ -1,0 +1,158 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100% !important;
+}
+
+@media only screen and (max-width: 1366px) {
+    .signup-MainDiv {
+        height: 608px;
+    }
+
+    .signup-MainDiv {
+        background-color: #212121;
+        color: white;
+        padding: 0.5% !important;
+    }
+
+    .left-col {
+       margin-top: 10% !important;
+    }
+
+    .leftMainTitle {
+        margin-bottom: 5%;
+    }
+
+    .btn-back:focus {
+        border-color: #DF004E;
+        text-decoration: none;
+        border: none;
+    }
+
+    .leftSubWords {
+        font-size: 18px !important;
+        /* margin-top: ; */
+    }
+
+
+    h3 {
+        text-align: justify;
+        font-weight: 200 !important;
+    }
+
+    span {
+        color: tomato;  
+        font-weight: bold;
+    }
+
+
+    /*************** right colum starts here *******************/
+
+    .right-col {
+        margin-top: 5%;
+    }
+
+    .mainTitle {
+        margin-top: 10% !important;
+        font-size: 40px !important;
+        margin-bottom: 0% !important;
+    }
+
+    .subTitle {
+        font-weight: 300 !important;
+        font-size: 15px !important;
+        margin-bottom: 5% !important;
+    }
+
+    .w-100{
+        margin-bottom: 1%;
+        padding-right: 19% !important;
+    }
+
+    .MuiFormControl-root {
+        background-color: #ADB8CA;
+        border-radius: 7px;
+        width: 40%;
+        margin-right: 1% !important;
+        padding-left: 1% !important;
+
+    }
+
+    label + .MuiInput-formControl {
+        width: 97% !important;
+
+    }
+
+    .MuiInputBase-input:focus {
+        /* color: #ADB8CA !important; */
+        border-color: #ADB8CA !important;
+    }
+
+    .form-personalData {
+        margin-bottom: 1.5%;
+    }
+
+    .MuiFormControl-root .MuiTextField-root #txt-SignUpUname {
+        width: 100% !important;
+    }
+
+    .txt-SignUpPass {
+        margin-top: 1.5% !important;
+    }
+
+    .SignUpTeamName {
+        margin-left: 0% !important;
+        width: 100%;
+    }
+
+    .SignUpAge {
+        margin-left: 0% !important;
+        width: 100%;
+    }
+
+    .formLabel {
+        margin-top: 1%;
+        font-size: 19px !important;
+        color: #ffffff !important;
+    }
+
+    .radioContainer {
+        margin-left: 3.5% !important;
+    }
+
+    .MuiFormControlLabel-root {
+      
+        max-width: 30%;
+       
+    }
+
+    .MuiIconButton-label {
+        color: #ffffff !important; 
+    }
+
+    .MuiFormControlLabel-label  {
+        color: #ffffff !important; 
+    }
+
+    .MuiButtonBase-root {
+        width: 60% !important;
+        margin-left: 10% !important;
+        margin-top: 3% !important;
+        background-color: #00AF4F !important;
+        
+    }
+
+    .MuiButton-label {
+        color: #ffffff !important;
+    }
+
+    .link-back {
+        margin-left: 40%;
+        color: #FF5931;
+    }
+
+    .link-back:hover {
+        text-decoration: none;
+        color: #FF5931;
+    }
+}
