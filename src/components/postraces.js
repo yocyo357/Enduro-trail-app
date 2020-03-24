@@ -141,7 +141,7 @@ class postraces extends Component {
                         <div className="col">
                             <div className="form-group">
                                 <label for="exampleFormControlInput1">Event Name</label>
-                                <input type="text" value={this.state.raceTitle}  onChange={this.handleTitleChange} className="form-control txt-input" placeholder="Add event's name here" />
+                                <input id="exampleFormControlSelect1" type="text" value={this.state.raceTitle}  onChange={this.handleTitleChange} className="form-control txt-input" placeholder="Add event's name here" />
                             </div>
                         </div>
 
@@ -169,13 +169,13 @@ class postraces extends Component {
                         <div className="col">
                             <div className="form-group">
                             <label for="exampleFormControlInput1">Race Category</label>
-                             <input type="text" value={this.state.raceCategory}  onChange={this.handleRaceCatChange} className="form-control txt-input" placeholder="Add event's name here" />
+                             <input id="exampleFormControlSelect1" type="text" value={this.state.raceCategory}  onChange={this.handleRaceCatChange} className="form-control txt-input" placeholder="Add event's name here" />
                             </div>
                         </div>
 
                         <div className="col">
                             <div className="form-group">
-                                <label>Add a Banner:</label>
+                                <label>Add a Banner:</label><br />
                                 <input type="file" onChange={this.fileSelectedHandler}/>
                                 
                             </div>
@@ -186,7 +186,7 @@ class postraces extends Component {
                         <div className="col">
                             <label>Venue/Trail address:</label>
                             {/* <input type="text" value={this.state.raceAddress}  onChange={this.handleRaceAddressChange} className="form-control txt-input" placeholder="Add event's name here"/><br/> */}
-                            <select className="form-control" id="exampleFormControlSelect1" value={this.state.raceAddress}  onChange={this.handleRaceAddressChange}   >
+                            <select  className="form-control" id="exampleFormControlSelect1" value={this.state.raceAddress}  onChange={this.handleRaceAddressChange}   >
                                 <option> Carabao Trail</option>
                                 <option> Devil's Trail</option>
                                 <option> Happy Ka</option>
@@ -197,24 +197,20 @@ class postraces extends Component {
 
                         <div className="col">
                             <label>Add Description:</label>
-                            <textarea className="form-control" id="exampleFormControlTextarea1" value={this.state.raceInfo}  onChange={this.handleRaceInfoChange} rows="4"></textarea>
+                            <textarea className="form-control" id="exampleFormControlSelect1" value={this.state.raceInfo}  onChange={this.handleRaceInfoChange} rows="4"></textarea>
                         </div>
-
-                        {/* <div className="col">
-                            
-                        </div> */}
                     </div>
                     <br />
 
                     <div className="row">
                         <div className="col">
                             <label>Specify No. of stages:</label>
-                            <input type="text" className="form-control txt-input" value={this.state.raceNoOfStages}  onChange={this.handleRaceStagesChange}/><br/>
+                            <input type="text" id="exampleFormControlSelect1" className="form-control txt-input" value={this.state.raceNoOfStages}  onChange={this.handleRaceStagesChange}/><br/>
                         </div>
 
                         <div className="col">
                             <label>Limit of riders:</label>
-                            <input type="text" className="form-control txt-input" value={this.state.noOfRiders}  onChange={this.handleRaceLimitChange}/><br/>
+                            <input type="text" id="exampleFormControlSelect1" className="form-control txt-input" value={this.state.noOfRiders}  onChange={this.handleRaceLimitChange}/><br/>
                         </div>
                     </div>
 

@@ -1,4 +1,9 @@
+.navbar {
+    padding: 2%;
+}
 
 .navbar-brand {
-    color: tomato !important;
+    color: #6F952C !important;
+    font-size: 25px;
+    font-family: 'Poppins', sans-serif;
 }

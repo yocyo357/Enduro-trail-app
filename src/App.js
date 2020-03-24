@@ -14,7 +14,7 @@ function App() {
 
  
   return (
-    <div>
+    <div className="MainHTMLBody">
       <Navigation />
       <PostRaces />
     </div>
