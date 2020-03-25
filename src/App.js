@@ -8,7 +8,7 @@ import Suggestion from './components/suggestionbox';
 import PostRaces from './components/postraces';
 import Navigation from './components/navigation';
 import Footer from './components/footer';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Link, Prompt } from 'react-router-dom';
 import Route from 'react-router-dom/Route';
 
 
@@ -49,8 +49,6 @@ function App() {
           }
         }/>
 
-       
-        
         <Footer />
       </div>
     </Router>

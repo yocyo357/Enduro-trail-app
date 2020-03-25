@@ -3,6 +3,7 @@ import { render } from "react-dom";
 import firebase, { storage } from 'firebase';
 import { config } from '../Firebase/index';
 import '../styles/postRaces.css';
+import { Prompt } from 'react-router-dom';
 
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
@@ -225,6 +226,12 @@ class postraces extends Component {
                         </div>
                     </div>
                 </div>
+                <Prompt 
+                    when={ this.state.raceTitle !== "" ||  this.state.raceCategory !== "" || this.state.raceInfo !== "" || this.state.raceNoOfStages !== "" || this.state.noOfRiders !== ""}
+                    message={(location) => {
+                        return location.pathname.startsWith('/suggestionsbox' && '/') ? 'Not done posting yet. Are you sure? ' : true
+                    }}
+                />
             </div>
         );
     }

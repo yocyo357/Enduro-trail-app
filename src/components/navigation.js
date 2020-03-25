@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { render } from "react-dom";
 import '../styles/navigation.css';
-import { BrowserRouter as Router, Link, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Link, NavLink, Prompt } from 'react-router-dom';
 
 
 class navigation extends Component { 
@@ -29,6 +29,8 @@ class navigation extends Component {
                             <NavLink className="nav-link" to="/suggestionsbox" exact activeStyle={{color: 'tomato'}}>New Suggestions</NavLink>
                         </li>
                     </ul>
+
+                    
                 </div>
             </nav>
         );
