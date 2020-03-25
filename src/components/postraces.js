@@ -4,6 +4,7 @@ import firebase, { storage } from 'firebase';
 import { config } from '../Firebase/index';
 import '../styles/postRaces.css';
 import { Prompt } from 'react-router-dom';
+import Footer from './footer';
 
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
@@ -226,6 +227,9 @@ class postraces extends Component {
                         </div>
                     </div>
                 </div>
+                <Footer /> 
+
+
                 <Prompt 
                     when={ this.state.raceTitle !== "" ||  this.state.raceCategory !== "" || this.state.raceInfo !== "" || this.state.raceNoOfStages !== "" || this.state.noOfRiders !== ""}
                     message={(location) => {

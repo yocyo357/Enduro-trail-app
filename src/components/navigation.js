@@ -18,16 +18,17 @@ class navigation extends Component {
                     <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
                         <li className="nav-item">
-                            <NavLink className="nav-link" to="/" exact activeStyle={{color: 'tomato'}}>Home</NavLink>
+                            <NavLink className="nav-link" to="/" exact activeStyle={{color: 'tomato', borderTop: '2px solid tomato', borderBottom: '2px solid tomato', padding: '2px 0'}}>Home</NavLink>
                         </li>
 
                         <li className="nav-item">
-                            <NavLink className="nav-link" to="/postraces" exact activeStyle={{color: 'tomato'}}>Add New Post</NavLink>
+                            <NavLink className="nav-link" to="/postraces" exact activeStyle={{color: 'tomato', borderTop: '2px solid tomato', borderBottom: '2px solid tomato', padding: '2px 0'}}>Add New Post</NavLink>
                         </li>
 
                         <li className="nav-item">
-                            <NavLink className="nav-link" to="/suggestionsbox" exact activeStyle={{color: 'tomato'}}>New Suggestions</NavLink>
+                            <NavLink className="nav-link" to="/suggestionsbox" exact activeStyle={{color: 'tomato', borderTop: '2px solid tomato', borderBottom: '2px solid tomato', padding: '2px 0'}}>New Suggestions</NavLink>
                         </li>
+                        <hr />
                     </ul>
 
                     

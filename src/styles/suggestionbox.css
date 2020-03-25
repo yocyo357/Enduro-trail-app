@@ -1,0 +1,13 @@
+.table-suggestions {
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+.footer-suggestion {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 70px;
+    width: 100%;
+    background: #343A40;
+}
