@@ -1,7 +1,8 @@
 
 @media only screen and (max-width: 1366px) {
     .header-text {
-        margin-left: 7%;
+        margin-left: 8.5%;
+        margin-top: 3%;
         font-size: 40px;
         font-family: 'Poppins', sans-serif;
         font-weight: bold;
@@ -15,13 +16,6 @@
 
     .container-fluid {
         padding: 0 !important;
-    }
-
-    .header-text {
-        margin-left: 7%;
-        font-size: 40px;
-        font-family: 'Poppins', sans-serif;
-        font-weight: bold;
     }
 
     .container {
@@ -57,16 +51,16 @@
     .btn-post {
         width: 80%;
         float: right;
-        color: white;
+        color: white !important;
         font-family: 'Poppins', sans-serif;
         font-size: 20px;
-        background-color: #70952C;
+        background-color: #70952C !important;
     }
 
-    .footer-postraces {
+    /* .footer-postraces {
         position: relative !important;
         width: 100% !important;
         height: 100px !important;
         background: #343A40;
-      }
+      } */
     

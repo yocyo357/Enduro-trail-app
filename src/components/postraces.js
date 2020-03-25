@@ -149,9 +149,9 @@ class postraces extends Component {
                         </div>
 
                         <div className="col">
-                            <div class="form-group">
+                            <div className="form-group">
                                 <label for="exampleFormControlSelect1">Type of Race:</label>
-                                <select class="form-control" id="exampleFormControlSelect1" value={this.state.raceType}  onChange={this.handleRaceTypeChange}   >
+                                <select className="form-control" id="exampleFormControlSelect1" value={this.state.raceType}  onChange={this.handleRaceTypeChange}   >
                                     <option>Group Race</option>
                                     <option>Dirt Race (Individual)</option>
                                     <option>Dirt Race (Groups)</option>
@@ -223,12 +223,10 @@ class postraces extends Component {
                         </div>
 
                         <div className="col">
-                            <button type="button" class="btn btn-post" onClick={() => this.handleOnclickSubmit()}>Post Now</button>
+                            <button type="button" className="btn btn-post" onClick={() => this.handleOnclickSubmit()}>Post Now</button>
                         </div>
                     </div>
                 </div>
-                <Footer /> 
-
 
                 <Prompt 
                     when={ this.state.raceTitle !== "" ||  this.state.raceCategory !== "" || this.state.raceInfo !== "" || this.state.raceNoOfStages !== "" || this.state.noOfRiders !== ""}

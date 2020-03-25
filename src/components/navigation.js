@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Link, NavLink, Prompt } from 'react-router-dom
 class navigation extends Component { 
     render() {
         return (
-                <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 
                     <a className="navbar-brand" href="#">ENDURO</a>
 

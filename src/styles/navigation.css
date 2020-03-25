@@ -1,6 +1,6 @@
 .navbar {
-    padding: %;
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    position: sticky !important;
 }
 
 .navbar-nav {
@@ -12,17 +12,13 @@
     color: #6F952C !important;
     font-size: 32px !important;
     font-family: 'Poppins', sans-serif;
-    /* font-weight: bold; */
 }
 
 .nav-link {
     transition: 0.4s ease;
-    /* background: #3fa46a; */
     color: #ffffff;
     font-size: 20px;
     text-decoration: none;
-    /* border-top: 4px solid #3fa46a; */
-    /* border-bottom: 4px solid #3fa46a; */
     padding: 10px 0;
     margin: 0 10px;
 }
