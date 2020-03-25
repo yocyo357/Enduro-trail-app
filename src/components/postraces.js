@@ -226,7 +226,7 @@ class postraces extends Component {
                             <button type="button" className="btn btn-post" onClick={() => this.handleOnclickSubmit()}>Post Now</button>
                         </div>
                     </div>
-                </div>
+                </div>  
 
                 <Prompt 
                     when={ this.state.raceTitle !== "" ||  this.state.raceCategory !== "" || this.state.raceInfo !== "" || this.state.raceNoOfStages !== "" || this.state.noOfRiders !== ""}

@@ -2,109 +2,63 @@ import React, { Component } from 'react';
 import * as ReactBootstrap from 'react-bootstrap';
 import '../styles/suggestionbox.css';
 import { GiMagnifyingGlass } from 'react-icons/gi';
+import firebase, { storage } from 'firebase';
+import { config } from '../Firebase/index';
 
-import { MDBDataTable } from 'mdbreact';
-
+if (!firebase.apps.length) {
+    firebase.initializeApp(config())
+}
 
 class suggestionbox extends Component {
+    
     constructor(props) {
         super(props);
 
+       
+
         this.state = {
             requiredItem: 0,
+            filterTable: '',
             suggestions: [
                 {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
+                    addressName: '',
+                    coordinates: '',
                     imageURI: '',
-                    sender: 'Paul Dango '
+                    sender: ''
                 },
-                {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
-                    imageURI: '',
-                    sender: 'Paul Dango '
-                },
-                {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
-                    imageURI: '',
-                    sender: 'Paul Dango '
-                },
-                {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
-                    imageURI: '',
-                    sender: 'Paul Dango '
-                },
-                {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
-                    imageURI: '',
-                    sender: 'Paul Dango '
-                },
-                {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
-                    imageURI: '',
-                    sender: 'Paul Dango '
-                },
-                {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
-                    imageURI: '',
-                    sender: 'Paul Dango '
-                },
-                {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
-                    imageURI: '',
-                    sender: 'Paul Dango '
-                },
-                {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
-                    imageURI: '',
-                    sender: 'Paul Dango '
-                },
-                {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
-                    imageURI: '',
-                    sender: 'Paul Dango '
-                },
-                {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
-                    imageURI: '',
-                    sender: 'Paul Dango '
-                },
-                {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
-                    imageURI: '',
-                    sender: 'Paul Dango '
-                },
-                {
-                    addressName: 'sample Address',
-                    coordinates: '7.07056 125.60861',
-                    imageURI: '',
-                    sender: 'Paul Dango '
-                }
+               
             ]
         }
-
     }
+
+    componentDidMount() {
+        var database = firebase.database();
+        var ref = database.ref('post_races');
+       
+        ref.on("child_added", function(snapshot) {
+            var newSuggestion = snapshot.val();
+            console.log("Author: " + newSuggestion.raceTitle);
+
+            
+
+          }, function (errorObject) {
+            console.log("The read failed: " + errorObject.code);
+          });
+    }
+
+    
 
     showClickeRow(index){
         this.setState({
             requiredItem: index
         });
     }
-    
 
     render() {
 
+        
+       
+        const requiredItem = this.state.requiredItem;
         const suggestions = this.state.suggestions.map((suggest, index) =>{
             return(
                 <tr key={index}>
@@ -116,13 +70,14 @@ class suggestionbox extends Component {
             )
         }) 
 
-        const requiredItem = this.state.requiredItem;
+        
         let modalData = this.state.suggestions[requiredItem];
 
         return (
             <div className="suggestionBox-container">
                 <h2 className="header-text-suggestion">New Trails?</h2>
                 <ReactBootstrap.Table className="table-suggestions" striped bordered hover variant="dark" >
+                    {/* <input type="text" onChange={this.handleSearch}/> */}
                     <thead>
                         <tr>
                         <th style={{textDecoration: 'underline'}}>Sugegsted Trail Address</th>
