@@ -26,9 +26,9 @@ class postraces extends Component {
     }
 
    handleOnclickSubmit = (event) => {
-       console.log(this.state.datePosted + "Date ni karon");
+    //    console.log(this.state.datePosted + "Date ni karon");
        
-        if(this.state.raceTitle == ""){
+        if(this.state.raceTitle == "" & this.state.selectedFile == null){
             alert("Missing");
         }else {
             var imageURI = this.state.selectedFile.name
@@ -43,8 +43,7 @@ class postraces extends Component {
                 raceNoOfStages: this.state.raceNoOfStages,
                 raceInfo: this.state.raceInfo,
                 noOfRiders: this.state.noOfRiders,
-                imageURI,
-                datePosted
+                imageURI
 
             }).then((data)=>{
                 //success callback
@@ -70,6 +69,8 @@ class postraces extends Component {
                 })
     
         }
+        // this.setState({raceTitle: null});
+        
 
     }
 
@@ -140,14 +141,14 @@ class postraces extends Component {
                     <div className="row">
                         <div className="col">
                             <div className="form-group">
-                                <label for="exampleFormControlInput1">Event Name</label>
+                                <label for="exampleFormControlInput1">Event Name:</label>
                                 <input id="exampleFormControlSelect1" type="text" value={this.state.raceTitle}  onChange={this.handleTitleChange} className="form-control txt-input" placeholder="Add event's name here" />
                             </div>
                         </div>
 
                         <div className="col">
                             <div class="form-group">
-                                <label for="exampleFormControlSelect1">Type of Race</label>
+                                <label for="exampleFormControlSelect1">Type of Race:</label>
                                 <select class="form-control" id="exampleFormControlSelect1" value={this.state.raceType}  onChange={this.handleRaceTypeChange}   >
                                     <option>Group Race</option>
                                     <option>Dirt Race (Individual)</option>
@@ -168,7 +169,7 @@ class postraces extends Component {
                     <div className="row">
                         <div className="col">
                             <div className="form-group">
-                            <label for="exampleFormControlInput1">Race Category</label>
+                            <label for="exampleFormControlInput1">Race Category:</label>
                              <input id="exampleFormControlSelect1" type="text" value={this.state.raceCategory}  onChange={this.handleRaceCatChange} className="form-control txt-input" placeholder="Add event's name here" />
                             </div>
                         </div>
@@ -176,7 +177,7 @@ class postraces extends Component {
                         <div className="col">
                             <div className="form-group">
                                 <label>Add a Banner:</label><br />
-                                <input type="file" onChange={this.fileSelectedHandler}/>
+                                <input type="file" className="fileUpload" onChange={this.fileSelectedHandler}/>
                                 
                             </div>
                         </div>
