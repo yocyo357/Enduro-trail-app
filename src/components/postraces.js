@@ -143,14 +143,15 @@ class postraces extends Component {
                     <div className="row">
                         <div className="col">
                             <div className="form-group">
-                                <label for="exampleFormControlInput1">Event Name:</label>
+                                <label >Event Name:</label>
                                 <input id="exampleFormControlSelect1" type="text" value={this.state.raceTitle}  onChange={this.handleTitleChange} className="form-control txt-input" placeholder="Add event's name here" />
                             </div>
                         </div>
 
                         <div className="col">
                             <div className="form-group">
-                                <label for="exampleFormControlSelect1">Type of Race:</label>
+                                <label 
+                                >Type of Race:</label>
                                 <select className="form-control" id="exampleFormControlSelect1" value={this.state.raceType}  onChange={this.handleRaceTypeChange}   >
                                     <option>Group Race</option>
                                     <option>Dirt Race (Individual)</option>
@@ -171,7 +172,7 @@ class postraces extends Component {
                     <div className="row">
                         <div className="col">
                             <div className="form-group">
-                            <label for="exampleFormControlInput1">Race Category:</label>
+                            <label >Race Category:</label>
                              <input id="exampleFormControlSelect1" type="text" value={this.state.raceCategory}  onChange={this.handleRaceCatChange} className="form-control txt-input" placeholder="Add event's name here" />
                             </div>
                         </div>

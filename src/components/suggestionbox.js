@@ -9,19 +9,30 @@ if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
 
+var database = firebase.database();
+var ref = database.ref('post_races');
+var data;
+
+ref.on("child_added", snapshot=> {
+    var newSuggestion = snapshot.val();
+    console.log("Author: " + newSuggestion.raceTitle);
+    data = (snapshot.val().raceTitle)
+    
+  }, function (errorObject) {
+    console.log("The read failed: " + errorObject.code);
+  });
+
 class suggestionbox extends Component {
     
     constructor(props) {
         super(props);
-
-       
 
         this.state = {
             requiredItem: 0,
             filterTable: '',
             suggestions: [
                 {
-                    addressName: '',
+                    addressName: data,
                     coordinates: '',
                     imageURI: '',
                     sender: ''
@@ -31,33 +42,18 @@ class suggestionbox extends Component {
         }
     }
 
-    componentDidMount() {
-        var database = firebase.database();
-        var ref = database.ref('post_races');
-       
-        ref.on("child_added", function(snapshot) {
-            var newSuggestion = snapshot.val();
-            console.log("Author: " + newSuggestion.raceTitle);
-
-            
-
-          }, function (errorObject) {
-            console.log("The read failed: " + errorObject.code);
-          });
-    }
-
-    
-
     showClickeRow(index){
         this.setState({
             requiredItem: index
         });
     }
 
+    componentDidMount() {
+
+    }
+
     render() {
 
-        
-       
         const requiredItem = this.state.requiredItem;
         const suggestions = this.state.suggestions.map((suggest, index) =>{
             return(
@@ -69,7 +65,6 @@ class suggestionbox extends Component {
                 </tr>
             )
         }) 
-
         
         let modalData = this.state.suggestions[requiredItem];
 
