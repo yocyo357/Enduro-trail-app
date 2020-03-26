@@ -18,10 +18,10 @@
     .table-suggestions {
         margin-top: 2%;
         margin-bottom: 10% !important;
-        text-align: center !important;
-        -webkit-box-shadow: 7px 11px 17px -3px rgba(99,140,45,0.9);
+        /* text-align: center !important; */
+        /* -webkit-box-shadow: 7px 11px 17px -3px rgba(99,140,45,0.9);
         -moz-box-shadow: 7px 11px 17px -3px rgba(99,140,45,0.9);
-        box-shadow: 7px 11px 17px -3px rgba(99,140,45,0.9);
+        box-shadow: 7px 11px 17px -3px rgba(99,140,45,0.9); */
     
     }   
 

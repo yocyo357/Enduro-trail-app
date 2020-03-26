@@ -36,6 +36,8 @@ class postraces extends Component {
             var imageURI = this.state.selectedFile.name
             var datePosted = this.state.datePosted
             // push og data to firebase********************
+
+            
             firebase.database().ref('post_races/').push({
                 //mga paramerter ni sya dre
                 raceTitle: this.state.raceTitle,  

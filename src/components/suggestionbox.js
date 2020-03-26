@@ -1,101 +1,92 @@
 import React, { Component } from 'react';
-import * as ReactBootstrap from 'react-bootstrap';
-import '../styles/suggestionbox.css';
-import { GiMagnifyingGlass } from 'react-icons/gi';
-import firebase, { storage } from 'firebase';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import * as firebase from 'firebase';
 import { config } from '../Firebase/index';
+import '../styles/suggestionbox.css';
+import { render } from '@testing-library/react';
 
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
 
 var database = firebase.database();
-var ref = database.ref('post_races');
-var data;
-
-ref.on("child_added", snapshot=> {
-    var newSuggestion = snapshot.val();
-    console.log("Author: " + newSuggestion.raceTitle);
-    data = (snapshot.val().raceTitle)
-    
-  }, function (errorObject) {
-    console.log("The read failed: " + errorObject.code);
-  });
+var ref = database.ref('post_races/');
 
 class suggestionbox extends Component {
     
     constructor(props) {
         super(props);
-
         this.state = {
-            requiredItem: 0,
-            filterTable: '',
-            suggestions: [
-                {
-                    addressName: data,
-                    coordinates: '',
-                    imageURI: '',
-                    sender: ''
-                },
-               
-            ]
+          text:'',
+          trails: []
+        };
+    
+       this.userRef = database.ref('post_races/');
+      }
+    
+      componentDidMount() {
+        this.userRef.on('value', this.gotData, this.errData); 
+      }
+    
+    
+      gotData = (data) => {
+        let newTrails = []
+        const userdata = data.val();
+        const keys = Object.keys(userdata);
+        for (let i = 0; i < keys.length; i++) {
+          const k = keys[i];
+          newTrails.push({
+            address: userdata[k].raceAddress, 
+            coordinates: userdata[k].raceCategory, 
+            sender: userdata[k].raceTitle,
+            action: `return (<button></button>)`
+          });
         }
-    }
+        this.setState({trails: newTrails});
+      }
+    
+      errData = (err) => {
+       console.log(err);
+     }
+    
+    //   handleClick = (rowKey) => {
+    //     alert(this.refs.table.getPageByRowKey(rowKey));
+    //   }
 
-    showClickeRow(index){
-        this.setState({
-            requiredItem: index
-        });
-    }
-
-    componentDidMount() {
-
-    }
+    // showClickeRow(index){
+    //     this.setState({
+    //         requiredItem: index
+    //     });
+    // }
 
     render() {
 
-        const requiredItem = this.state.requiredItem;
-        const suggestions = this.state.suggestions.map((suggest, index) =>{
-            return(
-                <tr key={index}>
-                    <td>{suggest.addressName}</td>
-                    <td>{suggest.coordinates}</td>
-                    <td>{suggest.sender}</td>
-                    <td><button className="btn btn-view" data-toggle="modal" data-target="#exampleModalCenter" onClick={()=> this.showClickeRow(index)}><GiMagnifyingGlass /></button></td>
-                </tr>
-            )
-        }) 
+        // const requiredItem = this.state.requiredItem;
         
-        let modalData = this.state.suggestions[requiredItem];
+        // let modalData = this.state.suggestions[requiredItem];
 
         return (
             <div className="suggestionBox-container">
                 <h2 className="header-text-suggestion">New Trails?</h2>
-                <ReactBootstrap.Table className="table-suggestions" striped bordered hover variant="dark" >
-                    {/* <input type="text" onChange={this.handleSearch}/> */}
-                    <thead>
-                        <tr>
-                        <th style={{textDecoration: 'underline'}}>Sugegsted Trail Address</th>
-                        <th style={{textDecoration: 'underline'}}>Map Coordinates</th>
-                        <th style={{textDecoration: 'underline'}}>Sender's Name</th>
-                        <th style={{textDecoration: 'underline'}}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {suggestions}
-                    </tbody>
-                    </ReactBootstrap.Table>
+                <div>
+                    <div className="col-lg-12">
+                </div>
+                    <BootstrapTable  
+                        className="table-hover table-suggestions"
+                        ref='table'
+                        data={ this.state.trails }
+                        pagination={ true }
+                        search={ true }>
+                    <TableHeaderColumn dataField='address' isKey={true} dataSort={true}>Address</TableHeaderColumn>
+                        <TableHeaderColumn dataField='coordinates' dataSort={true}>Map Coordinates</TableHeaderColumn>
+                        <TableHeaderColumn dataField='sender'>Sender</TableHeaderColumn>
+                        <TableHeaderColumn  dataField='action'>Actions</TableHeaderColumn>
+                    </BootstrapTable>
+                </div>
 
-                    {/* <MDBDataTable
-                        striped
-                        bordered
-                        hover
-                        data={this.state.suggestions}
-                    /> */}
+                    {/* ********************* Modal Area********************** */}
 
-                {/* ********************* Modal Area********************** */}
-
-                <div className="modal fade" id="exampleModalCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div className="modal fade" id="exampleModalCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div className="modal-dialog modal-dialog-centered" role="document">
                         <div className="modal-content">
                         <div className="modal-header">
@@ -105,7 +96,7 @@ class suggestionbox extends Component {
                             </button>
                         </div>
                         <div className="modal-body modal-body-suggestion" >
-                            <div className="row row-modal">
+                            {/* <div className="row row-modal">
                                 <label style={{color: 'black', marginRight: '15px', marginBottom: '15px'}}>Sent by:  </label><p className="modalData">{modalData.sender}</p>
                             </div>
 
@@ -117,7 +108,7 @@ class suggestionbox extends Component {
                             
                             <div className="row row-modal">
                                 <label style={{color: 'black', marginRight: '15px'}}>Map Coordinates:  </label><p className="modalData">{modalData.coordinates}</p>
-                            </div>  
+                            </div>   */}
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
