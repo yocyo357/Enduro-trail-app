@@ -24,6 +24,7 @@ class Login extends Component {
             }
         };
     }
+    
     textChangedHandler = (igKey, value) => {
         var text = { ...this.state.text }
         text[igKey] = value

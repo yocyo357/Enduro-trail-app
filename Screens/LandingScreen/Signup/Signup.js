@@ -48,11 +48,11 @@ class SignUp extends Component {
     onSubmitHandler = () =>{
         var values = []
         var users = []
+
         Object.keys(this.state.text)
             .map(igKey => values.push(this.state.text[igKey]))
 
-           
-        // var variable = (condition) ? (true block) :
+        var users = []
         firebase.database().ref('Users/').once('value', function (snapshot) {
             users = snapshot.val()
 

@@ -3,10 +3,35 @@ import React, { Component } from 'react';
 import {
     View,
     StyleSheet,
+    PermissionsAndroid,
+    Platform
 
 } from 'react-native';
 import { Container, Header, Content, Button, Text } from 'native-base';
+
+
+
+
 class LandingScreen extends Component {
+
+
+    async componentDidMount(){
+        // try {
+
+        //       const userResponse = await PermissionsAndroid.request(
+        //         PermissionsAndroid.PERMISSIONS.CAMERA,
+        //       //  PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+        //       );
+        //       //console.log(userResponse)
+
+        //   } catch (err) {
+        //     Warning(err);
+        //   }
+
+    }
+    async GetAllPermissions() {
+        
+      }
     render() {
         return (
             <Container style={{ backgroundColor: "#262626", alignItems: 'center' }}>

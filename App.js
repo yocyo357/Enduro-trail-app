@@ -25,6 +25,9 @@ import Signup from './Screens/LandingScreen/Signup/Signup'
 import Record from './Screens/Record/Record'
 import Profile from './Screens/Profile/Profile'
 import Notifications from './Screens/Notifications/Notifications'
+import SaveActivity from './Screens/SaveActivity/SaveActivity'
+
+
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -66,6 +69,7 @@ function Tabs() {
       <Tab.Screen name="Record" component={Record} />
       <Tab.Screen name="BikeShop" component={BikeShop} />
       <Tab.Screen name="Profile" component={Profile} />
+      
     </Tab.Navigator>
   )
 }
@@ -79,6 +83,7 @@ function Stacks() {
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Signup" component={Signup} />
       <Stack.Screen name="Notifications" component={Notifications} />
+      <Tab.Screen name="SaveActivity" component={SaveActivity} />
     </Stack.Navigator>
   )
 }
