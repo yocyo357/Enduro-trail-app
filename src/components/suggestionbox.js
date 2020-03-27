@@ -9,111 +9,128 @@ if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
 
-var database = firebase.database();
-var ref = database.ref('post_races/');
+var db = firebase.database().ref('Trails/');
+var trailDatas = [];
 
 class suggestionbox extends Component {
-    
+
     constructor(props) {
         super(props);
         this.state = {
-          text:'',
-          trails: []
+            requiredItem: 0,
+            trailValues: [],
+            data: [
+                {
+                    address: '',
+                    distance: '',
+                    difficulty: ''
+                }
+            ]
         };
-    
-       this.userRef = database.ref('post_races/');
-      }
-    
-      componentDidMount() {
-        this.userRef.on('value', this.gotData, this.errData); 
-      }
-    
-    
-      gotData = (data) => {
-        let newTrails = []
-        const userdata = data.val();
-        const keys = Object.keys(userdata);
-        for (let i = 0; i < keys.length; i++) {
-          const k = keys[i];
-          newTrails.push({
-            address: userdata[k].raceAddress, 
-            coordinates: userdata[k].raceCategory, 
-            sender: userdata[k].raceTitle,
-            action: `return (<button></button>)`
-          });
-        }
-        this.setState({trails: newTrails});
-      }
-    
-      errData = (err) => {
-       console.log(err);
-     }
-    
-    //   handleClick = (rowKey) => {
-    //     alert(this.refs.table.getPageByRowKey(rowKey));
-    //   }
+    }
 
-    // showClickeRow(index){
-    //     this.setState({
-    //         requiredItem: index
-    //     });
-    // }
+    componentDidMount() {
+        db.on('value', this.gotData, this.errData);
+    }
+
+    gotData(data) {
+        // console.log(data.val())
+        trailDatas.length = 0;
+        var trails = data.val()
+        var keys = Object.keys(trails)
+
+        for (var i = 0; i < keys.length; i++) {
+            var k = keys[i]
+
+            var newAddress = trails[k].address
+            var newDistance = trails[k].distance
+            var newDifficulty = trails[k].difficulty
+
+            var data = { index: k, address: newAddress, distance: newDistance, difficulty: newDifficulty }
+            trailDatas.push(data)
+        }
+        console.log(trailDatas)
+    }
+
+    errData(err) {
+        console.log(err)
+    }
+
+    handleTableBtnCLicked(i){
+        this.setState({
+            requiredItem: i
+        });
+
+    }
 
     render() {
 
-        // const requiredItem = this.state.requiredItem;
-        
-        // let modalData = this.state.suggestions[requiredItem];
+        const requiredItem = this.state.requiredItem;
+        const addressItem = this.state.address;
+        let modalData = trailDatas[requiredItem];
 
         return (
             <div className="suggestionBox-container">
                 <h2 className="header-text-suggestion">New Trails?</h2>
                 <div>
-                    <div className="col-lg-12">
-                </div>
-                    <BootstrapTable  
-                        className="table-hover table-suggestions"
-                        ref='table'
-                        data={ this.state.trails }
-                        pagination={ true }
-                        search={ true }>
-                    <TableHeaderColumn dataField='address' isKey={true} dataSort={true}>Address</TableHeaderColumn>
-                        <TableHeaderColumn dataField='coordinates' dataSort={true}>Map Coordinates</TableHeaderColumn>
-                        <TableHeaderColumn dataField='sender'>Sender</TableHeaderColumn>
-                        <TableHeaderColumn  dataField='action'>Actions</TableHeaderColumn>
-                    </BootstrapTable>
+                    <div className="col-lg-12"></div>
+
+                    <div>
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" dataField='newAddress'>Address</th>
+                                    <th scope="col">Trail Distance</th>
+                                    <th scope="col">Difficulty</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+
+                            {trailDatas.map(trail => {
+                                return (
+                                    <tr>
+                                        <th scope="row">{trail.address}</th>
+                                        <th scope="row">{trail.difficulty}</th>
+                                        <th scope="row">{trail.distance}</th>
+                                        <td><button className="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" onClick={() => this.handleTableBtnCLicked(trail.index)}>click</button></td>
+                                    </tr>
+                                )
+                            })}
+                        </table>
+                    </div>
                 </div>
 
-                    {/* ********************* Modal Area********************** */}
+                {/* ********************* Modal Area********************** */}
 
-                    <div className="modal fade" id="exampleModalCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div className="modal fade" id="exampleModalCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div className="modal-dialog modal-dialog-centered" role="document">
                         <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLongTitle">Modal title</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div className="modal-body modal-body-suggestion" >
-                            {/* <div className="row row-modal">
-                                <label style={{color: 'black', marginRight: '15px', marginBottom: '15px'}}>Sent by:  </label><p className="modalData">{modalData.sender}</p>
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body modal-body-suggestion" >
+                            
+                            <div className="row row-modal">
+                                <label style={{color: 'black', marginRight: '15px', marginBottom: '15px'}}>Sent by:  </label><p className="modalData">{addressItem}</p>
                             </div>
 
                             <hr style={{width: '90%'}}/>
 
-                            <div className="row row-modal">
+                            {/* <div className="row row-modal">
                                 <label style={{color: 'black', marginRight: '88px'}}>Address:  </label><p className="modalData">{modalData.addressName}</p>
                             </div>  
                             
                             <div className="row row-modal">
                                 <label style={{color: 'black', marginRight: '15px'}}>Map Coordinates:  </label><p className="modalData">{modalData.coordinates}</p>
                             </div>   */}
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-view">Save changes</button>
-                        </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" className="btn btn-view">Save changes</button>
+                            </div>
                         </div>
                     </div>
                 </div>

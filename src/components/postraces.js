@@ -59,6 +59,9 @@ class postraces extends Component {
 
             // upload picture********************
             const { selectedFile } = this.state
+            // let date = new Date(parsed)
+            let fireStamp = firebase.firestore.Timestamp.fromDate();
+
             const uploadTask = firebase.storage().ref(`images/${selectedFile.name}`).put(selectedFile)
             uploadTask.on('state_changed',
                 (error) => {
