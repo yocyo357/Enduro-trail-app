@@ -12,10 +12,13 @@ import MapView, { Marker, Polyline, AnimatedRegion, PROVIDER_GOOGLE } from 'reac
 import Geolocation from '@react-native-community/geolocation';
 import haversine from "haversine";
 import { ScrollView } from 'react-native-gesture-handler';
+import Geocoder from 'react-native-geocoding';
+
 const LATITUDE_DELTA = 0.009;
 const LONGITUDE_DELTA = 0.009;
 const LATITUDE = 37.78825;
 const LONGITUDE = -122.4324;
+Geocoder.init("AIzaSyANqV6leq3SUf6UTIlNQiPEoNAMPU5yAgA")
 class Record extends Component {
     constructor(props) {
         super(props);
@@ -30,64 +33,40 @@ class Record extends Component {
                 longitude: LONGITUDE
             }),
             recording: false,
-            recordText: 'RECORD'
+            recordText: 'RECORD',
+            address: '',
         };
     }
 
     async componentDidMount() {
 
-        try {
-            const granted = await PermissionsAndroid.requestMultiple([
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                // {
-                //     'title': 'Location Permission',
-                //     'message': 'This App needs access to your location ' +
-                //         'so we can know where you are.'
-                // },
-                PermissionsAndroid.PERMISSIONS.CAMERA,
-                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-                // {
-                //     title: "Cool Photo App Camera Permission",
-                //     message:
-                //         "Cool Photo App needs access to your camera " +
-                //         "so you can take awesome pictures.",
-                //     buttonNeutral: "Ask Me Later",
-                //     buttonNegative: "Cancel",
-                //     buttonPositive: "OK"
-                // }
-            ])
-            console.log(granted)
-            alert(granted["android.permission.ACCESS_FINE_LOCATION"])
-          
-                alert(granted)
-                Geolocation.watchPosition(position => {
-                    console.log(position)
-                    const { routeCoordinates, distanceTravelled } = this.state;
-                    const { latitude, longitude } = position.coords
-                    const newCoordinate = {
-                        latitude,
-                        longitude
-                    }
-                    this.setState({
-                        latitude,
-                        longitude,
-                        distanceTravelled:
-                            distanceTravelled + this.calcDistance(newCoordinate),
-                        prevLatlng: newCoordinate
-                    })
-                    this.isRecording(routeCoordinates, newCoordinate)
-                },
-                    error => console.log(error),
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 20000,
-                        maximumAge: 1000,
-                        distanceFilter: 10
-                    });
-            
-        } catch (err) {
-            console.warn(err)
-        }
+
+            Geolocation.watchPosition(position => {
+                
+        
+                const { routeCoordinates, distanceTravelled } = this.state;
+                const { latitude, longitude } = position.coords
+                const newCoordinate = {
+                    latitude,
+                    longitude
+                }
+                this.setState({
+                    latitude,
+                    longitude,
+                    distanceTravelled:
+                        distanceTravelled + this.calcDistance(newCoordinate),
+                    prevLatLng: newCoordinate
+                })
+                this.isRecording(routeCoordinates, newCoordinate)
+            },
+                error => console.log(error),
+                {
+                    enableHighAccuracy: true,
+                    timeout: 20000,
+                    maximumAge: 1000,
+                    distanceFilter: 10
+                });
+
 
     }
     // componentWillUnmount() {
@@ -119,6 +98,7 @@ class Record extends Component {
 
     calcDistance = newLatLng => {
         const { prevLatLng } = this.state;
+        console.log( (this.state.distanceTravelled)+ haversine(newLatLng,prevLatLng,{unit: 'mile'}) || 0)
         return haversine(prevLatLng, newLatLng) || 0;
     };
 
@@ -126,6 +106,22 @@ class Record extends Component {
         if (this.state.recording) {
             this.setState({ routeCoordinates: routeCoordinates.concat([newCoordinate]) })
         }
+    }
+
+    async geoCode() {
+        try {
+            Geocoder.from(this.state.routeCoordinates[0].latitude, this.state.routeCoordinates[0].longitude)
+                .then(json => {
+                    var addressComponent = json.results[0].address_components[0];
+                    console.log(addressComponent)
+                    this.setState({ address: addressComponent.long_name })
+                    return
+
+                })
+        } catch (err) {
+            alert(err); // TypeError: failed to fetch
+        }
+
     }
 
     btnOnpress = () => {
@@ -136,10 +132,10 @@ class Record extends Component {
                 // width: 300,      // optional, when omitted the view-width is used
                 // height: 300,     // optional, when omitted the view-height is used
                 // region: {
-                    latitude: this.state.latitude,
-                    longitude: this.state.longitude,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
+                latitude: this.state.latitude,
+                longitude: this.state.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
                 // },    // iOS only, optional region to render
                 format: 'jpg',   // image formats: 'png', 'jpg' (default: 'png')
                 quality: 0.8,    // image quality: 0..1 (only relevant for jpg, default: 1)
@@ -147,7 +143,15 @@ class Record extends Component {
             });
             snapshot.then((uri) => {
                 this.setState({ mapSnapshot: uri });
-                this.props.navigation.navigate('SaveActivity', { snapshoturi: uri })
+
+
+                Geocoder.from(this.state.routeCoordinates[0].latitude, this.state.routeCoordinates[0].longitude)
+                .then(json => {
+                    var addressComponent = json.results[0].formatted_address;
+                    console.log(addressComponent)
+                   this.props.navigation.navigate('SaveActivity', { snapshoturi: uri, routeCoordinates: this.state.routeCoordinates, distance: this.state.distanceTravelled, address: addressComponent })
+                })
+
             });
 
 
@@ -179,7 +183,9 @@ class Record extends Component {
                 <Button
                     onPress={() => this.btnOnpress()}
                     style={styles.button}><Text>{this.state.recordText}</Text></Button>
-
+                {/* <Button
+                    onPress={() => this.geoCode()}
+                    style={{position:"absolute",bottom:0}}><Text>{this.state.recordText}</Text></Button> */}
             </View>
 
         )

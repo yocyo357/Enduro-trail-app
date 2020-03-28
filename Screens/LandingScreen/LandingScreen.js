@@ -4,8 +4,8 @@ import {
     View,
     StyleSheet,
     PermissionsAndroid,
-    Platform
-
+    Platform,
+    AsyncStorage
 } from 'react-native';
 import { Container, Header, Content, Button, Text } from 'native-base';
 
@@ -15,23 +15,26 @@ import { Container, Header, Content, Button, Text } from 'native-base';
 class LandingScreen extends Component {
 
 
-    async componentDidMount(){
-        // try {
+    async componentDidMount() {
+        var userID = await AsyncStorage.getItem('userID')
+        if (userID != null) {
+            console.log(userID)
+            globalUserID = userID
+        }
 
-        //       const userResponse = await PermissionsAndroid.request(
-        //         PermissionsAndroid.PERMISSIONS.CAMERA,
-        //       //  PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-        //       );
-        //       //console.log(userResponse)
+        try {
+            const granted = await PermissionsAndroid.requestMultiple([
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                PermissionsAndroid.PERMISSIONS.CAMERA,
+                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
 
-        //   } catch (err) {
-        //     Warning(err);
-        //   }
+            ])
+        } catch (err) {
+            console.warn(err)
+        }
 
     }
-    async GetAllPermissions() {
-        
-      }
+
     render() {
         return (
             <Container style={{ backgroundColor: "#262626", alignItems: 'center' }}>

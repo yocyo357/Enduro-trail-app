@@ -45,7 +45,7 @@ class SignUp extends Component {
     componentDidMount() {
 
     }
-    onSubmitHandler = () =>{
+    onSubmitHandler = () => {
         var values = []
         var users = []
 
@@ -57,7 +57,7 @@ class SignUp extends Component {
             users = snapshot.val()
 
         }).then(() => {
-            
+
             var userExist = false
             Object.keys(users)
                 .map(igKey => {
@@ -66,10 +66,10 @@ class SignUp extends Component {
                         return
                     }
                 })
-               
+
             if (userExist) {
                 alert('Username already exists')
-            }else{
+            } else {
                 if (values.indexOf('') >= 0) {
                     if (values[5] == values[6]) {
                         alert("Please fill up all fields!")
@@ -80,8 +80,8 @@ class SignUp extends Component {
                     datas.push(this.state.text);
                 }
             }
-            
-           
+
+
         });
 
 

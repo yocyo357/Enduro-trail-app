@@ -18,7 +18,7 @@ class SaveActivityHeader extends Component {
 
                 </Body>
                 <Right>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.props.onSave(this.props.trailTitle)}>
                         <Text>Save</Text>
                     </TouchableOpacity>
                 </Right>

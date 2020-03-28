@@ -38,7 +38,7 @@ import {Icon} from 'native-base';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-
+global.globalUserID =""
 function Tabs() {
   return (
     <Tab.Navigator

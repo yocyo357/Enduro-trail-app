@@ -3,7 +3,7 @@ import { Container, Header, Content, Button, Text, Icon, Left, Right, Body, Item
 import SaveActivityHeader from '../../Headers/SaveActivityHeader'
 import { StyleSheet, View, Image, ScrollView, Dimensions, PermissionsAndroid } from 'react-native';
 import Slider from '@react-native-community/slider';
-import { TouchableOpacity, FlatList } from 'react-native-gesture-handler';
+import { TouchableOpacity, FlatList, TapGestureHandler } from 'react-native-gesture-handler';
 import { Circle } from 'react-native-maps';
 import ImagePicker from 'react-native-image-picker';
 import * as firebase from 'firebase'
@@ -17,6 +17,8 @@ const screenWidth = Math.round(Dimensions.get('window').width);
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
+var imagesURLS = []
+var imageNames = []
 class SaveActivity extends Component {
     constructor(props) {
         super(props);
@@ -30,31 +32,37 @@ class SaveActivity extends Component {
             type: '',
             difficulty: '',
             description: '',
+            imagesUrls: '',
+            status: 'pending',
+            address: '',
+            isdone: false
+
         };
     }
 
     async componentDidMount() {
-       
+
     }
     onActivitychange(value) {
         this.setState({
             activity: value,
         });
+
     }
-    onTypechange(value){
+    onTypechange(value) {
         this.setState({
             type: value,
         });
     }
-    onDifficultychange(value){
-        var difficulty = (value == 0)? 'Easy' : (value == 2)? 'Medium' : 'Hard'
-        this.setState({difficulty:difficulty})
+    onDifficultychange(value) {
+        var difficulty = (value == 0) ? 'Easy' : (value == 2) ? 'Medium' : 'Hard'
+        this.setState({ difficulty: difficulty })
     }
 
     imagePickerHandler = async () => {
 
         ImagePicker.showImagePicker((response) => {
-            console.log('Response = ', response);
+            // console.log('Response = ', response);
 
             if (response.didCancel) {
                 console.log('User cancelled image picker');
@@ -65,14 +73,9 @@ class SaveActivity extends Component {
 
                 // You can also display the image using data:
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-                this.uploadImage(response.uri,'testImage')
-                .then(()=>{
-                    alert('success')
-                }).catch((error)=>{
-                    alert(error)
-                })
-                var joined = this.state.images.concat(response.uri);
 
+                var joined = this.state.images.concat(response.uri);
+                imageNames.push(globalUserID + "-" + Date.now())
 
                 this.setState({
                     images: joined,
@@ -91,7 +94,9 @@ class SaveActivity extends Component {
     removeImage = (index) => {
         var images = [...this.state.images]
         images.splice(index, 1);
+        imageNames.splice(index, 1)
         this.setState({ images: images })
+
     }
     renderRow = ({ item, index }) => {
 
@@ -109,15 +114,111 @@ class SaveActivity extends Component {
 
         )
     }
-    uploadImage = async (uri, imageName) =>{
-        const response = await fetch(uri)
-        const blob = await response.blob()
+    uploadImage = async () => {
 
-        var ref = firebase.storage.ref().child("images/" + imageName)
-        return ref.put(blob)
+        const allImages = [...this.state.images]
+        allImages.push(this.props.route.params.snapshoturi)
+        imageNames.push(globalUserID + "-" + Date.now())
+
+        const prom = allImages.map(async (image, index) => {
+            const response = await fetch(image)
+            const blob = await response.blob()
+
+            var storage = firebase.storage();
+
+            var ref = storage.ref().child("images/" + imageNames[index])
+            ref.put(blob).then(async () => {
+                const url = await ref.getDownloadURL();
+                imagesURLS.push(url)
+                console.log(url)
+            })
+            //Promise.all(prom2).then(res => { this.setState({isdone:true}) })
+            // const ref = storage.ref('images/1585290674985');
+
+            // storage.ref('images').child(imageNames[index]+".jpg").getDownloadURL().then(url =>{
+            //     console.log(url)
+            // })
+        })
+
+         Promise.all(prom).then(res => {return})
+        //     const prom2 =allImages.map(async (image, index)=>{
+                
+        //         var ref = storage.ref().child("images/" + imageNames[index])
+        //         const url = await ref.getDownloadURL();
+        //         imagesURLS.push(url)
+        //     })
+            
+        //     Promise.all(prom2).then(res =>{
+        //         alert(imagesURLS.length)
+        //         var trailData = {
+        //             userId: globalUserID,
+        //             trailTitle: this.state.trailTitle,
+        //             activity: this.state.activity,
+        //             type: this.state.type,
+        //             difficulty: this.state.difficulty,
+        //             description: this.state.description,
+        //             status: this.state.status,
+        //             Images: [...imagesURLS],
+        //             distance: this.props.route.params.distance,
+        //             trailAddress: this.props.route.params.address,
+        //             routeCoordinates: this.props.route.params.routeCoordinates,
+        //             address: this.props.route.params.address
+        //         }
+
+        //         var datas = firebase.database().ref('/Trails')
+        //         //datas.push(trailData);
+        //         //alert('Successfully Saved')
+        //     })
+        
+        // });
+        // const uploadTask = storage.ref(`images/${'test'}`).put(blob)
+        // uploadTask.once('state_changed',
+        //     (error) => {
+        //         console.log(error)
+        //     },
+        //     () => {
+        //         var storage = firebase.storage();
+        //         storage.ref('images/').child('test').getDownloadURL().then(url => {
+        //             console.log(url)
+
+        //             imagesURLS.push(url)
+        //         })
+        //     })
 
     }
-    onSaveHandler() {
+    async onSaveHandler() {
+
+
+        if (this.state.trailTitle == "") {
+            alert("Please add title")
+        } else {
+
+            this.uploadImage()
+                .then(() => {
+                        
+                        var trailData = {
+                            userId: globalUserID,
+                            trailTitle: this.state.trailTitle,
+                            activity: this.state.activity,
+                            type: this.state.type,
+                            difficulty: this.state.difficulty,
+                            description: this.state.description,
+                            status: this.state.status,
+                            Images: [...imageNames],
+                            distance: this.props.route.params.distance,
+                            trailAddress: this.props.route.params.address,
+                            routeCoordinates: this.props.route.params.routeCoordinates,
+                            address: this.props.route.params.address
+                        }
+
+                        var datas = firebase.database().ref('/Trails')
+                        datas.push(trailData);
+                        alert('Successfully Saved')
+        
+                }).catch((error) => {
+                    alert(error)
+                })
+        }
 
     }
     render() {
@@ -126,19 +227,35 @@ class SaveActivity extends Component {
         activities.sort()
         return (
             <Container>
-                <SaveActivityHeader navigation={this.props.navigation} />
+                <Header style={{ backgroundColor: 'white' }}>
+                    <Left>
+                        <TouchableOpacity
+                            onPress={() => this.props.navigation.goBack()}>
+                            <Icon name='arrow-back' style={{ fontSize: 30, color: 'black' }} />
+                        </TouchableOpacity>
+                    </Left>
+                    <Body>
+
+                    </Body>
+                    <Right>
+                        <TouchableOpacity onPress={() => this.onSaveHandler()}>
+                            <Text>Save</Text>
+                        </TouchableOpacity>
+                    </Right>
+                </Header>
+
                 <ScrollView>
-                    <Button onPress={()=>this.uploadImage(this.state.images[0],'testimage')}><Text>TESSST</Text></Button>
                     <Image
                         style={{ width: screenWidth, height: 300 }}
                         source={{ uri: this.props.route.params.snapshoturi }} />
                     <Content style={styles.container}>
                         <Item>
-                            <Input placeholder="Trail title" />
+                            <Input
+                                placeholder="Trail title"
+                                value={this.state.trailTitle}
+                                onChangeText={value => this.setState({ trailTitle: value })} />
                         </Item>
-                        <Text style={styles.text}
-                            value={this.state.trailTitle}
-                            onChangeText={value => this.setState(trailTitle, value)}>
+                        <Text style={styles.text}>
                             Select Activity
                             </Text>
                         <Item picker>
@@ -146,7 +263,7 @@ class SaveActivity extends Component {
                                 mode="dropdown"
                                 iosIcon={<Icon name="arrow-down" />}
                                 style={{ width: undefined }}
-                                selectedValue={this.state.difficulty}
+                                selectedValue={this.state.activity}
                                 onValueChange={this.onActivitychange.bind(this)}
                             >
                                 {activities.map(activity => {
@@ -189,11 +306,11 @@ class SaveActivity extends Component {
                             </Grid>
                         </View>
                         <Form>
-                            <Textarea 
-                            rowSpan={5} 
-                            bordered placeholder="Add Description"
-                            value={this.state.description}
-                            onChangeText={value => this.setState(description, value)} />
+                            <Textarea
+                                rowSpan={5}
+                                bordered placeholder="Add Description"
+                                value={this.state.description}
+                                onChangeText={value => this.setState({ description: value })} />
                         </Form>
 
                         <Button
