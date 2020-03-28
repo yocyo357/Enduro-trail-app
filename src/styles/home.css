@@ -1,0 +1,46 @@
+.float{
+	position:fixed;
+	width:60px;
+	height:60px;
+	bottom:40px;
+	right:40px;
+	background-color:#0C9;
+	color:#FFF;
+	border-radius:50px;
+	text-align:center;
+	box-shadow: 2px 2px 3px #999;
+}
+
+.float-tooltip {
+    transition: all .2s ease-in-out;
+}
+
+.float-tooltip:hover {
+    transform: scale(1.2);
+}
+
+.my-float{
+	margin-top:22px;
+}
+
+.homeModalContainer {
+    height: 120% !important;
+    
+}
+
+.modal-header {
+    border: 0px solid #0C0D0A !important;
+}
+
+.modal-title{
+    font-size: 20px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    
+}
+
+.modal-content-home{
+    border: 3px solid #618930 !important;
+    background-color: #0C0D0A !important;
+}
+

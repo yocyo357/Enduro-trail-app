@@ -1,15 +1,24 @@
 import React, { Component } from 'react'
 import * as firebase from 'firebase';
+import { FaPlus } from 'react-icons/fa';
 import { config } from '../Firebase/index';
+import PostBox from './postraces';
+import '../styles/home.css';
 
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
 
-var db = firebase.database().ref('Trails/');
-var urlHolder =''
+var db = firebase.database().ref('post_races/');
+var urlHolder ='';
+var postDatas = [];
 
 class home extends Component {
+
+    constructor(props) {
+        super(props)
+
+    }
 
     getImage(image_name) {
         const storage = firebase.storage()
@@ -20,22 +29,81 @@ class home extends Component {
         
     }
 
-    componentDidMount() {
+    handleNewPost(){
         
     }
 
+    componentDidMount() {
+        db.on('value', gotData, this.errData);
+
+        function gotData(data) {
+            // console.log(data.val())
+            postDatas.length = 0;
+            var posts = data.val()
+            var keys = Object.keys(posts)
+
+            for (var i = 0; i < keys.length; i++) {
+                var k = keys[i]
+
+                var postTitle = posts[k].raceTitle
+                var raceDescription = posts[k].raceInfo
+                var status = posts[k].status
+                var newDifficulty = posts[k].difficulty
+
+                var data = { 
+                    id: k, 
+                    raceTitle: postTitle, 
+                    raceDescription: raceDescription }
+                postDatas.push(data)
+            }
+            // console.log(trailDatas)
+        }
+
+    }
+
     render(){
-        
         return (
-            <div style={{alignItems: 'center'}}>
-                <div class="card" style={{width: '70%', marginLeft: '15%', marginRight: '25%'}}>
-                    <img src="..." class="card-img-top" alt="..."/>
-                    <div class="card-body">
-                        <h5 class="card-title">Card title {urlHolder}</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
+           
+            <div style={{paddingTop: '4%', paddingBottom: '4%'}}>
+                
+                <div style={{alignItems: 'center'}}>
+
+                    {postDatas.map(post => {
+                        return(
+                            <div className="card" style={{width: '50%', marginLeft: '24%', marginRight: '25%', marginTop: '1.5%', marginBottom: '1.5%'}}>
+                                <img src="https://wallpapercave.com/wp/wIYKEQP.jpg" className="card-img-top" alt="..." style={{width: '100%'}}/>
+                                <div className="card-body">
+                                    <h5 className="card-title">{post.raceTitle}</h5>
+                                    <p className="card-text">{post.raceDescription}</p>
+                                    {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
+                                </div>
+                            </div>
+                        )
+                        
+                    })}
+                    
+                    
+                    <a href="#" className="float float-tooltip" data-toggle="modal" data-target="#exampleModalScrollable">
+                        <FaPlus className="fa fa-plus my-float " style={{width: '40px'}}/>
+                    </a>
                 </div>
+
+                {/* Modal Area */}
+                <div className="modal fade homeModalContainer" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                        <div className="modal-dialog modal-dialog-scrollable" role="document">
+                            <div className="modal-content modal-content-home">
+                                <div className="modal-header">
+                                    <h5 className="modal-title" id="exampleModalScrollableTitle">New Scream?</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body home-modal-body">
+                                    <PostBox />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             </div>
         );
     }

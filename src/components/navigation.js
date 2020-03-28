@@ -48,9 +48,9 @@ class navigation extends Component {
                             <NavLink className="nav-link" to="/" exact activeStyle={{color: 'tomato', borderTop: '2px solid tomato', borderBottom: '2px solid tomato', padding: '2px 0'}}>Home</NavLink>
                         </li>
 
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <NavLink className="nav-link" to="/postraces" exact activeStyle={{color: 'tomato', borderTop: '2px solid tomato', borderBottom: '2px solid tomato', padding: '2px 0'}}>Add New Post</NavLink>
-                        </li>
+                        </li> */}
 
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/suggestionsbox" exact activeStyle={{color: 'tomato', borderTop: '2px solid tomato', borderBottom: '2px solid tomato', padding: '2px 0'}}>New Suggestions<span class="badge badge-light">{count}</span></NavLink>

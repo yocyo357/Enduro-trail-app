@@ -40,7 +40,8 @@
     }
 
     .fileUpload {
-        width: 23% !important;
+        width: 100% !important;
+        color: white;
     }
 
     label {
