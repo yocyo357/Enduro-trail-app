@@ -13,6 +13,14 @@ import {
 } from 'react-native';
 import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right } from 'native-base';
 
+import firebase, { storage } from 'firebase'
+import { config } from '../../Firebase/index'
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(config())
+}
+
+
 
 // Race Title, Date Posted, Race Description (info., location, reace difficulty, race category)
 const DATA = [
