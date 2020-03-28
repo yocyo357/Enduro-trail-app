@@ -2,9 +2,36 @@ import React, { Component } from 'react'
 import { render } from "react-dom";
 import '../styles/navigation.css';
 import { BrowserRouter as Router, Link, NavLink, Prompt } from 'react-router-dom';
+import * as firebase from 'firebase';
+import { config } from '../Firebase/index';
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(config())
+}
+
+var db = firebase.database().ref('Trails/');
+var count = [];
 
 
 class navigation extends Component { 
+
+    state = {
+        count: ''
+    }
+
+    componentDidMount(){
+        count.length = 0;
+        db.child('status').equalTo('pending').on("value", function(snapshot) {
+            console.log("There are "+snapshot.numChildren()+" messages");
+
+            var data = snapshot.numChildren
+            count.push(data);
+          })
+
+          
+
+    }
+
     render() {
         return (
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -26,7 +53,7 @@ class navigation extends Component {
                         </li>
 
                         <li className="nav-item">
-                            <NavLink className="nav-link" to="/suggestionsbox" exact activeStyle={{color: 'tomato', borderTop: '2px solid tomato', borderBottom: '2px solid tomato', padding: '2px 0'}}>New Suggestions</NavLink>
+                            <NavLink className="nav-link" to="/suggestionsbox" exact activeStyle={{color: 'tomato', borderTop: '2px solid tomato', borderBottom: '2px solid tomato', padding: '2px 0'}}>New Suggestions<span class="badge badge-light">{count}</span></NavLink>
                         </li>
                         <hr />
                     </ul>

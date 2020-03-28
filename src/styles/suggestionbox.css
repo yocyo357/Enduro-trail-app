@@ -18,21 +18,8 @@
     .table-suggestions {
         margin-top: 2%;
         margin-bottom: 10% !important;
-        /* text-align: center !important; */
-        /* -webkit-box-shadow: 7px 11px 17px -3px rgba(99,140,45,0.9);
-        -moz-box-shadow: 7px 11px 17px -3px rgba(99,140,45,0.9);
-        box-shadow: 7px 11px 17px -3px rgba(99,140,45,0.9); */
     
     }   
-
-    /* .dataTables_filter {
-        background-color: #343A40 !important;
-        width: 50%;
-    }
-
-    .col-md-6 {
-        background-color: #343A40 !important;
-    } */
 
     .btn-view {
         color: white !important;
@@ -69,5 +56,23 @@
     .row-modal {
         padding-left: 5% !important;
         padding-right: 5% !important;
+    }
+
+    .thumbs-up {
+        transition: all .2s ease-in-out;
+        cursor: pointer;
+    }
+
+    .thumbs-down {
+        transition: all .2s ease-in-out;
+        cursor: pointer;
+    }
+
+    .thumbs-up:hover {
+        transform: scale(1.5);
+    }
+
+    .thumbs-down:hover {
+        transform: scale(1.5);
     }
 }

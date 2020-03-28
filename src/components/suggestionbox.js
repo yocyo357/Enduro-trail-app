@@ -4,6 +4,7 @@ import * as firebase from 'firebase';
 import { config } from '../Firebase/index';
 import '../styles/suggestionbox.css';
 import { render } from '@testing-library/react';
+import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
@@ -30,37 +31,40 @@ class suggestionbox extends Component {
     }
 
     componentDidMount() {
-        db.on('value', this.gotData, this.errData);
-    }
+        db.on('value', gotData, this.errData);
+    
 
-    gotData(data) {
-        // console.log(data.val())
-        trailDatas.length = 0;
-        var trails = data.val()
-        var keys = Object.keys(trails)
+        function gotData(data) {
+            // console.log(data.val())
+            trailDatas.length = 0;
+            var trails = data.val()
+            var keys = Object.keys(trails)
 
-        for (var i = 0; i < keys.length; i++) {
-            var k = keys[i]
+            for (var i = 0; i < keys.length; i++) {
+                var k = keys[i]
 
-            var newAddress = trails[k].address
-            var newDistance = trails[k].distance
-            var newDifficulty = trails[k].difficulty
+                var newAddress = trails[k].address
+                var newDistance = trails[k].distance
+                var status = trails[k].status
+                var newDifficulty = trails[k].difficulty
 
-            var data = { index: k, address: newAddress, distance: newDistance, difficulty: newDifficulty }
-            trailDatas.push(data)
+                var data = { id: k, address: newAddress, distance: newDistance, difficulty: newDifficulty, status: status }
+                trailDatas.push(data)
+            }
+            // console.log(trailDatas)
         }
-        console.log(trailDatas)
     }
 
     errData(err) {
         console.log(err)
     }
 
-    handleTableBtnCLicked(i){
-        this.setState({
-            requiredItem: i
-        });
-
+    handleTableBtnApprovedCLicked(newStatus, id) {
+        // const fb = firebase.database().ref('Trails/')
+        // const status = 'Approved'
+        // fb.child('status/'+id).update(status);
+        alert(newStatus)
+        
     }
 
     render() {
@@ -81,7 +85,7 @@ class suggestionbox extends Component {
                                 <tr>
                                     <th scope="col" dataField='newAddress'>Address</th>
                                     <th scope="col">Trail Distance</th>
-                                    <th scope="col">Difficulty</th>
+                                    <th scope="col"></th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -92,7 +96,12 @@ class suggestionbox extends Component {
                                         <th scope="row">{trail.address}</th>
                                         <th scope="row">{trail.difficulty}</th>
                                         <th scope="row">{trail.distance}</th>
-                                        <td><button className="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" onClick={() => this.handleTableBtnCLicked(trail.index)}>click</button></td>
+                                        <th>
+                                            <div className="row">
+                                                <div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.id) }><FaThumbsUp className="thumbs-up" p style={{size: '45px', color: '#6F952C'} }/></span></div>
+                                                <div className="col"><span ><FaThumbsDown className="thumbs-down"  style={{size: '45px', color: '#F95B44'}}/></span></div>
+                                            </div>
+                                        </th>
                                     </tr>
                                 )
                             })}
