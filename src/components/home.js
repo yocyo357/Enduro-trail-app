@@ -10,26 +10,30 @@ if (!firebase.apps.length) {
 }
 
 var db = firebase.database().ref('post_races/');
-var urlHolder ='';
-var postDatas = [];
+var postDatas= [];
+var urlHolder= [];
 
 class home extends Component {
 
     constructor(props) {
         super(props)
+        this.state = {
+            
+        }
 
     }
 
     getImage(image_name) {
+        urlHolder.length = 0
         const storage = firebase.storage()
-        const ref = storage.ref('image/'+image_name);
-        const url = ref.getDownloadURL();
+        firebase.storage().ref('images').child('/1').getDownloadURL().then(url => {
+            console.log("URL: "+url)
 
-        urlHolder.push(url);
-        
-    }
+            urlHolder.push(url)
+            
+        })
 
-    handleNewPost(){
+
         
     }
 
@@ -56,22 +60,19 @@ class home extends Component {
                     raceDescription: raceDescription }
                 postDatas.push(data)
             }
-            // console.log(trailDatas)
         }
-
+        console.log("URL "+     urlHolder)
     }
 
     render(){
         return (
            
             <div style={{paddingTop: '4%', paddingBottom: '4%'}}>
-                
                 <div style={{alignItems: 'center'}}>
-
                     {postDatas.map(post => {
                         return(
                             <div className="card" style={{width: '50%', marginLeft: '24%', marginRight: '25%', marginTop: '1.5%', marginBottom: '1.5%'}}>
-                                <img src="https://wallpapercave.com/wp/wIYKEQP.jpg" className="card-img-top" alt="..." style={{width: '100%'}}/>
+                                <img src={this.state.urlHolder} className="card-img-top" alt="..." style={{width: '100%'}}/>
                                 <div className="card-body">
                                     <h5 className="card-title">{post.raceTitle}</h5>
                                     <p className="card-text">{post.raceDescription}</p>
@@ -94,8 +95,8 @@ class home extends Component {
                             <div className="modal-content modal-content-home">
                                 <div className="modal-header">
                                     <h5 className="modal-title" id="exampleModalScrollableTitle">New Scream?</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.getImage}>
+                                        <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div className="modal-body home-modal-body">

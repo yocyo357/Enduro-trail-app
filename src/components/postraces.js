@@ -23,6 +23,7 @@ class postraces extends Component {
             raceInfo: '',
             noOfRiders: '',
             selectedFile: null,
+            url: '',
             datePosted: new Date()
         };
     }
@@ -52,6 +53,7 @@ class postraces extends Component {
             }).then((data)=>{
                 //success callback
                 console.log('data ' , data)
+                alert("You Added New Scream.")
             }).catch((error)=>{
                 //error callback
                 console.log('error ' , error)
@@ -59,9 +61,6 @@ class postraces extends Component {
 
             // upload picture********************
             const { selectedFile } = this.state
-            // let date = new Date(parsed)
-            // let fireStamp = firebase.firestore.Timestamp.fromDate();
-
             const uploadTask = firebase.storage().ref(`images/${selectedFile.name}`).put(selectedFile)
             uploadTask.on('state_changed',
                 (error) => {
@@ -71,7 +70,7 @@ class postraces extends Component {
                 //getPicture
                 () => {
                     firebase.storage().ref('images').child(selectedFile.name).getDownloadURL().then(url => {
-                        console.log(url)
+                        console.log("URL: "+url)
                     })
                 })
     

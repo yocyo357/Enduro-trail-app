@@ -38,20 +38,24 @@ class suggestionbox extends Component {
             // console.log(data.val())
             trailDatas.length = 0;
             var trails = data.val()
-            var keys = Object.keys(trails)
+            
+            
+            if(trails != null){
+                var keys = Object.keys(trails)
+            
+                for (var i = 0; i < keys.length; i++) {
+                    var k = keys[i]
 
-            for (var i = 0; i < keys.length; i++) {
-                var k = keys[i]
+                    var newAddress = trails[k].address
+                    var newDistance = trails[k].distance
+                    var status = trails[k].status
+                    var newDifficulty = trails[k].difficulty
 
-                var newAddress = trails[k].address
-                var newDistance = trails[k].distance
-                var status = trails[k].status
-                var newDifficulty = trails[k].difficulty
-
-                var data = { id: k, address: newAddress, distance: newDistance, difficulty: newDifficulty, status: status }
-                trailDatas.push(data)
+                    var data = { id: k, address: newAddress, distance: newDistance, difficulty: newDifficulty, status: status }
+                    trailDatas.push(data)
+                }
+                // console.log(trailDatas)
             }
-            // console.log(trailDatas)
         }
     }
 
