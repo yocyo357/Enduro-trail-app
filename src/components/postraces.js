@@ -37,8 +37,6 @@ class postraces extends Component {
             var imageURI = this.state.selectedFile.name
             var datePosted = this.state.datePosted
             // push og data to firebase********************
-
-            
             firebase.database().ref('post_races/').push({
                 //mga paramerter ni sya dre
                 raceTitle: this.state.raceTitle,  
@@ -48,7 +46,7 @@ class postraces extends Component {
                 raceNoOfStages: this.state.raceNoOfStages,
                 raceInfo: this.state.raceInfo,
                 noOfRiders: this.state.noOfRiders,
-                imageURI
+                imageURL: this.state.url
 
             }).then((data)=>{
                 //success callback
@@ -58,19 +56,21 @@ class postraces extends Component {
                 //error callback
                 console.log('error ' , error)
             })
+            
+            
 
             // upload picture********************
             const { selectedFile } = this.state
-            const uploadTask = firebase.storage().ref(`images/${selectedFile.name}`).put(selectedFile)
+            const uploadTask = firebase.storage().ref(`images/${this.state.raceTitle}`).put(selectedFile)
             uploadTask.on('state_changed',
                 (error) => {
                     console.log(error)
                 },
     
                 //getPicture
-                () => {
+                () => {         
                     firebase.storage().ref('images').child(selectedFile.name).getDownloadURL().then(url => {
-                        console.log("URL: "+url)
+                        
                     })
                 })
     

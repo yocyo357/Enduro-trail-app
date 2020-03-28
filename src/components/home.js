@@ -18,21 +18,24 @@ class home extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            
+            myimage: '',
         }
 
     }
 
     getImage(image_name) {
         urlHolder.length = 0
+        var that = this
         const storage = firebase.storage()
         firebase.storage().ref('images').child('/1').getDownloadURL().then(url => {
             console.log("URL: "+url)
 
-            urlHolder.push(url)
+            that.setState({ myimage: url })
+             .push(url)
             
         })
 
+// relax
 
         
     }
@@ -44,22 +47,26 @@ class home extends Component {
             // console.log(data.val())
             postDatas.length = 0;
             var posts = data.val()
-            var keys = Object.keys(posts)
+            if(posts != null){
+                var keys = Object.keys(posts)
 
-            for (var i = 0; i < keys.length; i++) {
-                var k = keys[i]
-
-                var postTitle = posts[k].raceTitle
-                var raceDescription = posts[k].raceInfo
-                var status = posts[k].status
-                var newDifficulty = posts[k].difficulty
-
-                var data = { 
-                    id: k, 
-                    raceTitle: postTitle, 
-                    raceDescription: raceDescription }
-                postDatas.push(data)
+                for (var i = 0; i < keys.length; i++) {
+                    var k = keys[i]
+    
+                    var postTitle = posts[k].raceTitle
+                    var raceDescription = posts[k].raceInfo
+                    var status = posts[k].status
+                    var newDifficulty = posts[k].difficulty
+                    var newUrl =  posts[k].imageURL
+                    var data = { 
+                        id: k, 
+                        raceTitle: postTitle, 
+                        raceDescription: raceDescription }
+                    postDatas.push(data)
+                }
             }
+
+            
         }
         console.log("URL "+     urlHolder)
     }
@@ -76,7 +83,8 @@ class home extends Component {
                                 <div className="card-body">
                                     <h5 className="card-title">{post.raceTitle}</h5>
                                     <p className="card-text">{post.raceDescription}</p>
-                                    {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
+                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    
                                 </div>
                             </div>
                         )
@@ -95,9 +103,9 @@ class home extends Component {
                             <div className="modal-content modal-content-home">
                                 <div className="modal-header">
                                     <h5 className="modal-title" id="exampleModalScrollableTitle">New Scream?</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.getImage}>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
-                                    </button>
+                                    </button> 
                                 </div>
                                 <div className="modal-body home-modal-body">
                                     <PostBox />

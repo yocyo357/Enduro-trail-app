@@ -5,12 +5,16 @@ import { config } from '../Firebase/index';
 import '../styles/suggestionbox.css';
 import { render } from '@testing-library/react';
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import UniqueID from 'react-html-id';
 
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
 
-var db = firebase.database().ref('Trails/');
+var db = firebase.database();
+var ref = db.ref('Trails/').orderByChild('status').equalTo('pending');
+
+
 var trailDatas = [];
 
 class suggestionbox extends Component {
@@ -31,7 +35,7 @@ class suggestionbox extends Component {
     }
 
     componentDidMount() {
-        db.on('value', gotData, this.errData);
+        ref.on('value', gotData, this.errData);
     
 
         function gotData(data) {
@@ -50,8 +54,10 @@ class suggestionbox extends Component {
                     var newDistance = trails[k].distance
                     var status = trails[k].status
                     var newDifficulty = trails[k].difficulty
+                    var newUrl = trails[k].userimageurl
+                    
 
-                    var data = { id: k, address: newAddress, distance: newDistance, difficulty: newDifficulty, status: status }
+                    var data = { index: k, address: newAddress, distance: newDistance, difficulty: newDifficulty, status: status, suggestImage: newUrl }
                     trailDatas.push(data)
                 }
                 // console.log(trailDatas)
@@ -63,11 +69,12 @@ class suggestionbox extends Component {
         console.log(err)
     }
 
-    handleTableBtnApprovedCLicked(newStatus, id) {
-        // const fb = firebase.database().ref('Trails/')
-        // const status = 'Approved'
-        // fb.child('status/'+id).update(status);
-        alert(newStatus)
+    handleTableBtnApprovedCLicked(s, index) {
+        db.ref('Trails/'+index+'/status').set(
+            'approved'
+        )
+
+        alert(index)
         
     }
 
@@ -89,20 +96,20 @@ class suggestionbox extends Component {
                                 <tr>
                                     <th scope="col" dataField='newAddress'>Address</th>
                                     <th scope="col">Trail Distance</th>
-                                    <th scope="col"></th>
+                                    <th scope="col">Click the link to see pic</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
 
                             {trailDatas.map(trail => {
                                 return (
-                                    <tr>
+                                    <tr key={trail.index}>
                                         <th scope="row">{trail.address}</th>
                                         <th scope="row">{trail.difficulty}</th>
                                         <th scope="row">{trail.distance}</th>
                                         <th>
                                             <div className="row">
-                                                <div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.id) }><FaThumbsUp className="thumbs-up" p style={{size: '45px', color: '#6F952C'} }/></span></div>
+                                                <div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index) }><FaThumbsUp className="thumbs-up" p style={{size: '45px', color: '#6F952C'} }/></span></div>
                                                 <div className="col"><span ><FaThumbsDown className="thumbs-down"  style={{size: '45px', color: '#F95B44'}}/></span></div>
                                             </div>
                                         </th>
@@ -110,41 +117,6 @@ class suggestionbox extends Component {
                                 )
                             })}
                         </table>
-                    </div>
-                </div>
-
-                {/* ********************* Modal Area********************** */}
-
-                <div className="modal fade" id="exampleModalCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLongTitle">Modal title</h5>
-                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body modal-body-suggestion" >
-                            
-                            <div className="row row-modal">
-                                <label style={{color: 'black', marginRight: '15px', marginBottom: '15px'}}>Sent by:  </label><p className="modalData">{addressItem}</p>
-                            </div>
-
-                            <hr style={{width: '90%'}}/>
-
-                            {/* <div className="row row-modal">
-                                <label style={{color: 'black', marginRight: '88px'}}>Address:  </label><p className="modalData">{modalData.addressName}</p>
-                            </div>  
-                            
-                            <div className="row row-modal">
-                                <label style={{color: 'black', marginRight: '15px'}}>Map Coordinates:  </label><p className="modalData">{modalData.coordinates}</p>
-                            </div>   */}
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" className="btn btn-view">Save changes</button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
