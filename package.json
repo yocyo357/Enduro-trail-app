@@ -22,11 +22,16 @@
     "react": "16.9.0",
     "react-native": "0.61.5",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "react-native-card-view": "0.0.3",
     "react-native-complete-flatlist": "^2.0.3",
 =======
     "react-native-geocoding": "^0.4.0",
 >>>>>>> 567f46e9ea16c0f51d005247062a898e8734b653
+=======
+    "react-native-card-view": "0.0.3",
+    "react-native-complete-flatlist": "^2.0.3",
+>>>>>>> 52a41e1... Profile UI
     "react-native-gesture-handler": "^1.6.1",
     "react-native-image-picker": "^2.3.1",
     "react-native-maps": "0.27.1",
