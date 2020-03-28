@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import {
     View,
-    StyleSheet
+    StyleSheet,
+    AsyncStorage
 } from 'react-native';
 
 import firebase, { storage } from 'firebase'
@@ -19,19 +20,49 @@ class Login extends Component {
         super(props);
         this.state = {
             text: {
-                username: '',
-                password: ''
+                username: 'r',
+                password: 'rg'
             }
         };
     }
+    
     textChangedHandler = (igKey, value) => {
         var text = { ...this.state.text }
         text[igKey] = value
         this.setState({ text: text })
     }
 
+    checkUser(){
+       
+        
+    }
+    
     onSubmitHander=()=>{
-
+        var ids=[]
+        var users=[]
+        var bool = false
+        var userID=''
+        firebase.database().ref('Users/').once('value', function (snapshot) {
+            users = snapshot.val()
+            console.log(users)
+            
+        }).then(() => {
+            Object.keys(users)
+            .map((igKey)=>{
+                if (this.state.text.username == users[igKey]['username'] && this.state.text.password == users[igKey]['password']) {
+                    userID=igKey
+                    bool = true
+                }
+            })
+            if (bool == true){
+                globalUserID = userID
+                AsyncStorage.setItem('userID', userID)
+                this.props.navigation.navigate('Tabs')
+            }
+            else{
+                alert("Wrong Username Password")
+            }
+        })
   
     }
 
@@ -59,7 +90,7 @@ class Login extends Component {
 
                         <Button
                             success
-                            onPress={() => {this.props.navigation.navigate('Tabs')}}
+                            onPress={() => this.onSubmitHander()}
                             style={styles.button} block>
                             <Text>Login</Text>
                         </Button>

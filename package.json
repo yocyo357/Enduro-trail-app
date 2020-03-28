@@ -10,17 +10,26 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/masked-view": "^0.1.7",
+    "@react-native-community/slider": "^2.0.9",
     "@react-navigation/bottom-tabs": "^5.2.2",
     "@react-navigation/native": "^5.1.1",
     "@react-navigation/stack": "^5.2.3",
     "firebase": "^7.12.0",
+    "haversine": "^1.1.1",
     "native-base": "^2.13.12",
     "react": "16.9.0",
     "react-native": "0.61.5",
+<<<<<<< HEAD
     "react-native-card-view": "0.0.3",
     "react-native-complete-flatlist": "^2.0.3",
+=======
+    "react-native-geocoding": "^0.4.0",
+>>>>>>> 567f46e9ea16c0f51d005247062a898e8734b653
     "react-native-gesture-handler": "^1.6.1",
+    "react-native-image-picker": "^2.3.1",
+    "react-native-maps": "0.27.1",
     "react-native-reanimated": "^1.7.0",
     "react-native-safe-area-context": "^0.7.3",
     "react-native-screens": "^2.4.0",

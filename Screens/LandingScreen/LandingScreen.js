@@ -3,10 +3,38 @@ import React, { Component } from 'react';
 import {
     View,
     StyleSheet,
-
+    PermissionsAndroid,
+    Platform,
+    AsyncStorage
 } from 'react-native';
 import { Container, Header, Content, Button, Text } from 'native-base';
+
+
+
+
 class LandingScreen extends Component {
+
+
+    async componentDidMount() {
+        var userID = await AsyncStorage.getItem('userID')
+        if (userID != null) {
+            console.log(userID)
+            globalUserID = userID
+        }
+
+        try {
+            const granted = await PermissionsAndroid.requestMultiple([
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                PermissionsAndroid.PERMISSIONS.CAMERA,
+                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+
+            ])
+        } catch (err) {
+            console.warn(err)
+        }
+
+    }
+
     render() {
         return (
             <Container style={{ backgroundColor: "#262626", alignItems: 'center' }}>
