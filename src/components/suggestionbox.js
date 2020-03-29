@@ -5,6 +5,7 @@ import { config } from '../Firebase/index';
 import '../styles/suggestionbox.css';
 import { render } from '@testing-library/react';
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import { GiMagnifyingGlass } from 'react-icons/gi'
 import UniqueID from 'react-html-id';
 
 if (!firebase.apps.length) {
@@ -118,11 +119,12 @@ class suggestionbox extends Component {
                                         <th scope="row">{trail.address}</th>
                                         <th scope="row">{trail.difficulty}</th>
                                         <th scope="row">{trail.distance}</th>
-                                        <th>
-                                            <div className="row">
+                                        <th><div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index, trail) }><GiMagnifyingGlass className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
+                                            {/* <div className="row">
                                                 <div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index, trail) }><FaThumbsUp className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
                                                 <div className="col"><span ><FaThumbsDown className="thumbs-down"  style={{size: '45px', color: '#F95B44'}}/></span></div>
-                                            </div>
+                                            
+                                            </div> */}
                                         </th>
                                     </tr>
                                 )
@@ -144,7 +146,16 @@ class suggestionbox extends Component {
                         <div className="modal-body">
                             <div className='row'>
                                 <div className='col'>
-                                    <label style={{color: 'black'}}>Sender:</label> {this.state.sender}
+                                    <h3>Trail Summary</h3>
+                                    <div className='row'>
+                                        <label style={{color: 'black'}}>Sender:</label> {this.state.sender} 
+                                    </div>
+
+                                    <div className='row'>
+                                        <label style={{color: 'black'}}>Address:</label> {this.state.modalAddress}
+                                    </div>
+                                    
+                                    
                                 </div>
                                 <div className='col'>
                                     < img src={this.state.modalTrailImg} style={{width: '100%', height: '100%'}}/>
@@ -154,8 +165,8 @@ class suggestionbox extends Component {
                         {/* <p>Hey: </p> */}
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-primary">Save changes</button>
+                            <button type="button" className="btn btn-primary">Approve Trail</button>
+                            <button type="button" className="btn btn-danger" data-dismiss="modal">Disapprove</button>
                         </div>
                         </div>
                     </div>
