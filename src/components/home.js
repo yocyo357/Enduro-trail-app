@@ -19,12 +19,12 @@ class home extends Component {
         super(props)
         this.state = {
             myimage: '',
+            url: ''
         }
 
     }
 
     getImage(image_name) {
-        urlHolder.length = 0
         var that = this
         const storage = firebase.storage()
         firebase.storage().ref('images').child('/1').getDownloadURL().then(url => {
@@ -61,14 +61,15 @@ class home extends Component {
                     var data = { 
                         id: k, 
                         raceTitle: postTitle, 
-                        raceDescription: raceDescription }
+                        raceDescription: raceDescription,
+                        url: newUrl
+                    }
                     postDatas.push(data)
                 }
             }
 
-            
         }
-        console.log("URL "+     urlHolder)
+        // alert("URL "+     this.state.url)
     }
 
     render(){
@@ -79,11 +80,12 @@ class home extends Component {
                     {postDatas.map(post => {
                         return(
                             <div className="card" style={{width: '50%', marginLeft: '24%', marginRight: '25%', marginTop: '1.5%', marginBottom: '1.5%'}}>
-                                <img src={this.state.urlHolder} className="card-img-top" alt="..." style={{width: '100%'}}/>
+                                <img src={post.url} className="card-img-top" alt="..." style={{width: '100%'}}/>
                                 <div className="card-body">
                                     <h5 className="card-title">{post.raceTitle}</h5>
                                     <p className="card-text">{post.raceDescription}</p>
                                     <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    {/* {alert(post.newUrl)} */}
                                     
                                 </div>
                             </div>

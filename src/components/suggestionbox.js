@@ -49,21 +49,21 @@ class suggestionbox extends Component {
             trailDatas.length = 0;
             var trails = data.val()
             
-            
             if(trails != null){
                 var keys = Object.keys(trails)
-            
                 for (var i = 0; i < keys.length; i++) {
                     var k = keys[i]
 
-                    var newSender = trails[k].username
+                    var newSender =  trails[k].firstname + " " + trails[k].lastname
                     var newAddress = trails[k].address
-                    var newDistance = trails[k].distance
+                    var newDistance = trails[k].distance * 1.6
                     var status = trails[k].status
                     var newDifficulty = trails[k].difficulty
                     var newUrl = trails[k].userimageuri
+                    var newActivity = trails[k].activity
+                    var newTrail = trails[k].trailTitle
                     
-                    var data = { index: k, sender: newSender, address: newAddress, distance: newDistance, difficulty: newDifficulty, status: status, suggestImage: newUrl }
+                    var data = { index: k, sender: newSender, trailTitle: newTrail, activity: newActivity, address: newAddress, distance: Math.round((newDistance + Number.EPSILON) * 100) / 100, difficulty: newDifficulty, status: status, suggestImage: newUrl }
                     trailDatas.push(data)
                 }
                 // console.log(trailDatas)
@@ -75,20 +75,24 @@ class suggestionbox extends Component {
         }
     }
 
-    
-
     handleTableBtnApprovedCLicked(s, index, trail) {
-        // db.ref('Trails/'+index+'/status').set(
-        //     'approved'
-        // )
+        
 
 
         this.setState({
             modalAddress: trail.address, 
             modalTrailImg: trail.suggestImage,
-            sender: trail.sender
+            sender: trail.sender,
+            itemIndex: index
         })        
-        // alert(trail.suggestImage)
+        // alert(trail.index)
+    }
+
+    handleApprove(index){
+        db.ref('Trails/'+index+'/status').set(
+            'approved'
+        )
+
     }
 
     render() {
@@ -103,12 +107,13 @@ class suggestionbox extends Component {
                     <div className="col-lg-12"></div>
 
                     <div>
-                        <table class="table table-striped table-hover">
+                        <table className="table table-striped table-dark table-bordered">
                             <thead>
-                                <tr>
-                                    <th scope="col" dataField='newAddress'>Address</th>
-                                    <th scope="col">Trail Distance</th>
+                                <tr style={{textAlign: 'center' }}>
                                     <th scope="col">Sender</th>
+                                    <th scope="col">Trail Name</th>
+                                    <th scope="col">Distance from Start to End</th>
+                                    <th scope="col">Suggestion Status</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -116,10 +121,12 @@ class suggestionbox extends Component {
                             {trailDatas.map(trail => {
                                 return (
                                     <tr key={trail.index}>
-                                        <th scope="row">{trail.address}</th>
-                                        <th scope="row">{trail.difficulty}</th>
-                                        <th scope="row">{trail.distance}</th>
-                                        <th><div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index, trail) }><GiMagnifyingGlass className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{trail.sender}</th>
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{trail.trailTitle}</th>
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{trail.distance}</th>
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{trail.status}</th>
+                                        
+                                        <th style={{textAlign: 'center'}}><div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index, trail.address) }><GiMagnifyingGlass className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
                                             {/* <div className="row">
                                                 <div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index, trail) }><FaThumbsUp className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
                                                 <div className="col"><span ><FaThumbsDown className="thumbs-down"  style={{size: '45px', color: '#F95B44'}}/></span></div>
@@ -148,13 +155,12 @@ class suggestionbox extends Component {
                                 <div className='col'>
                                     <h3>Trail Summary</h3>
                                     <div className='row'>
-                                        <label style={{color: 'black'}}>Sender:</label> {this.state.sender} 
+                                        <label style={{color: 'black'}}>Sender: </label> <strong>{this.state.sender} </strong>
                                     </div>
 
                                     <div className='row'>
                                         <label style={{color: 'black'}}>Address:</label> {this.state.modalAddress}
                                     </div>
-                                    
                                     
                                 </div>
                                 <div className='col'>
@@ -162,10 +168,9 @@ class suggestionbox extends Component {
                                 </div>
                             </div>
                        
-                        {/* <p>Hey: </p> */}
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-primary">Approve Trail</button>
+                            <button type="button" className="btn btn-primary" onClick={this.handleApprove(this.state.itemIndex)}>Approve Trail</button>
                             <button type="button" className="btn btn-danger" data-dismiss="modal">Disapprove</button>
                         </div>
                         </div>
