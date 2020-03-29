@@ -19,6 +19,7 @@ if (!firebase.apps.length) {
 }
 var imagesURLS = []
 var imageNames = []
+var storage = firebase.storage();
 class SaveActivity extends Component {
     constructor(props) {
         super(props);
@@ -30,7 +31,7 @@ class SaveActivity extends Component {
             trailTitle: '',
             activity: '',
             type: '',
-            difficulty: '',
+            difficulty: 'Easy',
             description: '',
             imagesUrls: '',
             status: 'pending',
@@ -58,7 +59,9 @@ class SaveActivity extends Component {
         var difficulty = (value == 0) ? 'Easy' : (value == 2) ? 'Medium' : 'Hard'
         this.setState({ difficulty: difficulty })
     }
-
+    generateUniqueId() {
+        return '-' + Math.random().toString(36).substr(2, 9) + '-' + Math.random().toString(36).substr(2, 9)
+    }
     imagePickerHandler = async () => {
 
         ImagePicker.showImagePicker((response) => {
@@ -75,7 +78,7 @@ class SaveActivity extends Component {
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
                 var joined = this.state.images.concat(response.uri);
-                imageNames.push(globalUserID + "-" + Date.now())
+                imageNames.push("IMAGE"+this.generateUniqueId())
 
                 this.setState({
                     images: joined,
@@ -114,11 +117,95 @@ class SaveActivity extends Component {
 
         )
     }
+
+    async putImage(image, index) {
+        // the return value will be a Promise
+        const response = await fetch(image)
+        const blob = await response.blob()
+
+        var ref = storage.ref().child("images/" + imageNames[index])
+        return ref.put(blob)
+            .then(async (snapshot) => {
+                let url = await ref.getDownloadURL();
+                imagesURLS.push(url)
+                console.log(imagesURLS)
+            }).catch((error) => {
+                //console.log('One failed:',image, error.message)
+            });
+    }
+
+    findMapIndex(images,type){
+        for(let i =0; i<images.length;i++){
+            var str = images[i]
+            var n = str.search("MAP");
+            if(n>0){
+               
+                if (type == "map"){
+                    return i
+                }else{
+                    imagesURLS.splice(i, 1);
+                    return imagesURLS
+                }
+                
+            }
+        }
+    }
+
+
+    Save() {
+        if (this.state.trailTitle == "") {
+            alert("Please add title")
+        } else {
+            var allImages = [...this.state.images]
+            allImages.push(this.props.route.params.snapshoturi)
+            imageNames.push("MAP"+this.generateUniqueId())
+            console.log(allImages)
+            console.log(imageNames)
+            Promise.all(
+                allImages.map((image, index) => this.putImage(image, index, imageNames))
+            )
+                .then((url) => {
+                    console.log(imagesURLS)
+                    var trailData = {
+                        mapImage: imagesURLS[this.findMapIndex(imagesURLS,'map')],
+                        userId: globalUserID,
+                        trailTitle: this.state.trailTitle,
+                        activity: this.state.activity,
+                        type: this.state.type,
+                        difficulty: this.state.difficulty,
+                        description: this.state.description,
+                        status: this.state.status,
+                        Images: this.findMapIndex(imagesURLS,'img'), 
+                        distance: this.props.route.params.distance,
+                        trailAddress: this.props.route.params.address,
+                        routeCoordinates: this.props.route.params.routeCoordinates,
+                        address: this.props.route.params.address,
+                        likes: '0',
+                        username: globalUserData.username,
+                        userimageuri: globalUserData.imageuri,
+                        timestamp: Date.now()
+                    }
+
+                    var datas = firebase.database().ref('/Trails')
+                    datas.push(trailData);
+                    alert('Successfully Saved')
+                })
+                .catch(error => {
+                    alert(error)
+                })
+        }
+    }
+
     uploadImage = async () => {
 
         const allImages = [...this.state.images]
         allImages.push(this.props.route.params.snapshoturi)
         imageNames.push(globalUserID + "-" + Date.now())
+
+
+
+
+
 
         const prom = allImages.map(async (image, index) => {
             const response = await fetch(image)
@@ -127,11 +214,13 @@ class SaveActivity extends Component {
             var storage = firebase.storage();
 
             var ref = storage.ref().child("images/" + imageNames[index])
-            ref.put(blob).then(async () => {
-                const url = await ref.getDownloadURL();
-                imagesURLS.push(url)
-                console.log(url)
-            })
+            ref.put(blob)
+
+            // .then(async () => {
+            //     const url = await ref.getDownloadURL();
+            //     imagesURLS.push(url)
+            //     console.log(url)
+            // })
             //Promise.all(prom2).then(res => { this.setState({isdone:true}) })
             // const ref = storage.ref('images/1585290674985');
 
@@ -140,14 +229,14 @@ class SaveActivity extends Component {
             // })
         })
 
-         Promise.all(prom).then(res => {return})
+        Promise.all(prom).then(res => { return })
         //     const prom2 =allImages.map(async (image, index)=>{
-                
+
         //         var ref = storage.ref().child("images/" + imageNames[index])
         //         const url = await ref.getDownloadURL();
         //         imagesURLS.push(url)
         //     })
-            
+
         //     Promise.all(prom2).then(res =>{
         //         alert(imagesURLS.length)
         //         var trailData = {
@@ -169,7 +258,7 @@ class SaveActivity extends Component {
         //         //datas.push(trailData);
         //         //alert('Successfully Saved')
         //     })
-        
+
         // });
         // const uploadTask = storage.ref(`images/${'test'}`).put(blob)
         // uploadTask.once('state_changed',
@@ -195,26 +284,31 @@ class SaveActivity extends Component {
 
             this.uploadImage()
                 .then(() => {
-                        
-                        var trailData = {
-                            userId: globalUserID,
-                            trailTitle: this.state.trailTitle,
-                            activity: this.state.activity,
-                            type: this.state.type,
-                            difficulty: this.state.difficulty,
-                            description: this.state.description,
-                            status: this.state.status,
-                            Images: [...imageNames],
-                            distance: this.props.route.params.distance,
-                            trailAddress: this.props.route.params.address,
-                            routeCoordinates: this.props.route.params.routeCoordinates,
-                            address: this.props.route.params.address
-                        }
 
-                        var datas = firebase.database().ref('/Trails')
-                        datas.push(trailData);
-                        alert('Successfully Saved')
-        
+                    var trailData = {
+                        userId: globalUserID,
+                        trailTitle: this.state.trailTitle,
+                        activity: this.state.activity,
+                        type: this.state.type,
+                        difficulty: this.state.difficulty,
+                        description: this.state.description,
+                        status: this.state.status,
+                        Images: [...imageNames],
+                        mapImage: imageNames[imageNames.length - 1],
+                        distance: this.props.route.params.distance,
+                        trailAddress: this.props.route.params.address,
+                        routeCoordinates: this.props.route.params.routeCoordinates,
+                        address: this.props.route.params.address,
+                        likes: '0',
+                        username: globalUserData.username,
+                        userimageuri: globalUserData.imageuri,
+                        timestamp: Date.now()
+                    }
+
+                    var datas = firebase.database().ref('/Trails')
+                    datas.push(trailData);
+                    alert('Successfully Saved')
+
                 }).catch((error) => {
                     alert(error)
                 })
@@ -245,6 +339,7 @@ class SaveActivity extends Component {
                 </Header>
 
                 <ScrollView>
+                    <Button onPress={() => this.Save()}><Text>Test</Text></Button>
                     <Image
                         style={{ width: screenWidth, height: 300 }}
                         source={{ uri: this.props.route.params.snapshoturi }} />

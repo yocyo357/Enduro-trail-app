@@ -39,6 +39,7 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 global.globalUserID =""
+global.globalUserData=[]
 function Tabs() {
   return (
     <Tab.Navigator
