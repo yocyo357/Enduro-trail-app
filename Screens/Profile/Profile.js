@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
-
   View,
   Image,
   TouchableOpacity,
@@ -17,10 +16,25 @@ import firebase, { storage } from 'firebase'
 import { config } from '../../Firebase/index'
 
 if (!firebase.apps.length) {
-    firebase.initializeApp(config())
+  firebase.initializeApp(config())
 }
 
-
+age:
+"10"
+confirmPassword:
+"password"
+firstname:
+"userfirst"
+imagename:
+"userdefault"
+lastname:
+"userlast"
+password:
+"password"
+team:
+"Teamos"
+username:
+"user1"
 
 // Race Title, Date Posted, Race Description (info., location, reace difficulty, race category)
 const DATA = [
@@ -41,82 +55,49 @@ const DATA = [
   },
 ];
 
-function Item({ title,Description}) {
-  return (
-    <View style={{ margin: 25 }}>
-      <Content>
-        <Card style={{ flex: 0 }}>
-          <CardItem>
-            <Left>
-              <Thumbnail source={{ uri: 'https://reactjs.org/logo-og.png' }} />
-              <Body>
-                <Text>{title}</Text>
-                <Text note>April 15, 2016</Text>
-              </Body>
-            </Left>
-          </CardItem>
-
-          <CardItem>
-            <Left>
-              <Body>
-                
-                <Text>{title}</Text>
-                <Text note>{Description}</Text>
-              </Body>
-            </Left>
-          </CardItem>
-
-          <CardItem>
-            <Left>
-              <Body>
-                
-                <Text>{title}</Text>
-                <Text note>{Description}</Text>
-              </Body>
-            </Left>
-          </CardItem>
-          
-          <CardItem cardBody>
-            <Image source={{ uri: 'https://reactjs.org/logo-og.png' }} style={{ height: 200, width: null, flex: 1, marginLeft: 15, marginRight: 15 }} />
-
-          </CardItem>
-          <CardItem>
-            <Left>
-              {/* <Button transparent>
-                  <Icon active name="thumbs-up" />
-                  <Text>12 Likes</Text>
-                </Button> */}
-            </Left>
-            <Body>
-              {/* <Button transparent>
-                  <Icon active name="chatbubbles" />
-                  <Text>4 Comments</Text>
-                </Button> */}
-            </Body>
-            <Right>
-              <Button transparent textStyle={{ color: '#87838B' }}>
-                <Icon name="logo-github" />
-                <Text>View</Text>
-              </Button>
-            </Right>
-          </CardItem>
- 
-        </Card>
-      </Content>
 
 
-    </View>
 
-
-  );
-}
 export default class Profile extends Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      userdata: [],
+
+    }
+
+  }
+
+  //  return (  
+
+
+
+  // );
+
+  async componentDidMount() {
+
+    var that = this
+    firebase.database().ref('Users/').once('value', function (snapshot) {
+      var returnArray = [];
+      snapshot.forEach(function (snap) {
+        var item = snap.val();
+        item.key = snap.key;
+
+        returnArray.push(item);
+      });
+      that.setState({ userdata: returnArray })
+ 
+    });
+
+
+  }
 
   render() {
 
-
-
+    console.log(this.state.userdata);
+    console.log('swe');
     return (
       <View style={styles.container}>
         <ScrollView>
@@ -139,9 +120,77 @@ export default class Profile extends Component {
               <Text>Opcion 1</Text>
             </TouchableOpacity>
           </View>
+
           <FlatList
-            data={DATA}
-            renderItem={({ item }) => <Item title={item.title} Description={item.Description} />}
+            data={this.state.userdata}
+            renderItem={({ item }) =>
+
+              // <Text>{item.firstname}</Text>
+              <View style={{ margin: 25 }}>
+                <Content>
+                  <Card style={{ flex: 0 }}>
+                    <CardItem>
+                      <Left>
+                        <Thumbnail source={{ uri: 'https://reactjs.org/logo-og.png' }} />
+                        <Body>
+                          <Text>{item.firstname}</Text>
+                          <Text note>April 15, 2016</Text>
+                        </Body>
+                      </Left>
+                    </CardItem>
+
+                    <CardItem>
+                      <Left>
+                        <Body>
+
+                          <Text>{item.firstname}</Text>
+                          <Text note>{item.lastname}</Text>
+                        </Body>
+                      </Left>
+                    </CardItem>
+
+                    <CardItem>
+                      <Left>
+                        <Body>
+
+                          <Text>{item.firstname}</Text>
+                          <Text note>{item.lastname}</Text>
+                        </Body>
+                      </Left>
+                    </CardItem>
+
+                    <CardItem cardBody>
+                      <Image source={{ uri: 'https://reactjs.org/logo-og.png' }} style={{ height: 200, width: null, flex: 1, marginLeft: 15, marginRight: 15 }} />
+                    </CardItem>
+                    <CardItem>
+                      <Left>
+                        {/* <Button transparent>
+                  <Icon active name="thumbs-up" />
+                  <Text>12 Likes</Text>
+                </Button> */}
+                      </Left>
+                      <Body>
+                        {/* <Button transparent>
+                  <Icon active name="chatbubbles" />
+                  <Text>4 Comments</Text>
+                </Button> */}
+                      </Body>
+                      <Right>
+                        <Button transparent textStyle={{ color: '#87838B' }}>
+                          <Icon name="logo-github" />
+                          <Text>View</Text>
+                        </Button>
+                      </Right>
+                    </CardItem>
+
+                  </Card>
+                </Content>
+
+
+              </View>
+            
+          
+          }
             keyExtractor={item => item.id}
           />
 

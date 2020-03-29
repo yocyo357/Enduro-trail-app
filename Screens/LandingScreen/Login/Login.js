@@ -38,7 +38,6 @@ class Login extends Component {
     }
     
     onSubmitHander=()=>{
-        this.props.navigation.navigate('Tabs')
         var ids=[]
         var users=[]
         var bool = false
