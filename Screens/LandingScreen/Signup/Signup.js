@@ -26,7 +26,7 @@ class SignUp extends Component {
                 age: '',
                 team: '',
                 password: '',
-                confirmPassword: ''
+                confirmPassword: '',
 
             },
 
@@ -57,8 +57,9 @@ class SignUp extends Component {
             users = snapshot.val()
 
         }).then(() => {
-
+            
             var userExist = false
+            if(users != null){
             Object.keys(users)
                 .map(igKey => {
                     if (this.state.text.username == users[igKey]['username']) {
@@ -66,7 +67,7 @@ class SignUp extends Component {
                         return
                     }
                 })
-
+            }
             if (userExist) {
                 alert('Username already exists')
             } else {
@@ -77,7 +78,8 @@ class SignUp extends Component {
                 }
                 else {
                     var datas = firebase.database().ref('/Users')
-                    datas.push(this.state.text);
+                    var vals = { ...this.state.text, imagename: 'userdefault' }
+                    datas.push(vals);
                 }
             }
 
