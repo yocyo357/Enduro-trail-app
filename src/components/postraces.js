@@ -153,8 +153,7 @@ class postraces extends Component {
 
                         <div className="col">
                             <div className="form-group">
-                                <label 
-                                >Type of Race:</label>
+                                <label>Type of Race:</label>
                                 <select className="form-control" id="exampleFormControlSelect1" value={this.state.raceType}  onChange={this.handleRaceTypeChange}   >
                                     <option>Group Race</option>
                                     <option>Dirt Race (Individual)</option>

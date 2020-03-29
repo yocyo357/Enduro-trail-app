@@ -17,11 +17,16 @@ var ref = db.ref('Trails/').orderByChild('status').equalTo('pending');
 
 var trailDatas = [];
 
-class suggestionbox extends Component {
 
+class suggestionbox extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
+            modalAddress: '',
+            modalTrailImg: '',
+            sender: '',
+
             requiredItem: 0,
             trailValues: [],
             data: [
@@ -35,7 +40,7 @@ class suggestionbox extends Component {
     }
 
     componentDidMount() {
-        ref.on('value', gotData, this.errData);
+        ref.on('value', gotData, errData);
     
 
         function gotData(data) {
@@ -50,36 +55,42 @@ class suggestionbox extends Component {
                 for (var i = 0; i < keys.length; i++) {
                     var k = keys[i]
 
+                    var newSender = trails[k].username
                     var newAddress = trails[k].address
                     var newDistance = trails[k].distance
                     var status = trails[k].status
                     var newDifficulty = trails[k].difficulty
-                    var newUrl = trails[k].userimageurl
+                    var newUrl = trails[k].userimageuri
                     
-
-                    var data = { index: k, address: newAddress, distance: newDistance, difficulty: newDifficulty, status: status, suggestImage: newUrl }
+                    var data = { index: k, sender: newSender, address: newAddress, distance: newDistance, difficulty: newDifficulty, status: status, suggestImage: newUrl }
                     trailDatas.push(data)
                 }
                 // console.log(trailDatas)
             }
         }
+
+        function errData(err) {
+            console.log(err)
+        }
     }
 
-    errData(err) {
-        console.log(err)
-    }
+    
 
-    handleTableBtnApprovedCLicked(s, index) {
-        db.ref('Trails/'+index+'/status').set(
-            'approved'
-        )
+    handleTableBtnApprovedCLicked(s, index, trail) {
+        // db.ref('Trails/'+index+'/status').set(
+        //     'approved'
+        // )
 
-        alert(index)
-        
+
+        this.setState({
+            modalAddress: trail.address, 
+            modalTrailImg: trail.suggestImage,
+            sender: trail.sender
+        })        
+        // alert(trail.suggestImage)
     }
 
     render() {
-
         const requiredItem = this.state.requiredItem;
         const addressItem = this.state.address;
         let modalData = trailDatas[requiredItem];
@@ -96,7 +107,7 @@ class suggestionbox extends Component {
                                 <tr>
                                     <th scope="col" dataField='newAddress'>Address</th>
                                     <th scope="col">Trail Distance</th>
-                                    <th scope="col">Click the link to see pic</th>
+                                    <th scope="col">Sender</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -109,7 +120,7 @@ class suggestionbox extends Component {
                                         <th scope="row">{trail.distance}</th>
                                         <th>
                                             <div className="row">
-                                                <div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index) }><FaThumbsUp className="thumbs-up" p style={{size: '45px', color: '#6F952C'} }/></span></div>
+                                                <div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index, trail) }><FaThumbsUp className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
                                                 <div className="col"><span ><FaThumbsDown className="thumbs-down"  style={{size: '45px', color: '#F95B44'}}/></span></div>
                                             </div>
                                         </th>
@@ -117,6 +128,36 @@ class suggestionbox extends Component {
                                 )
                             })}
                         </table>
+                    </div>
+                </div>
+
+                {/* Modal Area */}
+                <div className="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <div className='row'>
+                                <div className='col'>
+                                    <label style={{color: 'black'}}>Sender:</label> {this.state.sender}
+                                </div>
+                                <div className='col'>
+                                    < img src={this.state.modalTrailImg} style={{width: '100%', height: '100%'}}/>
+                                </div>
+                            </div>
+                       
+                        {/* <p>Hey: </p> */}
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" className="btn btn-primary">Save changes</button>
+                        </div>
+                        </div>
                     </div>
                 </div>
             </div>
