@@ -31,7 +31,8 @@ class postraces extends Component {
             url: '',
             datePosted: new Date(),
             loading: false,
-            disabled: true
+            disabled: true,
+            trailValues: []
         };
     }
 
@@ -147,30 +148,10 @@ class postraces extends Component {
 
 
     componentDidMount() {
-        refss.on('value', gotData, errData);
-    
-        function gotData(data) {
-            trailDatas.length = 0;
-            var trails = data.val()
-            
-            if(trails != null){
-                var keys = Object.keys(trails)
-            
-                for (var i = 0; i < keys.length; i++) {
-                    var k = keys[i]
-
-                    var status = trails[k].status
-                    var newTrail = trails[k].trailTitle
-                    
-                    var data = { status: status, trailName: newTrail }
-                    trailDatas.push(data)
-                }
-            }
-        }
-
-        function errData(err) {
-            console.log(err)
-        }
+        refss.on('value', snapshot =>{
+            let Datas = {...snapshot.val()}
+            this.setState({trailValues: Datas})
+        })
     }
 
     render() {
@@ -195,9 +176,10 @@ class postraces extends Component {
                         </div>
                     </div>
                     <div className="col">
-                            <label>Specify No. of series:</label>
-                            <input type="text" id="exampleFormControlSelect1"  disabled={this.state.disabled} className="form-control txt-input" value={this.state.raceNoOfStages} onChange={this.handleRaceStagesChange} /><br />
-                        </div>
+                        <label>Specify No. of series:</label>
+                        <input type="text" id="exampleFormControlSelect1" disabled={this.state.disabled} className="form-control txt-input" value={this.state.raceNoOfStages} onChange={this.handleRaceStagesChange} /><br />
+                        
+                    </div>
                 </div>
 
                 <form>
@@ -207,11 +189,14 @@ class postraces extends Component {
                                 <label >Race Category:</label>
 
                                 <select className="form-control" id="exampleFormControlSelect1" value={this.state.raceCategory} onChange={this.handleRaceCatChange}   >
-                                <option>Under 19</option>
-                                <option></option>
-                                <option></option>
-                                <option></option>
-                                <option></option>
+                                <option>Under 20</option>
+                                <option>Under 30</option>
+                                <option>Under 40</option>
+                                <option>Under 50</option>
+                                <option>Free For All (FFA)</option>
+                                <option>Executive</option>
+                                <option>Semi-Pro</option>
+                                <option>Pros</option>
                             </select>
                             </div>
                         </div>
@@ -228,9 +213,9 @@ class postraces extends Component {
                         <div className="col">
                             <label>Venue/Trail address:</label>
                             <select className="form-control" id="exampleFormControlSelect1" value={this.state.raceAddress} onChange={this.handleRaceAddressChange}   >
-                                {trailDatas.map(trail => {
+                                {Object.keys(this.state.trailValues).map(igKey => {
                                     return (
-                                    <option> {trail.trailName}</option>
+                                    <option> {this.state.trailValues[igKey].trailTitle}</option>
                                     )
                                 })}
                             </select>

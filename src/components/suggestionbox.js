@@ -26,7 +26,9 @@ class suggestionbox extends Component {
         this.state = {
             modalAddress: '',
             modalTrailImg: '',
-            sender: '',
+            modalTrailTitle: '',
+            modalSender: '',
+            modalDistance: '',
 
             requiredItem: 0,
             trailValues: [],
@@ -45,30 +47,23 @@ class suggestionbox extends Component {
             let Datas = {...snapshot.val()}
             this.setState({trailValues: Datas})
         })
-
-        
-
-        function errData(err) {
-            console.log(err)
-        }
     }
 
     handleApprove(index){
-        // db.ref('Trails/'+index+'/status').set(
-        //     'approved'
-        // )
-        // alert("gibasa japun")
+        // Need pa ifix
 
     }
 
-    handleTableBtnApprovedCLicked(s, index, trail) {
+    handleTableBtnApprovedCLicked(url, title, address, sender, key, distance) {
         this.setState({
-            modalAddress: trail.address, 
-            modalTrailImg: trail.suggestImage,
-            sender: trail.sender,
-            itemIndex: index
+            modalTrailImg: url,
+            modalTrailTitle: title,
+            modalAddress: address,
+            modalSender: sender,
+            modalDistance: Math.round((distance + Number.EPSILON) * 100) / 100
         })        
-        // alert(this.state.modalTrailImg) trail.status, trail.index, trail.address, trail.suggestImage
+
+        alert(key)
     }
 
     
@@ -83,8 +78,6 @@ class suggestionbox extends Component {
                 <h2 className="header-text-suggestion">New Trails?</h2>
                 <div>
                     <div className="col-lg-12"></div>
-                    {/* <text>{this.state.trailValues.length}</text> */}
-                    {/* <text>{trailDatas.length}</text> */}
                     <div>
                         <table className="table table-striped table-dark table-bordered">
                             <thead>
@@ -105,7 +98,7 @@ class suggestionbox extends Component {
                                         <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{this.state.trailValues[igKey].distance}</th>
                                         <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{this.state.trailValues[igKey].status}</th>
                                         
-                                        <th style={{textAlign: 'center'}}><div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(this.state.trailValues[igKey].status, this.state.trailValues[igKey].index,igKey) }><GiMagnifyingGlass className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
+                                        <th style={{textAlign: 'center'}}><div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(this.state.trailValues[igKey].userimageuri, this.state.trailValues[igKey].trailTitle, this.state.trailValues[igKey].trailAddress, this.state.trailValues[igKey].firstname + " " + this.state.trailValues[igKey].lastname, igKey, this.state.trailValues[igKey].distance) }><GiMagnifyingGlass className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
                                         </th>
                                     </tr>
                                 )
@@ -126,17 +119,25 @@ class suggestionbox extends Component {
                         </div>
                         <div className="modal-body">
                             <div className='row'>
-                                <div className='col'>
+                                <div className='col' >
                                     <h3>Trail Summary</h3>
-                                    <div className='row'>
-                                        <label style={{color: 'black'}}>Sender: </label> <strong>{this.state.sender} </strong>
+                                    <div className='row' style={{paddingLeft: '5%', paddingRight: '5%'}}>
+                                        <label style={{color: 'black'}}>Sender: </label> &nbsp; <span style={{fontStyle: 'italic', color: 'black',  marginLeft: '16%', fontFamily: 'Poppins'}}><strong>{this.state.modalSender} </strong></span>
                                     </div>
 
-                                    <div className='row'>
-                                        <label style={{color: 'black'}}>Address:</label> {this.state.modalAddress}
+                                    <div className='row' style={{paddingLeft: '5%', marginTop: '-1%', marginBottom: '1%'}}>
+                                        <label style={{color: 'black'}}>Trail Name: </label> <span style={{fontStyle: 'italic', color: 'black', marginLeft: '8%', fontFamily: 'Poppins'}}>{this.state.modalTrailTitle}</span>
                                     </div>
-                                    
+
+                                    <div className='row' style={{paddingLeft: '5%', paddingRight: '5%', marginTop: '-3%'}}>
+                                        <label style={{color: 'black'}}>Trail address: &nbsp; <span style={{fontStyle: 'italic', color: 'black'}}>{this.state.modalAddress}</span></label>
+                                    </div>
+
+                                    <div className='row' style={{paddingLeft: '5%', paddingRight: '5%', marginTop: '-3%'}}>
+                                        <label style={{color: 'black'}}>Distance: &nbsp; </label><span style={{fontStyle: 'italic', color: 'black',  marginLeft: '10%'}}>{this.state.modalDistance}km.</span>
+                                    </div>
                                 </div>
+
                                 <div className='col'>
                                     < img src={this.state.modalTrailImg} style={{width: '100%', height: '100%'}}/>
                                 </div>
