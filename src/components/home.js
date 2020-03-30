@@ -9,7 +9,8 @@ if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
 
-var db = firebase.database().ref('post_races/');
+var db = firebase.database();
+var ref = db.ref('post_races/').limitToLast(20);
 var postDatas= [];
 var urlHolder= [];
 
@@ -19,7 +20,8 @@ class home extends Component {
         super(props)
         this.state = {
             myimage: '',
-            url: ''
+            url: '',
+            trailValues: [],
         }
 
     }
@@ -41,34 +43,39 @@ class home extends Component {
     }
 
     componentDidMount() {
-        db.on('value', gotData, this.errData);
+        ref.on('value', snapshot =>{
+            let Datas = {...snapshot.val()}
+            this.setState({trailValues: Datas})
+        })
+        // db.on('value', gotData, this.errData);
 
-        function gotData(data) {
-            // console.log(data.val())
-            postDatas.length = 0;
-            var posts = data.val()
-            if(posts != null){
-                var keys = Object.keys(posts)
+        // function gotData(data) {
+        //     // console.log(data.val())
+        //     postDatas.length = 0;
+        //     var posts = data.val()
+        //     if(posts != null){
+        //         var keys = Object.keys(posts)
 
-                for (var i = 0; i < keys.length; i++) {
-                    var k = keys[i]
+        //         for (var i = 0; i < keys.length; i++) {
+        //             var k = keys[i]
     
-                    var postTitle = posts[k].raceTitle
-                    var raceDescription = posts[k].raceInfo
-                    var status = posts[k].status
-                    var newDifficulty = posts[k].difficulty
-                    var newUrl =  posts[k].imageURL
-                    var data = { 
-                        id: k, 
-                        raceTitle: postTitle, 
-                        raceDescription: raceDescription,
-                        url: newUrl
-                    }
-                    postDatas.push(data)
-                }
-            }
+        //             var postTitle = posts[k].raceTitle
+        //             var raceDescription = posts[k].raceInfo
+        //             var status = posts[k].status
+        //             var newDifficulty = posts[k].difficulty
+        //             var newUrl =  posts[k].imageURL
+        //             var data = { 
+        //                 id: k, 
+        //                 raceTitle: postTitle, 
+        //                 raceDescription: raceDescription,
+        //                 url: newUrl
+        //             }
+        //             postDatas.push(data)
+        //         }
 
-        }
+        //     }
+
+        // }
         // alert("URL "+     this.state.url)
     }
 
@@ -76,15 +83,16 @@ class home extends Component {
         return (
            
             <div style={{paddingTop: '4%', paddingBottom: '4%'}}>
+                <h2 style={{marginLeft: '2%'}}>Upcoming Events</h2>
                 <div style={{alignItems: 'center'}}>
-                    {postDatas.map(post => {
+                    {Object.keys(this.state.trailValues).map(igKey => {
                         return(
                             <div className="card" style={{width: '50%', marginLeft: '24%', marginRight: '25%', marginTop: '1.5%', marginBottom: '1.5%'}}>
-                                <img src={post.url} className="card-img-top" alt="..." style={{width: '100%'}}/>
+                                <img src={this.state.trailValues[igKey].imageURL} className="card-img-top" alt="..." style={{width: '100%'}}/>
                                 <div className="card-body">
-                                    <h5 className="card-title">{post.raceTitle}</h5>
-                                    <p className="card-text">{post.raceDescription}</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    <h5 className="card-title">{this.state.trailValues[igKey].raceTitle}</h5>
+                                    <p className="card-text">{this.state.trailValues[igKey].raceInfo}</p>
+                                    {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
                                     {/* {alert(post.newUrl)} */}
                                     
                                 </div>

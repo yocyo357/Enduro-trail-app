@@ -41,34 +41,12 @@ class suggestionbox extends Component {
     }
 
     componentDidMount() {
-        ref.on('value', gotData, errData);
-    
+        ref.on('value', snapshot =>{
+            let Datas = {...snapshot.val()}
+            this.setState({trailValues: Datas})
+        })
 
-        function gotData(data) {
-            // console.log(data.val())
-            trailDatas.length = 0;
-            var trails = data.val()
-            
-            if(trails != null){
-                var keys = Object.keys(trails)
-                for (var i = 0; i < keys.length; i++) {
-                    var k = keys[i]
-
-                    var newSender =  trails[k].firstname + " " + trails[k].lastname
-                    var newAddress = trails[k].address
-                    var newDistance = trails[k].distance * 1.6
-                    var status = trails[k].status
-                    var newDifficulty = trails[k].difficulty
-                    var newUrl = trails[k].userimageuri
-                    var newActivity = trails[k].activity
-                    var newTrail = trails[k].trailTitle
-                    
-                    var data = { index: k, sender: newSender, trailTitle: newTrail, activity: newActivity, address: newAddress, distance: Math.round((newDistance + Number.EPSILON) * 100) / 100, difficulty: newDifficulty, status: status, suggestImage: newUrl }
-                    trailDatas.push(data)
-                }
-                console.log(trailDatas)
-            }
-        }
+        
 
         function errData(err) {
             console.log(err)
@@ -105,7 +83,8 @@ class suggestionbox extends Component {
                 <h2 className="header-text-suggestion">New Trails?</h2>
                 <div>
                     <div className="col-lg-12"></div>
-
+                    {/* <text>{this.state.trailValues.length}</text> */}
+                    {/* <text>{trailDatas.length}</text> */}
                     <div>
                         <table className="table table-striped table-dark table-bordered">
                             <thead>
@@ -118,20 +97,15 @@ class suggestionbox extends Component {
                                 </tr>
                             </thead>
 
-                            {trailDatas.map(trail => {
+                            {Object.keys(this.state.trailValues).map(igKey => {
                                 return (
-                                    <tr key={trail.index}>
-                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{trail.sender}</th>
-                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{trail.trailTitle}</th>
-                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{trail.distance}</th>
-                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{trail.status}</th>
+                                    <tr key={igKey}>
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}> {this.state.trailValues[igKey].firstname + " " + this.state.trailValues[igKey].lastname} </th>
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{this.state.trailValues[igKey].trailTitle}</th>
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{this.state.trailValues[igKey].distance}</th>
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{this.state.trailValues[igKey].status}</th>
                                         
-                                        <th style={{textAlign: 'center'}}><div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index, trail) }><GiMagnifyingGlass className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
-                                            {/* <div className="row">
-                                                <div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index, trail) }><FaThumbsUp className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
-                                                <div className="col"><span ><FaThumbsDown className="thumbs-down"  style={{size: '45px', color: '#F95B44'}}/></span></div>
-                                            
-                                            </div> */}
+                                        <th style={{textAlign: 'center'}}><div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(this.state.trailValues[igKey].status, this.state.trailValues[igKey].index,igKey) }><GiMagnifyingGlass className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
                                         </th>
                                     </tr>
                                 )

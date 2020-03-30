@@ -50,7 +50,7 @@
     }
 
     .btn-post {
-        width: 80%;
+        width: 100% !important;
         float: right;
         color: white !important;
         font-family: 'Poppins', sans-serif;

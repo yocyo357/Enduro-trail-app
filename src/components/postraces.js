@@ -30,7 +30,8 @@ class postraces extends Component {
             selectedFile: null,
             url: '',
             datePosted: new Date(),
-            loading: false
+            loading: false,
+            disabled: true
         };
     }
 
@@ -47,7 +48,8 @@ class postraces extends Component {
                 raceNoOfStages: this.state.raceNoOfStages,
                 raceInfo: this.state.raceInfo,
                 noOfRiders: this.state.noOfRiders,
-                imageURL: url
+                imageURL: url,
+                
 
             }).then((data) => {
                 //success callback
@@ -89,8 +91,22 @@ class postraces extends Component {
     handleRaceTypeChange = (event) => {
         this.setState({
             raceType: event.target.value
+            
 
         })
+
+        if(event.target.value == 'Series'){
+            this.setState({
+                disabled: false
+            })
+        }else {
+            this.setState({
+                disabled: true
+            })
+           
+        }
+        
+        console.log(this.state.disabled)
     }
 
     handleRaceCatChange = (event) => {
@@ -127,19 +143,15 @@ class postraces extends Component {
         this.setState({
             selectedFile: event.target.files[0]
         })
-
     }
 
 
     componentDidMount() {
         refss.on('value', gotData, errData);
     
-
         function gotData(data) {
-            // console.log(data.val())
             trailDatas.length = 0;
             var trails = data.val()
-            
             
             if(trails != null){
                 var keys = Object.keys(trails)
@@ -153,7 +165,6 @@ class postraces extends Component {
                     var data = { status: status, trailName: newTrail }
                     trailDatas.push(data)
                 }
-                // console.log(trailDatas)
             }
         }
 
@@ -176,16 +187,17 @@ class postraces extends Component {
 
                     <div className="col">
                         <div className="form-group">
-                            <label>Type of Race:</label>
+                            <label>Race Type:</label>
                             <select className="form-control" id="exampleFormControlSelect1" value={this.state.raceType} onChange={this.handleRaceTypeChange}   >
-                                <option>Group Race</option>
-                                <option>Dirt Race (Individual)</option>
-                                <option>Dirt Race (Groups)</option>
-                                <option>Drag Race</option>
-                                <option>Endurance Race</option>
+                                <option>Regular</option>
+                                <option>Series</option>
                             </select>
                         </div>
                     </div>
+                    <div className="col">
+                            <label>Specify No. of series:</label>
+                            <input type="text" id="exampleFormControlSelect1"  disabled={this.state.disabled} className="form-control txt-input" value={this.state.raceNoOfStages} onChange={this.handleRaceStagesChange} /><br />
+                        </div>
                 </div>
 
                 <form>
@@ -193,7 +205,14 @@ class postraces extends Component {
                         <div className="col">
                             <div className="form-group">
                                 <label >Race Category:</label>
-                                <input id="exampleFormControlSelect1" type="text" value={this.state.raceCategory} onChange={this.handleRaceCatChange} className="form-control txt-input" placeholder="Add event's name here" />
+
+                                <select className="form-control" id="exampleFormControlSelect1" value={this.state.raceCategory} onChange={this.handleRaceCatChange}   >
+                                <option>Under 19</option>
+                                <option></option>
+                                <option></option>
+                                <option></option>
+                                <option></option>
+                            </select>
                             </div>
                         </div>
 
@@ -201,7 +220,6 @@ class postraces extends Component {
                             <div className="form-group">
                                 <label>Add a Banner:</label><br />
                                 <input type="file" className="fileUpload" onChange={this.fileSelectedHandler} />
-
                             </div>
                         </div>
                     </div>
@@ -209,8 +227,6 @@ class postraces extends Component {
                     <div className="row">
                         <div className="col">
                             <label>Venue/Trail address:</label>
-                            {/* <input type="text" value={this.state.raceAddress}  onChange={this.handleRaceAddressChange} className="form-control txt-input" placeholder="Add event's name here"/><br/> */}
-                            
                             <select className="form-control" id="exampleFormControlSelect1" value={this.state.raceAddress} onChange={this.handleRaceAddressChange}   >
                                 {trailDatas.map(trail => {
                                     return (
@@ -218,25 +234,23 @@ class postraces extends Component {
                                     )
                                 })}
                             </select>
+                            <br />
+                            {/* <label>Specify No. of stages:</label>
+                            <input type="text" id="exampleFormControlSelect1" className="form-control txt-input" value={this.state.raceNoOfStages} onChange={this.handleRaceStagesChange} /><br /> */}
                         </div>
 
                         <div className="col">
                             <label>Add Description:</label>
-                            <textarea className="form-control" id="exampleFormControlSelect1" value={this.state.raceInfo} onChange={this.handleRaceInfoChange} rows="4"></textarea>
+                            <textarea className="form-control" id="exampleFormControlSelect1"  value={this.state.raceInfo} onChange={this.handleRaceInfoChange} rows="5"></textarea>
                         </div>
                     </div>
                     <br />
 
                     <div className="row">
-                        <div className="col">
-                            <label>Specify No. of stages:</label>
-                            <input type="text" id="exampleFormControlSelect1" className="form-control txt-input" value={this.state.raceNoOfStages} onChange={this.handleRaceStagesChange} /><br />
-                        </div>
 
                         <div className="col">
-                            <label>Limit of riders:</label>
-                            <input type="text" id="exampleFormControlSelect1" className="form-control txt-input" value={this.state.noOfRiders} onChange={this.handleRaceLimitChange} /><br />
                         </div>
+                        <div className="col"></div>
                     </div>
 
                     <div className="row">
@@ -250,8 +264,6 @@ class postraces extends Component {
                         </div>
                     </div>
                 </form>
-                {/* </div>   */}
-
                 <Prompt
                     when={this.state.raceTitle !== "" || this.state.raceCategory !== "" || this.state.raceInfo !== "" || this.state.raceNoOfStages !== "" || this.state.noOfRiders !== ""}
                     message={(location) => {
