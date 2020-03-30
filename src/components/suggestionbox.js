@@ -66,7 +66,7 @@ class suggestionbox extends Component {
                     var data = { index: k, sender: newSender, trailTitle: newTrail, activity: newActivity, address: newAddress, distance: Math.round((newDistance + Number.EPSILON) * 100) / 100, difficulty: newDifficulty, status: status, suggestImage: newUrl }
                     trailDatas.push(data)
                 }
-                // console.log(trailDatas)
+                console.log(trailDatas)
             }
         }
 
@@ -75,25 +75,25 @@ class suggestionbox extends Component {
         }
     }
 
+    handleApprove(index){
+        // db.ref('Trails/'+index+'/status').set(
+        //     'approved'
+        // )
+        // alert("gibasa japun")
+
+    }
+
     handleTableBtnApprovedCLicked(s, index, trail) {
-        
-
-
         this.setState({
             modalAddress: trail.address, 
             modalTrailImg: trail.suggestImage,
             sender: trail.sender,
             itemIndex: index
         })        
-        // alert(trail.index)
+        // alert(this.state.modalTrailImg) trail.status, trail.index, trail.address, trail.suggestImage
     }
 
-    handleApprove(index){
-        db.ref('Trails/'+index+'/status').set(
-            'approved'
-        )
-
-    }
+    
 
     render() {
         const requiredItem = this.state.requiredItem;
@@ -126,7 +126,7 @@ class suggestionbox extends Component {
                                         <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{trail.distance}</th>
                                         <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{trail.status}</th>
                                         
-                                        <th style={{textAlign: 'center'}}><div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index, trail.address) }><GiMagnifyingGlass className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
+                                        <th style={{textAlign: 'center'}}><div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index, trail) }><GiMagnifyingGlass className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
                                             {/* <div className="row">
                                                 <div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(trail.status, trail.index, trail) }><FaThumbsUp className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
                                                 <div className="col"><span ><FaThumbsDown className="thumbs-down"  style={{size: '45px', color: '#F95B44'}}/></span></div>
