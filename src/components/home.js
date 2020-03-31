@@ -10,7 +10,7 @@ if (!firebase.apps.length) {
 }
 
 var db = firebase.database();
-var ref = db.ref('post_races/').limitToLast(20);
+var ref = db.ref('post_races/').orderByChild('datePosted');
 var postDatas = [];
 var urlHolder = [];
 
@@ -72,11 +72,13 @@ class home extends Component {
                     {Object.keys(this.state.trailValues).map(igKey => {
                         return (
                             <div className="card" style={{ width: '50%', marginLeft: '24%', marginRight: '25%', marginTop: '1.5%', marginBottom: '1.5%' }}>
-                                <img src={this.state.trailValues[igKey].imageURL} className="card-img-top" alt="..." style={{ width: '100%' }} />
-                                <div className="card-body">
-                                    <h5 className="card-title">{this.state.trailValues[igKey].raceTitle}</h5>
-                                    <p className="card-text">{this.state.trailValues[igKey].raceInfo}</p>
-                                    <a href="#" className="btn btn-primary" style={{backgroundColor: '#618930', borderColor: '#618930'}}>Add Event Results</a>
+                                
+                                <div className="card-body" style={{backgroundColor: '#343A40', borderRadius: '5px'}}>
+                                    <h5 className="card-title" style={{color: 'white'}}>{this.state.trailValues[igKey].raceTitle}</h5>
+                                    <p style={{color: '#6F747C', fontFamily: 'Poppins', fontSize: '14px', marginTop: '-2%'}}>Posted on {this.state.trailValues[igKey].datePosted}</p>
+                                    <p className="card-text" style={{color: 'white'}}>{this.state.trailValues[igKey].raceInfo}</p>
+                                    <img src={this.state.trailValues[igKey].imageURL} className="card-img-top" alt="..." style={{ width: '100%', marginBottom: '1.5%' }} />
+                                    <a href="#" className="btn btn-primary" style={{backgroundColor: '#618930', borderColor: '#618930', float: 'right'}}>Add Event Results</a>
                                 </div>
                             </div>
                         )

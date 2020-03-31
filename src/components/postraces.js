@@ -19,6 +19,10 @@ class postraces extends Component {
     constructor(props) {
         super(props);
 
+        var tempDate = new Date();
+        var date = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + tempDate.getDate() + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes();
+        const currDate = date;
+
         this.state = {
             raceTitle: '',
             raceType: '',
@@ -28,8 +32,8 @@ class postraces extends Component {
             raceInfo: '',
             noOfRiders: '',
             selectedFile: null,
+            datePosted: currDate,
             url: '',
-            datePosted: new Date(),
             loading: false,
             disabled: true,
             trailValues: []
@@ -50,6 +54,7 @@ class postraces extends Component {
                 raceInfo: this.state.raceInfo,
                 noOfRiders: this.state.noOfRiders,
                 imageURL: url,
+                datePosted: this.state.datePosted   
                 
 
             }).then((data) => {

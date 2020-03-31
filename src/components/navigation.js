@@ -12,7 +12,6 @@ if (!firebase.apps.length) {
 var db = firebase.database().ref('Trails/');
 var count = [];
 
-
 class navigation extends Component { 
 
     state = {
@@ -26,10 +25,7 @@ class navigation extends Component {
 
             var data = snapshot.numChildren
             count.push(data);
-          })
-
-          
-
+        })
     }
 
     render() {
