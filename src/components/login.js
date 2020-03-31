@@ -1,16 +1,25 @@
-import React, { Component } from 'react';
-import Container from '@material-ui/core/Container';
-import Box from '@material-ui/core/Box';
-import '../styles/login.css';
+import React, { Component } from "react";
 
-class login extends Component {
+class landingPage extends Component {
     render() {
-        return (
-            <Container className="login-container">
-                lhkjhkjh
-            </Container>
-        );
+        return(
+            <div>
+                <div class="wrapper fadeInDown">
+                    <div id="formContent">
+                        <div class="fadeIn first">
+                            <img src="http://danielzawadzki.com/codepen/01/icon.svg" id="icon" alt="User Icon" />
+                        </div>
+
+                        <form>
+                            <input type="text" id="login" class="fadeIn second" name="login" placeholder="login" />
+                            <input type="text" id="password" class="fadeIn third" name="login" placeholder="password" />
+                            <input type="submit" class="fadeIn fourth" value="Log In" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        )
     }
-}   
-    
-export default login;
+}
+
+export default landingPage;

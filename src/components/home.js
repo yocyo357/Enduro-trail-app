@@ -11,8 +11,11 @@ if (!firebase.apps.length) {
 
 var db = firebase.database();
 var ref = db.ref('post_races/').orderByChild('datePosted');
-var postDatas = [];
-var urlHolder = [];
+
+var trailAdd = firebase.database();
+
+
+                        
 
 class home extends Component {
 
@@ -22,6 +25,12 @@ class home extends Component {
             myimage: '',
             url: '',
             trailValues: [],
+            rankingEventTitle: '',
+            rankingEventDatePosted: '',
+            rankingMaxSeries: '1',
+            trailID: '',
+            trailAdd: ''
+
         }
 
     }
@@ -31,6 +40,20 @@ class home extends Component {
             let Datas = { ...snapshot.val() }
             this.setState({ trailValues: Datas })
         })
+
+        var ID = this.state.trailID
+        var trailRef = trailAdd.ref('Trails').child(ID)
+
+        trailRef.on('value', gotData, errData)
+
+        function gotData(data) {
+            console.log(data.val().trailTitle)
+        }
+
+        function errData(err) {
+            console.log(err)
+        }
+
         // db.on('value', gotData, this.errData);
 
         // function gotData(data) {
@@ -56,11 +79,18 @@ class home extends Component {
         //             }
         //             postDatas.push(data)
         //         }
-
         //     }
-
         // }
         // alert("URL "+     this.state.url)
+    }
+
+    handleSpecificEvent(eventTitle, datePosted, numOfSeries, trailIDs) {
+        this.setState({
+            rankingEventTitle: eventTitle,
+            rankingEventDatePosted: datePosted,
+            rankingMaxSeries: numOfSeries,
+            trailID: trailIDs
+        })
     }
 
     render() {
@@ -70,27 +100,31 @@ class home extends Component {
                 <h2 style={{ marginLeft: '24%' }}>Event List</h2>
                 <div style={{ alignItems: 'center' }}>
                     {Object.keys(this.state.trailValues).map(igKey => {
+                        
+
                         return (
                             <div className="card" style={{ width: '50%', marginLeft: '24%', marginRight: '25%', marginTop: '1.5%', marginBottom: '1.5%' }}>
-                                
-                                <div className="card-body" style={{backgroundColor: '#343A40', borderRadius: '5px'}}>
-                                    <h5 className="card-title" style={{color: 'white'}}>{this.state.trailValues[igKey].raceTitle}</h5>
-                                    <p style={{color: '#6F747C', fontFamily: 'Poppins', fontSize: '14px', marginTop: '-2%'}}>Posted on {this.state.trailValues[igKey].datePosted}</p>
-                                    <p className="card-text" style={{color: 'white'}}>{this.state.trailValues[igKey].raceInfo}</p>
+
+                                <div className="card-body" style={{ backgroundColor: '#343A40', borderRadius: '5px' }}>
+                                    <h5 className="card-title" style={{ color: 'white' }}>{this.state.trailValues[igKey].raceTitle}</h5>
+                                    <p style={{ color: '#6F747C', fontFamily: 'Poppins', fontSize: '14px', marginTop: '-2%' }}>Posted on {this.state.trailValues[igKey].datePosted}</p>
+                                    <p style={{ color: 'white', fontFamily: 'Poppins', fontSize: '14px', marginTop: '-2%' }}>When: <span style={{color: '#6F747C', fontFamily: 'Poppins'}}>{this.state.trailValues[igKey].eventDate}</span></p>
+                                    <p style={{ color: 'white', fontFamily: 'Poppins', fontSize: '14px', marginTop: '-2%' }}>Where: <span style={{color: '#6F747C'}}>{this.state.trailAdd}</span></p>
+                                    <p className="card-text" style={{ color: 'white' }}>{this.state.trailValues[igKey].raceInfo}</p>
                                     <img src={this.state.trailValues[igKey].imageURL} className="card-img-top" alt="..." style={{ width: '100%', marginBottom: '1.5%' }} />
-                                    <a href="#" className="btn btn-primary" style={{backgroundColor: '#618930', borderColor: '#618930', float: 'right'}}>Add Event Results</a>
+                                    <a href="#" className="btn btn-primary" data-toggle="modal" data-target="#exampleModalScrollable2" style={{ backgroundColor: '#618930', borderColor: '#618930', float: 'right' }} onClick={() => this.handleSpecificEvent(this.state.trailValues[igKey].raceTitle, this.state.trailValues[igKey].datePosted, this.state.trailValues[igKey].raceNoOfStages, this.state.trailValues[igKey].trailID)}>Add Event Results</a>
                                 </div>
                             </div>
                         )
                     })}
 
-                    <a href="#" className="float float-tooltip" data-toggle="modal" data-target="#exampleModalScrollable">
+                    <a href="#" className="float float-tooltip" data-toggle="modal" data-target="#exampleModalScrollable1">
                         <FaPlus className="fa fa-plus my-float " style={{ width: '40px' }} />
                     </a>
                 </div>
 
-                {/* Modal Area */}
-                <div className="modal fade homeModalContainer" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                {/* New Scream Modal Area */}
+                <div className="modal fade homeModalContainer" id="exampleModalScrollable1" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
                     <div className="modal-dialog modal-dialog-scrollable" role="document">
                         <div className="modal-content modal-content-home">
                             <div className="modal-header">
@@ -105,6 +139,33 @@ class home extends Component {
                         </div>
                     </div>
                 </div>
+
+                {/* New Ranking Modal Area */}
+                <div className="modal fade homeModalContainer" style={{ width: '50%', marginLeft: '25%' }} id="exampleModalScrollable2" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                    <div className="modal-dialog modal-dialog-scrollable" role="document">
+                        <div className="modal-content modal-content-home">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalScrollableTitle">{this.state.rankingEventTitle}</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body home-modal-body">
+                                <form>
+                                    <label>Player Name: </label>
+                                    <select className="form-control" id="exampleFormControlSelect1" onChange={this.handleRanking}   >
+                                        <option>Under 20</option>
+                                        {/* <option>{this.state.rankingMaxSeries}</option> */}
+                                    </select>
+
+                                    <label>Series</label>
+                                        <input type='number' min='1' max={this.state.rankingMaxSeries}/>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         );
     }

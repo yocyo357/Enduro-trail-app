@@ -26,21 +26,14 @@ function App() {
           }
         }/>
 
-        <Route path="/postraces" exact strict render={
-          ()=> {
-
-            return ( <PostRaces /> )
-            
-            // <h1>POST</h1>
-          }
-        }/>
-
         <Route path="/suggestionsbox" exact strict render={
           ()=> {
             return( <Suggestion /> )
             // <h1>Suggestion</h1>
           }
         }/>
+
+        {/* <LogIn /> */}
 
         
       </div>
