@@ -8,3 +8,12 @@
     margin: 0;
     
 }
+
+.wrapper {
+    width: 30%;
+    margin-left: 34%;
+    margin-top: 10%;
+    /* height: 100%; */
+    padding: 5% 2% 5% 2%;
+    background-color: #343A40;
+}

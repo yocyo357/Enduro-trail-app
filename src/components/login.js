@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import '../styles/login.css'
 
 class landingPage extends Component {
     render() {
@@ -11,9 +12,11 @@ class landingPage extends Component {
                         </div>
 
                         <form>
-                            <input type="text" id="login" class="fadeIn second" name="login" placeholder="login" />
-                            <input type="text" id="password" class="fadeIn third" name="login" placeholder="password" />
-                            <input type="submit" class="fadeIn fourth" value="Log In" />
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Passcode</label>
+                                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Passcode here..." />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Log In</button>
                         </form>
                     </div>
                 </div>

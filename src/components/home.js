@@ -33,6 +33,8 @@ class home extends Component {
 
         }
 
+        // this.setState({trailID: })
+
     }
 
     componentDidMount() {
@@ -41,10 +43,10 @@ class home extends Component {
             this.setState({ trailValues: Datas })
         })
 
-        var ID = this.state.trailID
-        var trailRef = trailAdd.ref('Trails').child(ID)
+        // var ID = this.state.trailID
+        // var trailRef = trailAdd.ref('Trails').child(ID)
 
-        trailRef.on('value', gotData, errData)
+        // trailRef.on('value', gotData, errData)
 
         function gotData(data) {
             console.log(data.val().trailTitle)
@@ -89,7 +91,7 @@ class home extends Component {
             rankingEventTitle: eventTitle,
             rankingEventDatePosted: datePosted,
             rankingMaxSeries: numOfSeries,
-            trailID: trailIDs
+           
         })
     }
 
