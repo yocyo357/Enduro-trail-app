@@ -30,6 +30,7 @@ class suggestionbox extends Component {
             modalSender: '',
             modalDistance: '',
             itemApproved: '',
+            itemDisapproved: '',
 
             requiredItem: 0,
             trailValues: [],
@@ -58,6 +59,14 @@ class suggestionbox extends Component {
 
     }
 
+    handleDisapprove=(index)=>{
+        // Need pa ifix
+        // alert("sdsd" + index.status)
+        firebase.database().ref('Trails/' + index + '/status').set('disapproved');
+        alert('Disapproved')
+
+    }
+
     handleTableBtnApprovedCLicked(url, title, address, sender, key, distance) {
         this.setState({
             modalTrailImg: url,
@@ -65,7 +74,8 @@ class suggestionbox extends Component {
             modalAddress: address,
             modalSender: sender,
             modalDistance: Math.round((distance + Number.EPSILON) * 100) / 100,
-            itemApproved: key
+            itemApproved: key,
+            itemDisapproved: key
         })        
 
         // alert(key)
@@ -151,7 +161,7 @@ class suggestionbox extends Component {
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-primary" onClick={()=>this.handleApprove(this.state.itemApproved)}>Approve Trail</button>
-                            <button type="button" className="btn btn-danger" data-dismiss="modal">Disapprove</button>
+                            <button type="button" className="btn btn-danger" on onClick={()=>this.handleDisapprove(this.state.itemDisapproved)} data-dismiss="modal">Disapprove</button>
                         </div>
                         </div>
                     </div>

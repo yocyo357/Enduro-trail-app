@@ -69,10 +69,10 @@
     }
 
     .thumbs-up:hover {
-        transform: scale(0.1);
+        transform: scale(1.5);
     }
 
     .thumbs-down:hover {
-        transform: scale(0.1);
+        transform: scale(1.5);
     }
 }

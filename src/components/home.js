@@ -133,14 +133,14 @@ class home extends Component {
                                 )
                             })}
 
-                            <a href="#" className="float float-tooltip" data-toggle="modal" data-target="#exampleModalScrollable1" style={{zIndex: '1'}}>
+                            <a href="#" className="float float-tooltip" data-toggle="modal" data-target="#exampleModalScrollable1" style={{zIndex: '2'}}>
                                 <FaPlus className="fa fa-plus my-float " style={{ width: '40px' }} />
                             </a>
                         </div>
                     </div>
 
                     <div className='col col-sm-3' style={{zIndex: '1', width: '60%',  }}>
-                        <h3 style={{fontFamily: 'Poppins', fontWeight: '300', marginTop: '1%'}}>Appoved Trails</h3>
+                        <h3 style={{fontFamily: 'Poppins', fontWeight: '300', marginTop: '25%'}}>Appoved Trails</h3>
                         <div>
                         {Object.keys(this.state.approvedTrails).map(igKey => {
                             return (
