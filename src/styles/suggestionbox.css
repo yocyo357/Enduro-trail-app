@@ -64,15 +64,15 @@
     }
 
     .thumbs-down {
-        transition: all .2s ease-in-out;
+        transition: all .5s ease-in-out;
         cursor: pointer;
     }
 
     .thumbs-up:hover {
-        transform: scale(1.5);
+        transform: scale(0.1);
     }
 
     .thumbs-down:hover {
-        transform: scale(1.5);
+        transform: scale(0.1);
     }
 }

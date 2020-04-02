@@ -79,7 +79,7 @@ class postraces extends Component {
                 datePosted: this.state.datePosted,
                 trailID: this.state.trailID,
                 eventDate: this.state.raceDate,
-                raceCaregory: [...this.state.raceCategory]
+                raceCategory: [...this.state.raceCategory]
 
 
             }).then((data) => {
@@ -234,6 +234,7 @@ class postraces extends Component {
                         <div className="col">
                             <div className="form-group">
                                 <label >Race Category:</label><br></br>
+                                
                                 <Select
                                     closeMenuOnSelect={false}
                                     isMulti
@@ -243,22 +244,6 @@ class postraces extends Component {
                                     onChange={this.handleRaceCatChange}
                                     
                                 />
-                                
-                                
-
-                                {/* <select className="form-control" isMulti id="exampleFormControlSelect1" value={this.state.raceCategory} onChange={this.handleRaceCatChange}   >
-                                    <option>Under 20</option>
-                                    <option>Under 30</option>
-                                    <option>Under 40</option>
-                                    <option>Under 50</option>
-                                    <option>Free For All (FFA)</option>
-                                    <option>Executive</option>
-                                    <option>Semi-Pro</option>
-                                    <option>Pros</option>
-                                </select> */}
-
-                                
-
                             </div>
                         </div>
 
@@ -277,8 +262,12 @@ class postraces extends Component {
                                 {Object.keys(this.state.trailValues).map(igKey => {
                                     return (
                                         <option value={igKey}> {this.state.trailValues[igKey].trailTitle}</option>
+
+                                        
                                     )
                                 })}
+
+                                        
                             </select>
                             <br />
                         </div>
