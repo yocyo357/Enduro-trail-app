@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import * as firebase from 'firebase';
 import { FaPlus } from 'react-icons/fa';
-import { AiOutlineEnter } from 'react-icons/ai';
+import { AiOutlineEnter, AiFillLike } from 'react-icons/ai';
 import { config } from '../Firebase/index';
 import PostBox from './postraces';
 import '../styles/home.css';
@@ -13,8 +13,7 @@ if (!firebase.apps.length) {
 var db = firebase.database();
 var ref = db.ref('post_races/').orderByChild('datePosted');
 
-
-
+var refss = db.ref('Trails/').orderByChild('status').equalTo('approved');
 
                         
 
@@ -24,18 +23,18 @@ class home extends Component {
         super(props)
         this.state = {
             myimage: '',
+            trailname: '',
+            modalTrailAdd: '',
             url: '',
             trailValues: [],
             rankingEventTitle: '',
             rankingEventDatePosted: '',
             rankingMaxSeries: '1',
             trailID: [],
-            trailAdd: ''
+            trailAdd: '',
+            approvedTrails: []
 
         }
-
-        // this.setState({trailID: })
-
     }
 
     componentDidMount() {
@@ -43,22 +42,19 @@ class home extends Component {
             let Datas = { ...snapshot.val() }
             this.setState({ trailValues: Datas })
         })
-       
 
+        refss.on('value', snapshot => {
+            let Datum = { ...snapshot.val() }
+            this.setState({ approvedTrails: Datum })
+        })
 
+        // function gotData(data) {
+        //     console.log(data.val().trailTitle)
+        // }
 
-        // var ID = this.state.trailID
-        // var trailRef = trailAdd.ref('Trails').child(ID)
-
-        // trailRef.on('value', gotData, errData)
-
-        function gotData(data) {
-            console.log(data.val().trailTitle)
-        }
-
-        function errData(err) {
-            console.log(err)
-        }
+        // function errData(err) {
+        //     console.log(err)
+        // }
 
         // db.on('value', gotData, this.errData);
 
@@ -104,9 +100,12 @@ class home extends Component {
             // let trailData = { snapshot.val() }
    
         })
+    }
 
-       
+    trailClicked(image, trailName, address) {
+        // alert(image)
 
+        this.setState({ myimage: image, trailName: trailName, modalTrailAdd: address })
     }
 
     render() {
@@ -140,9 +139,19 @@ class home extends Component {
                         </div>
                     </div>
 
-                    <div className='col col-sm-3' style={{backgroundColor: '#343A40', zIndex: '0', width: '60%'}}>
-                            <h3>Appoved Trails</h3>
+                    <div className='col col-sm-3' style={{zIndex: '1', width: '60%',  }}>
+                        <h3 style={{fontFamily: 'Poppins', fontWeight: '300', marginTop: '1%'}}>Appoved Trails</h3>
+                        <div>
+                        {Object.keys(this.state.approvedTrails).map(igKey => {
+                            return (
+                                <ul className="list-group list-group-flush">
+                                    <li className='list-group-item list-group-item-action' onClick={() => this.trailClicked(this.state.approvedTrails[igKey].Images[0], this.state.approvedTrails[igKey].trailTitle, this.state.approvedTrails[igKey].trailAddress)} data-toggle="modal" data-target="#exampleModalScrollable4" style={{cursor: 'pointer'}}><a  >{this.state.approvedTrails[igKey].trailTitle}&nbsp;<span class="badge badge-primary badge-pill" style={{backgroundColor: '#618930', float: 'right'}}><AiFillLike />&nbsp;{this.state.approvedTrails[igKey].likes}</span></a></li>
+                                </ul>
+                            
+                            )
+                        })}
 
+                        </div>    
 
                     </div>
                 </div>
@@ -205,6 +214,24 @@ class home extends Component {
                     </div>
                 </div>
 
+                {/* Trail Image Modal Area */}
+                <div className="modal fade homeModalContainer" style={{ width: '70%', marginLeft: '15%' }} id="exampleModalScrollable4" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                    <div className="modal-dialog modal-dialog-scrollable" role="document">
+                        <div className="modal-content modal-content-home">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalScrollableTitle">{this.state.trailName}</h5>
+                                
+                                <h6 style={{color: 'grey', fontSize: '12px', marginTop: '6%', marginLeft: '-22%'}}>{this.state.modalTrailAdd}</h6>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body home-modal-body">
+                                <img src={this.state.myimage} style={{width: '100%', height: '400px'}}/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
