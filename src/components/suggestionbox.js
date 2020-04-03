@@ -6,6 +6,7 @@ import '../styles/suggestionbox.css';
 import { render } from '@testing-library/react';
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi'
+import { AiOutlineEnter, AiFillLike } from 'react-icons/ai';
 import UniqueID from 'react-html-id';
 
 if (!firebase.apps.length) {
@@ -29,6 +30,7 @@ class suggestionbox extends Component {
             modalTrailTitle: '',
             modalSender: '',
             modalDistance: '',
+            likes: '',
             itemApproved: '',
             itemDisapproved: '',
 
@@ -67,7 +69,7 @@ class suggestionbox extends Component {
 
     }
 
-    handleTableBtnApprovedCLicked(url, title, address, sender, key, distance) {
+    handleTableBtnApprovedCLicked(url, title, address, sender, key, distance, likes) {
         this.setState({
             modalTrailImg: url,
             modalTrailTitle: title,
@@ -75,7 +77,8 @@ class suggestionbox extends Component {
             modalSender: sender,
             modalDistance: Math.round((distance + Number.EPSILON) * 100) / 100,
             itemApproved: key,
-            itemDisapproved: key
+            itemDisapproved: key,
+            likes: likes
         })        
 
         // alert(key)
@@ -95,25 +98,27 @@ class suggestionbox extends Component {
                     <div className="col-lg-12"></div>
                     <div>
                         <table className="table table-striped table-dark table-bordered">
-                            <thead>
+                            <thead className='suggesion-thead' >
                                 <tr style={{textAlign: 'center' }}>
                                     <th scope="col">Sender</th>
                                     <th scope="col">Trail Name</th>
-                                    <th scope="col">Distance from Start to End</th>
+                                    <th scope="col">Distance</th>
                                     <th scope="col">Suggestion Status</th>
+                                    <th scope="col">Popularity</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
 
                             {Object.keys(this.state.trailValues).map(igKey => {
                                 return (
-                                    <tr key={igKey}>
-                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}> {this.state.trailValues[igKey].firstname + " " + this.state.trailValues[igKey].lastname} </th>
-                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{this.state.trailValues[igKey].trailTitle}</th>
-                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{this.state.trailValues[igKey].distance}</th>
-                                        <th scope="row" style={{ width: '20%', textAlign: 'center' }}>{this.state.trailValues[igKey].status}</th>
-                                        
-                                        <th style={{textAlign: 'center'}}><div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(this.state.trailValues[igKey].userimageuri, this.state.trailValues[igKey].trailTitle, this.state.trailValues[igKey].trailAddress, this.state.trailValues[igKey].firstname + " " + this.state.trailValues[igKey].lastname, igKey, this.state.trailValues[igKey].distance) }><GiMagnifyingGlass className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
+                                    <tr key={igKey} >
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center', fontWeight: '200' }}> {this.state.trailValues[igKey].firstname + " " + this.state.trailValues[igKey].lastname} </th>
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center', fontWeight: '200' }}>{this.state.trailValues[igKey].trailTitle}</th>
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center', fontWeight: '200' }}>{ Math.round((this.state.trailValues[igKey].distance + Number.EPSILON) * 100) / 100 }Km</th>
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center', fontWeight: '200' }}>{this.state.trailValues[igKey].status}</th>
+                                        <th scope="row" style={{ width: '20%', textAlign: 'center', fontWeight: '200' }}><AiFillLike /> &nbsp; {this.state.trailValues[igKey].likes}</th>
+
+                                        <th style={{textAlign: 'center'}}><div className="col"><span onClick={()=>this.handleTableBtnApprovedCLicked(this.state.trailValues[igKey].userimageuri, this.state.trailValues[igKey].trailTitle, this.state.trailValues[igKey].trailAddress, this.state.trailValues[igKey].firstname + " " + this.state.trailValues[igKey].lastname, igKey, this.state.trailValues[igKey].distance, this.state.trailValues[igKey].likes) }><GiMagnifyingGlass className="thumbs-up" p style={{size: '45px', color: '#6F952C'} } data-toggle="modal" data-target="#exampleModalLong"/></span></div>
                                         </th>
                                     </tr>
                                 )

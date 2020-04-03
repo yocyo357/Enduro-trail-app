@@ -11,8 +11,7 @@ if (!firebase.apps.length) {
 }
 
 var db = firebase.database();
-var ref = db.ref('post_races/').orderByChild('datePosted');
-
+var ref = db.ref('post_races/');
 var refss = db.ref('Trails/').orderByChild('status').equalTo('approved');
 
                         
@@ -32,7 +31,9 @@ class home extends Component {
             rankingMaxSeries: '1',
             trailID: [],
             trailAdd: '',
-            approvedTrails: []
+            approvedTrails: [],
+            raceValue: [],
+            eventID: []
 
         }
     }
@@ -47,6 +48,8 @@ class home extends Component {
             let Datum = { ...snapshot.val() }
             this.setState({ approvedTrails: Datum })
         })
+
+        
 
         // function gotData(data) {
         //     console.log(data.val().trailTitle)
@@ -86,25 +89,18 @@ class home extends Component {
         // alert("URL "+     this.state.url)
     }
 
-    handleSpecificEvent(eventTitle, datePosted, numOfSeries, trailIDs) {
+    // Includes Rangkin event
+    handleSpecificEvent(eventTitle, datePosted, numOfSeries, trailIDs, eventID) {
         this.setState({
             rankingEventTitle: eventTitle,
             rankingEventDatePosted: datePosted,
-            rankingMaxSeries: numOfSeries,
-            // trailID: trailIDs
+            rankingMaxSeries: numOfSeries
            
         })
         
-        var trailRef = db.ref('Trails/').orderByChild(trailIDs);
-        trailRef.on('value', snapshot => {
-            // let trailData = { snapshot.val() }
-   
-        })
     }
 
     trailClicked(image, trailName, address) {
-        // alert(image)
-
         this.setState({ myimage: image, trailName: trailName, modalTrailAdd: address })
     }
 
@@ -127,7 +123,7 @@ class home extends Component {
                                             <p style={{ color: 'white', fontFamily: 'Poppins', fontSize: '14px', marginTop: '-2%' }}>Where: <span style={{color: '#6F747C'}}>{this.state.trailAdd}</span></p>
                                             <p className="card-text" style={{ color: 'white' }}>{this.state.trailValues[igKey].raceInfo}</p>
                                             <img src={this.state.trailValues[igKey].imageURL} className="card-img-top" alt="..." style={{ width: '100%', marginBottom: '1.5%' }} />
-                                            <a href="#" className="btn btn-primary" data-toggle="modal" data-target="#exampleModalScrollable2" style={{ backgroundColor: '#618930', borderColor: '#618930', float: 'right' }} onClick={() => this.handleSpecificEvent(this.state.trailValues[igKey].raceTitle, this.state.trailValues[igKey].datePosted, this.state.trailValues[igKey].raceNoOfStages, this.state.trailValues[igKey].trailID)}>Add Event Results</a>
+                                            <a href="#" className="btn btn-primary" data-toggle="modal" data-target="#exampleModalScrollable2" style={{ backgroundColor: '#618930', borderColor: '#618930', float: 'right' }} onClick={() => this.handleSpecificEvent(this.state.trailValues[igKey].raceTitle, this.state.trailValues[igKey].datePosted, this.state.trailValues[igKey].raceNoOfStages, this.state.trailValues[igKey].trailID), igKey}>Add Event Results</a>
                                         </div>
                                     </div>
                                 )
@@ -145,7 +141,7 @@ class home extends Component {
                         {Object.keys(this.state.approvedTrails).map(igKey => {
                             return (
                                 <ul className="list-group list-group-flush">
-                                    <li className='list-group-item list-group-item-action' onClick={() => this.trailClicked(this.state.approvedTrails[igKey].Images[0], this.state.approvedTrails[igKey].trailTitle, this.state.approvedTrails[igKey].trailAddress)} data-toggle="modal" data-target="#exampleModalScrollable4" style={{cursor: 'pointer'}}><a  >{this.state.approvedTrails[igKey].trailTitle}&nbsp;<span class="badge badge-primary badge-pill" style={{backgroundColor: '#618930', float: 'right'}}><AiFillLike />&nbsp;{this.state.approvedTrails[igKey].likes}</span></a></li>
+                                    <li className='list-group-item list-group-item-action' onClick={() => this.trailClicked(this.state.approvedTrails[igKey].mapImage, this.state.approvedTrails[igKey].trailTitle, this.state.approvedTrails[igKey].trailAddress)} data-toggle="modal" data-target="#exampleModalScrollable4" style={{cursor: 'pointer'}}><a  >{this.state.approvedTrails[igKey].trailTitle}&nbsp;<span class="badge badge-primary badge-pill" style={{backgroundColor: '#618930', float: 'right'}}><AiFillLike />&nbsp;{this.state.approvedTrails[igKey].likes}</span></a></li>
                                 </ul>
                             
                             )
@@ -186,12 +182,12 @@ class home extends Component {
                                 </button>
                             </div>
                             <div className="modal-body home-modal-body">
-                                <form style={{paddingLeft: '10.5%', paddingRight: '3%'}}>
+                                {/* <form style={{paddingLeft: '10.5%', paddingRight: '3%'}}>
+
                                     <div className="row" style={{width: '100%'}}>
-                                    <label>Player Name: </label>
-                                        <select className="form-control" id="exampleFormControlSelect1" onChange={this.handleRanking}   >
-                                            <option>Under 20</option>
-                                            {/* <option>{this.state.rankingMaxSeries}</option> */}
+                                        <label>Player Name: </label>
+                                        <select className="form-control" id="exampleFormControlSelect1" onChange={this.handleRanking}>
+                                            <option>HELLO</option>
                                         </select>
                                     </div>
 
@@ -206,9 +202,16 @@ class home extends Component {
                                     </div>
 
                                     <div className="row" style={{marginTop: '4%'}}>
-                                        <button className='btn button-Enter' style={{backgroundColor: '#618930', color: 'white', width: '90%'}}><span className='buttons'><AiOutlineEnter /> Enter</span></button>
+                                        <button className='btn button-Enter' onClick={()=>this.handleRanking()} style={{backgroundColor: '#618930', color: 'white', width: '90%'}}><span className='buttons' style={{color: 'white'}}><AiOutlineEnter /> Enter</span></button>
                                     </div>
-                                </form>
+                                </form> */}
+
+                                    <div className="row" style={{width: '100%'}}>
+                                        <label>Select Category: </label>
+                                        <select className="form-control" id="exampleFormControlSelect1" onChange={this.handleRanking}>
+                                            <option>Diri ang Category</option>
+                                        </select>
+                                    </div>
                             </div>
                         </div>
                     </div>

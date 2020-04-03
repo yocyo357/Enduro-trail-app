@@ -26,13 +26,15 @@ class navigation extends Component {
             var data = snapshot.numChildren
             count.push(data);
         })
+
+        
     }
 
     render() {
         return (
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 
-                    <a className="navbar-brand" href="#">ENDURO</a>
+                    <a className="navbar-brand" href="#">Enduro MTB PH</a>
 
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
@@ -53,8 +55,6 @@ class navigation extends Component {
                         </li>
                         <hr />
                     </ul>
-
-                    
                 </div>
             </nav>
         );
