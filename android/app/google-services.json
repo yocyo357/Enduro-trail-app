@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1094424332422",
+    "firebase_url": "https://endurotrail-d806b.firebaseio.com",
+    "project_id": "endurotrail-d806b",
+    "storage_bucket": "endurotrail-d806b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1094424332422:android:aa5ae79a8d59be4cbda907",
+        "android_client_info": {
+          "package_name": "com.endurotrailmob"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1094424332422-2e5dtj7ll76rtq1kinljnb3ks45qiiqg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUerWqWQ3yKbgVSFWy4_KMRXiMEyoxGSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1094424332422-2e5dtj7ll76rtq1kinljnb3ks45qiiqg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

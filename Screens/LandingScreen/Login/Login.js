@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import {
     View,
     StyleSheet,
-    AsyncStorage
+    AsyncStorage,
+    ToastAndroid
 } from 'react-native';
 
 import firebase, { storage } from 'firebase'
@@ -15,6 +16,9 @@ if (!firebase.apps.length) {
 
 import { Container, Header, Content, Button, Text, Icon, Left, Right, Body, Item, Input } from 'native-base';
 import { TextInput } from 'react-native-gesture-handler';
+const showToast = (message) => {
+    ToastAndroid.show(message, ToastAndroid.SHORT);
+  };
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -57,10 +61,11 @@ class Login extends Component {
             if (bool == true){
                 globalUserID = userID
                 AsyncStorage.setItem('userID', userID)
+                globalReloadData="true"
                 this.props.navigation.navigate('Tabs')
             }
             else{
-                alert("Wrong Username Password")
+                showToast("Wrong Username Password")
             }
         })
   
@@ -70,10 +75,12 @@ class Login extends Component {
         const placeholder = ['Username', 'Password']
         const TextInputs = Object.keys(this.state.text)
             .map((igKey, index) => {
+                let secure = (igKey == 'password')? true: false
                 return (
                     <Item style={styles.item}>
                         <Input style={styles.input} placeholder={placeholder[index]}
                             value={this.state.text.igKey}
+                            secureTextEntry={secure}
                             onChangeText={value => this.textChangedHandler(igKey, value)} />
                     </Item>)
             })

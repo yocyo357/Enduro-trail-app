@@ -4,26 +4,25 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 
-class HomeHeader extends Component {
+class TrailHeader extends Component {
     render() {
         return (
-            <Header style={{ backgroundColor: '#343A40',borderBottomWidth:0}} hasTabs>
+            <Header style={{ backgroundColor: '#343A40'}}>
                 <Left style={{flex:1}}>
-                    {/* <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('Login')}>
+                    <TouchableOpacity
+                        onPress={() => this.props.navigation.goBack()}>
                         <Icon name='arrow-back' style={{ fontSize: 30,color:'white' }} />
-                    </TouchableOpacity> */}
+                    </TouchableOpacity>
                 </Left>
                 <Body>
                 <Body style={{ flex: 1, alignItems: 'center',justifyContent:'center' }}>
-                    <Title style={{color:'white'}}>{this.props.title}</Title>
+                    <Title style={{color:'white'}}>{this.props.title.toUpperCase()}</Title>
                 </Body>
                 </Body>
                 <Right>
                     <Button transparent>
 
-                        <Icon style={{ fontSize: 30, color: "white" }} name='ios-notifications' />
-                        <Badge style={{ scaleX: 0.7, scaleY: 0.7, position: 'absolute', right: 0 }}><Text>2</Text></Badge>
+                        
                     </Button>
                 </Right>
             </Header>
@@ -32,4 +31,4 @@ class HomeHeader extends Component {
 }
 
 
-export default HomeHeader
+export default TrailHeader

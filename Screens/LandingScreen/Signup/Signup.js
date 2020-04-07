@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {
     View,
     StyleSheet,
-
+    ToastAndroid
 } from 'react-native';
 
 
@@ -15,6 +15,9 @@ import { config } from '../../../Firebase/index'
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
+const showToast = (message) => {
+    ToastAndroid.show(message, ToastAndroid.SHORT);
+  };
 class SignUp extends Component {
     constructor(props) {
         super(props);
@@ -57,30 +60,34 @@ class SignUp extends Component {
             users = snapshot.val()
 
         }).then(() => {
-            
+
             var userExist = false
-            if(users != null){
-            Object.keys(users)
-                .map(igKey => {
-                    if (this.state.text.username == users[igKey]['username']) {
-                        userExist = true
-                        return
-                    }
-                })
+            if (users != null) {
+                Object.keys(users)
+                    .map(igKey => {
+                        if (this.state.text.username == users[igKey]['username']) {
+                            userExist = true
+                            return
+                        }
+                    })
             }
             if (userExist) {
-                alert('Username already exists')
+                showToast('Username already exists')
             } else {
                 if (values.indexOf('') >= 0) {
                     if (values[5] == values[6]) {
-                        alert("Please fill up all fields!")
+                        showToast("Please fill up all the fields")
                     }
+                }
+                else if (this.state.text.password != this.state.text.confirmPassword) {
+                    showToast('Password not the same')
                 }
                 else {
                     var datas = firebase.database().ref('/Users')
-                    var vals = { ...this.state.text, imagename: 'userdefault' }
+                    var vals = { ...this.state.text, imageuri: 'https://firebasestorage.googleapis.com/v0/b/endurotrail-d806b.appspot.com/o/images%2Fuserdefault.jpg?alt=media&token=aba1930e-0679-4c02-b4e0-7b2fce2cddd3' }
                     datas.push(vals);
                 }
+
             }
 
 
@@ -98,10 +105,12 @@ class SignUp extends Component {
         const placeholder = ['Username', 'Firstname', 'Lastname', 'Age', 'Team', 'Password', 'Confirm Password']
         const TextInputs = Object.keys(this.state.text)
             .map((igKey, index) => {
+                let secure = (igKey == 'password' || igKey == 'confirmPassword')? true : false
                 return (
                     <Item style={styles.item}>
                         <Input style={styles.input} placeholder={placeholder[index]}
                             value={this.state.text.igKey}
+                            secureTextEntry={secure}
                             onChangeText={value => this.textChangedHandler(igKey, value)} />
                     </Item>)
             })
