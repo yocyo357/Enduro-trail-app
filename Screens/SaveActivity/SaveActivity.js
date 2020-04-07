@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Header, Content, Button, Text, Icon, Left, Right, Body, Item, Input, Picker, Grid, Col, Textarea, Form } from 'native-base';
 import SaveActivityHeader from '../../Headers/SaveActivityHeader'
-import { StyleSheet, View, Image, ScrollView, Dimensions, PermissionsAndroid } from 'react-native';
+import { StyleSheet, View, Image, ScrollView, Dimensions, PermissionsAndroid,ToastAndroid } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { TouchableOpacity, FlatList, TapGestureHandler } from 'react-native-gesture-handler';
 import { Circle } from 'react-native-maps';
@@ -9,7 +9,7 @@ import ImagePicker from 'react-native-image-picker';
 import * as firebase from 'firebase'
 import 'firebase/storage';
 import { config } from '../../Firebase/index'
-
+import Spinner from 'react-native-loading-spinner-overlay';
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 
@@ -17,9 +17,14 @@ const screenWidth = Math.round(Dimensions.get('window').width);
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
+const showToast = (message) => {
+    ToastAndroid.show(message, ToastAndroid.SHORT);
+  };
 var imagesURLS = []
 var imageNames = []
 var storage = firebase.storage();
+var localMapImage = ""
+
 class SaveActivity extends Component {
     constructor(props) {
         super(props);
@@ -36,13 +41,13 @@ class SaveActivity extends Component {
             imagesUrls: '',
             status: 'pending',
             address: '',
-            isdone: false
-
+            isdone: false,
+            isLoading: false
         };
     }
 
     async componentDidMount() {
-
+        imagesURLS.length=0
     }
     onActivitychange(value) {
         this.setState({
@@ -78,7 +83,7 @@ class SaveActivity extends Component {
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
                 var joined = this.state.images.concat(response.uri);
-                imageNames.push("IMAGE"+this.generateUniqueId())
+                imageNames.push("IMAGE" + this.generateUniqueId())
 
                 this.setState({
                     images: joined,
@@ -122,8 +127,8 @@ class SaveActivity extends Component {
         // the return value will be a Promise
         const response = await fetch(image)
         const blob = await response.blob()
-
         var ref = storage.ref().child("images/" + imageNames[index])
+
         return ref.put(blob)
             .then(async (snapshot) => {
                 let url = await ref.getDownloadURL();
@@ -134,72 +139,92 @@ class SaveActivity extends Component {
             });
     }
 
-    findMapIndex(images,type){
-        for(let i =0; i<images.length;i++){
+    findMapIndex(images, type) {
+        for (let i = 0; i < images.length; i++) {
             var str = images[i]
             var n = str.search("MAP");
-            if(n>0){
-               
-                if (type == "map"){
+            if (n > 0) {
+
+                if (type == "map") {
                     return i
-                }else{
+                } else {
                     imagesURLS.splice(i, 1);
                     return imagesURLS
                 }
-                
+
             }
         }
     }
 
 
-    Save() {
+    async Save() {
         if (this.state.trailTitle == "") {
-            alert("Please add title")
+            showToast("Please add title")
         } else {
-            var allImages = [...this.state.images]
-            allImages.push(this.props.route.params.snapshoturi)
-            imageNames.push("MAP"+this.generateUniqueId())
-            console.log(allImages)
-            console.log(imageNames)
-            Promise.all(
-                allImages.map((image, index) => this.putImage(image, index, imageNames))
-            )
-                .then((url) => {
-                    console.log(imagesURLS)
-                    var trailData = {
-                        mapImage: imagesURLS[this.findMapIndex(imagesURLS,'map')],
-                        userId: globalUserID,
-                        trailTitle: this.state.trailTitle,
-                        activity: this.state.activity,
-                        type: this.state.type,
-                        difficulty: this.state.difficulty,
-                        description: this.state.description,
-                        status: this.state.status,
-                        Images: this.findMapIndex(imagesURLS,'img'), 
-                        distance: this.props.route.params.distance,
-                        trailAddress: this.props.route.params.address,
-                        routeCoordinates: this.props.route.params.routeCoordinates,
-                        address: this.props.route.params.address,
-                        likes: '0',
-                        username: globalUserData.username,
-                        userimageuri: globalUserData.imageuri,
-                        timestamp: Date.now()
-                    }
 
-                    var datas = firebase.database().ref('/Trails')
-                    datas.push(trailData);
-                    alert('Successfully Saved')
-                })
-                .catch(error => {
-                    alert(error)
-                })
+            this.setState({isLoading:true})
+            var allImages = [...this.state.images]
+            // allImages.push(this.props.route.params.snapshoturi)
+            // imageNames.push("MAP"+this.generateUniqueId())
+            // console.log(allImages)
+            // console.log(imageNames)
+            var ref = storage.ref().child("images/" + "MAP" + this.generateUniqueId())
+            const response = await fetch(this.props.route.params.snapshoturi)
+            const blob = await response.blob()
+
+            ref.put(blob).then(async () => {
+                let url = await ref.getDownloadURL();
+                localMapImage = url
+
+                Promise.all(
+                    allImages.map((image, index) => this.putImage(image, index, imageNames))
+                )
+                    .then((url) => {
+                        console.log(imagesURLS)
+                        var trailData = {
+                            mapImage: localMapImage,
+                            userId: globalUserID,
+                            trailTitle: this.state.trailTitle,
+                            activity: this.state.activity,
+                            type: this.state.type,
+                            difficulty: this.state.difficulty,
+                            description: this.state.description,
+                            status: this.state.status,
+                            Images: [...imagesURLS],
+                            distance: this.props.route.params.distance,
+                            trailAddress: this.props.route.params.address,
+                            routeCoordinates: this.props.route.params.routeCoordinates,
+                            address: this.props.route.params.address,
+                            likes: 0,
+                            firstname: globalUserData.firstname,
+                            lastname: globalUserData.lastname,
+                            userimageuri: globalUserData.imageuri,
+                            timestamp: Date.now()
+                        }
+
+                        var datas = firebase.database().ref('/Trails')
+                        datas.push(trailData).then(() => {
+                            this.setState({isLoading:false})
+                            showToast('Successfully Saved')
+                            this.props.navigation.goBack()
+                        }).catch(error =>{
+                            this.setState({isLoading:false})
+                            showToast(error)
+                        });
+                        
+                    })
+                    .catch(error => {
+                        this.setState({isLoading:false})
+                        showToast(error)
+                    })
+            })
         }
     }
 
     uploadImage = async () => {
 
         const allImages = [...this.state.images]
-        allImages.push(this.props.route.params.snapshoturi)
+        // allImages.push(this.props.route.params.snapshoturi)
         imageNames.push(globalUserID + "-" + Date.now())
 
 
@@ -275,50 +300,35 @@ class SaveActivity extends Component {
         //     })
 
     }
-    async onSaveHandler() {
-
-
-        if (this.state.trailTitle == "") {
-            alert("Please add title")
-        } else {
-
-            this.uploadImage()
-                .then(() => {
-
-                    var trailData = {
-                        userId: globalUserID,
-                        trailTitle: this.state.trailTitle,
-                        activity: this.state.activity,
-                        type: this.state.type,
-                        difficulty: this.state.difficulty,
-                        description: this.state.description,
-                        status: this.state.status,
-                        Images: [...imageNames],
-                        mapImage: imageNames[imageNames.length - 1],
-                        distance: this.props.route.params.distance,
-                        trailAddress: this.props.route.params.address,
-                        routeCoordinates: this.props.route.params.routeCoordinates,
-                        address: this.props.route.params.address,
-                        likes: '0',
-                        username: globalUserData.username,
-                        userimageuri: globalUserData.imageuri,
-                        timestamp: Date.now()
-                    }
-
-                    var datas = firebase.database().ref('/Trails')
-                    datas.push(trailData);
-                    alert('Successfully Saved')
-
-                }).catch((error) => {
-                    alert(error)
-                })
-        }
-
-    }
+   
     render() {
         var activities = ["Walk", "Run", "Swim", "Hike", "Ride", "Alpine Ski", "Backcountry Ski", "Ice Skate", "Snowboard", "Snowshoe", "Nordic Ski", "Canoe", "Kayaking", "KiteSurf", "Rowing", "Surfing", "Rock Climb", "E Bike", "Hand Cycle", "Wheel Chair"]
         var types = ["None", "Long Run", "Workout", "Race"]
         activities.sort()
+
+        // if (this.state.isLoading) {
+        //     return (
+        //         <Container>
+        //             <Header style={{ backgroundColor: 'white' }}>
+        //                 <Left>
+        //                     <TouchableOpacity
+        //                         onPress={() => this.props.navigation.goBack()}>
+        //                         <Icon name='arrow-back' style={{ fontSize: 30, color: 'black' }} />
+        //                     </TouchableOpacity>
+        //                 </Left>
+        //                 <Body>
+
+        //                 </Body>
+        //                 <Right>
+        //                     <TouchableOpacity onPress={() => this.onSaveHandler()}>
+        //                         <Text>Save</Text>
+        //                     </TouchableOpacity>
+        //                 </Right>
+        //             </Header>
+        //         </Container>
+        //     )
+        // }
+
         return (
             <Container>
                 <Header style={{ backgroundColor: 'white' }}>
@@ -332,14 +342,13 @@ class SaveActivity extends Component {
 
                     </Body>
                     <Right>
-                        <TouchableOpacity onPress={() => this.onSaveHandler()}>
+                        <TouchableOpacity onPress={() => this.Save()}>
                             <Text>Save</Text>
                         </TouchableOpacity>
                     </Right>
                 </Header>
 
                 <ScrollView>
-                    <Button onPress={() => this.Save()}><Text>Test</Text></Button>
                     <Image
                         style={{ width: screenWidth, height: 300 }}
                         source={{ uri: this.props.route.params.snapshoturi }} />
@@ -421,7 +430,13 @@ class SaveActivity extends Component {
                             numColumns={2}>
 
                         </FlatList>
-
+                        <View style={styles.container}>
+                            <Spinner
+                                visible={this.state.isLoading}
+                                textContent={'Loading...'}
+                                textStyle={styles.spinnerTextStyle}
+                            />
+                        </View>
                     </Content>
                 </ScrollView>
             </Container>
@@ -452,5 +467,14 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 200,
         resizeMode: 'cover',
+    },
+    spinner: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF'
+    },
+    spinnerTextStyle: {
+        color: '#FFF'
     },
 })

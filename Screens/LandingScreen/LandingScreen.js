@@ -16,19 +16,18 @@ if (!firebase.apps.length) {
 }
 
 class LandingScreen extends Component {
-   
+
 
     async componentDidMount() {
         var userID = await AsyncStorage.getItem('userID')
         if (userID != null) {
             console.log(userID)
             globalUserID = userID
-            firebase.database().ref('Users/' + userID).once('value',async snapshot => {
+            firebase.database().ref('Users/' + userID).once('value', async snapshot => {
 
-                var storage = firebase.storage();
-                var ref = storage.ref().child("images/" + snapshot.val().imagename+".jpg")
-                const url = await ref.getDownloadURL();
-                globalUserData = { ...snapshot.val(),imageuri:url }
+                globalUserData = { ...snapshot.val()}
+                globalReloadData="false"
+                // this.props.navigation.navigate('Tabs')
             })
         }
 
