@@ -191,9 +191,6 @@ class home extends Component {
             editRaceType: raceType,
             editRaceCategory: raceCategory
         })
-
-        
-
     }
 
     handleEditChange(e){
@@ -201,24 +198,19 @@ class home extends Component {
     }
 
     handleSaveEdit(id, title, limit, info, date, datePosted, url, trail, raceType, category) {
-        firebase.database().ref('post_races/'+id).set({
-            raceTitle: title,
-            eventDate: date,
-            noOfRiders: limit,
-            raceInfo: info,
-            datePosted: datePosted,
-            imageURL: url,
-            trailID: trail,
-            raceType: raceType,
-            // raceCategory: category
-
-        });
+        //Updating several post details in Home page
+        var updateRef = firebase.database().ref('post_races/');
+        updateRef.child(id).update({
+            'raceTitle': title,
+            'eventDate': date,
+            'noOfRiders': limit,
+            'raceInfo': info,
+        })
         
     }
 
     render() {
         return (
-
             <div style={{ paddingTop: '4%', paddingBottom: '4%' }}>
                 <div className='row' style={{ width: '100%', paddingLeft: '2%', paddingRight: '2%' }}>
                     <div className='col col-sm-9' >
@@ -362,7 +354,9 @@ class home extends Component {
                                 <input hidden name='editTrailID' value={this.state.editTrailID} onChange={this.handleEditChange}/>
                                 <input hidden name='editRaceType' value={this.state.editRaceType} onChange={this.handleEditChange}/>
                                 {/* <input  name='editRaceCategory' value={this.state.editRaceCategory[0].label} onChange={this.handleEditChange}/> */}
-
+                                
+                              
+                                
                                 <button onClick={()=>this.handleSaveEdit(this.state.idToBeEdited, this.state.editRaceTitle, this.state.editNoOfRiders, this.state.editRaceDescription, this.state.editRaceDate, this.state.editDatePosted, this.state.editImageUrl, this.state.editTrailID, this.state.editRaceType, this.state.editRaceCategory)}>Save Edit</button>
                             </div>
                         </div>
