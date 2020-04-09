@@ -1,46 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
 import LogIn from './components/login';
 import SignUp from './components/signup';
 import Home from './components/home';
 import Suggestion from './components/suggestionbox';
+import Main from './components/MainScreen';
 import PostRaces from './components/postraces';
 import Navigation from './components/navigation';
 import Footer from './components/footer';
 import { BrowserRouter as Router, Link, Prompt } from 'react-router-dom';
 import Route from 'react-router-dom/Route';
+import Fire from './config/fire';
 
-function App() {
-  return (
-    <Router>
-      <Navigation />
+class App extends Component {
+  constructor(props) {
+    super(props);
 
-      <div className="MainHTMLBody">
+    this.state = {
+      user: {},
+    }
+  }
 
-        <Route path="/" exact strict render={
-          ()=> {
-            return( <Home /> )
-            
-            // <h1>Home</h1>
-          }
-        }/>
+  componentDidMount() {
+    this.authListener();
+  }
 
-        <Route path="/suggestionsbox" exact strict render={
-          ()=> {
-            return( <Suggestion /> )
-            // <h1>Suggestion</h1>
-          }
-        }/>
+  authListener() {
+    Fire.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({ user });
+      } else {
+        this.setState({ user: null });
+      }
+    })
+  }
 
-        {/* <LogIn /> */}
-
-        
+  render(){
+    return(
+      <div>
+        {this.state.user ? (<Main />) : (<LogIn />)}
       </div>
+    )
+  }
 
-      <Footer />
-    </Router>
-  );
 }
+
+
 
 export default App;

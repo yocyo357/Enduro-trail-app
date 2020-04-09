@@ -4,6 +4,8 @@ import '../styles/navigation.css';
 import { BrowserRouter as Router, Link, NavLink, Prompt } from 'react-router-dom';
 import * as firebase from 'firebase';
 import { config } from '../Firebase/index';
+import Fire from '../config/fire';
+import { GiExitDoor } from 'react-icons/gi';
 
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
@@ -26,8 +28,10 @@ class navigation extends Component {
             var data = snapshot.numChildren
             count.push(data);
         })
+    }
 
-        
+    handleLogout() {
+        Fire.auth().signOut();
     }
 
     render() {
@@ -56,6 +60,7 @@ class navigation extends Component {
                         <hr />
                     </ul>
                 </div>
+                <i className='logout' onClick={this.handleLogout}><GiExitDoor  style={{color: 'tomato', fontSize: '29px', float: 'right'}} /></i>
             </nav>
         );
     }

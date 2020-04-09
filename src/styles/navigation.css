@@ -34,3 +34,7 @@
     border-bottom: 2px solid tomato;
     padding: 2px 0; 
   }
+
+  .logout:hover {
+    cursor: pointer;
+  }

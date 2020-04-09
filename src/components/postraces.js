@@ -58,7 +58,9 @@ class postraces extends Component {
             loading: false,
             disabled: true,
             trailValues: [],
-            trailID: ''
+            trailID: '',
+
+            options2: []
 
         };
     }
@@ -198,6 +200,13 @@ class postraces extends Component {
         refss.on('value', snapshot => {
             let Datas = { ...snapshot.val() }
             this.setState({ trailValues: Datas })
+        
+        })
+
+        this.setState ({
+            options2: [{
+                
+            }]
         })
     }
 
@@ -258,17 +267,24 @@ class postraces extends Component {
                     <div className="row">
                         <div className="col">
                             <label>Venue/Trail address:</label>
-                            <select className="form-control" id="exampleFormControlSelect1" value={this.state.trailID} onChange={this.handleRaceAddressChange}   >
+                            <Select
+                                    closeMenuOnSelect={false}
+                                    isMulti
+                                    options={this.state.options2}
+                                    style={{backgroundColor: '#2E353B'}}
+                                    // value={this.state.raceCategory} 
+                                    onChange={this.handleRaceCatChange}
+                                    
+                                />
+                            {/* <select className="form-control" id="exampleFormControlSelect1" value={this.state.trailID} onChange={this.handleRaceAddressChange}   >
                                 {Object.keys(this.state.trailValues).map(igKey => {
                                     return (
                                         <option value={igKey}> {this.state.trailValues[igKey].trailTitle}</option>
 
                                         
                                     )
-                                })}
-
-                                        
-                            </select>
+                                })} 
+                            </select> */}
                             <br />
                         </div>
 

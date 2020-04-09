@@ -7,7 +7,6 @@ import PostBox from './postraces';
 import '../styles/home.css';
 import { OutTable, ExcelRenderer } from 'react-excel-renderer';
 
-
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
@@ -15,8 +14,6 @@ if (!firebase.apps.length) {
 var db = firebase.database();
 var ref = db.ref('post_races/');
 var refss = db.ref('Trails/').orderByChild('status').equalTo('approved');
-// var rankingCategoriesIndex
-
 
 var rankId = ""
 class home extends Component {
@@ -222,9 +219,8 @@ class home extends Component {
                                         <div className="card-body" style={{ backgroundColor: '#343A40', borderRadius: '5px' }}>
                                             <h5 className="card-title" style={{ color: 'white' }}>{this.state.trailValues[igKey].raceTitle}<span data-toggle="modal" data-target="#edit" onClick={() => this.handleEditPost(this.state.trailValues[igKey].raceTitle, this.state.trailValues[igKey].eventDate, this.state.trailValues[igKey].raceInfo, this.state.trailValues[igKey].noOfRiders, igKey,this.state.trailValues[igKey].datePosted, this.state.trailValues[igKey].imageURL, this.state.trailValues[igKey].trailID, this.state.trailValues[igKey].raceType, this.state.trailValues[igKey].raceCategory )} style={{ float: 'right', color: '#618930', cursor: 'pointer' }}><FaEdit /></span></h5>
                                             <p style={{ color: '#6F747C', fontFamily: 'Poppins', fontSize: '14px', marginTop: '-2%' }}>Posted on {this.state.trailValues[igKey].datePosted}</p>
-                                            <p style={{ color: 'white', fontFamily: 'Poppins', fontSize: '14px', marginTop: '-2%' }}>When: <span style={{ color: '#6F747C', fontFamily: 'Poppins' }}>{this.state.trailValues[igKey].eventDate}</span></p>
-                                            {/* <p style={{ color: 'white', fontFamily: 'Poppins', fontSize: '14px', marginTop: '-2%' }}>Where: <span style={{color: '#6F747C'}}>{this.state.trailAdd}</span></p> */}
-                                            <p className="card-text" style={{ color: 'white' }}>{this.state.trailValues[igKey].raceInfo}</p>
+                                            <p style={{ color: 'white', fontFamily: 'Poppins', fontSize: '14px', marginTop: '1%' }}>When: <span style={{ color: '#6F747C', fontFamily: 'Poppins' }}>{this.state.trailValues[igKey].eventDate}</span></p>
+                                            <p className="card-text" style={{ color: 'white', textAlign: 'justify'}}>{this.state.trailValues[igKey].raceInfo}</p>
                                             <img src={this.state.trailValues[igKey].imageURL} className="card-img-top" alt="..." style={{ width: '100%', marginBottom: '1.5%' }} />
                                             <a href="#" className="btn btn-primary" data-toggle="modal" data-target="#exampleModalScrollable2" style={{ backgroundColor: '#618930', borderColor: '#618930', float: 'right' }} onClick={() => this.handleSpecificEvent(this.state.trailValues[igKey].raceTitle, igKey)}>Add Event Results</a>
                                         </div>
@@ -246,7 +242,6 @@ class home extends Component {
                                     <ul className="list-group list-group-flush">
                                         <li className='list-group-item list-group-item-action' onClick={() => this.trailClicked(this.state.approvedTrails[igKey].mapImage, this.state.approvedTrails[igKey].trailTitle, this.state.approvedTrails[igKey].trailAddress)} data-toggle="modal" data-target="#exampleModalScrollable4" style={{ cursor: 'pointer' }}><a  >{this.state.approvedTrails[igKey].trailTitle}&nbsp;<span class="badge badge-primary badge-pill" style={{ backgroundColor: '#618930', float: 'right' }}><AiFillLike />&nbsp;{this.state.approvedTrails[igKey].likes}</span></a></li>
                                     </ul>
-
                                 )
                             })}
 
@@ -335,29 +330,33 @@ class home extends Component {
                                 </button>
                             </div>
                             <div className="modal-body home-modal-body">
-                                <label for="exampleInputEmail1">Event Name</label>
-                                <input type="text" name='editRaceTitle' value={this.state.editRaceTitle} onChange={this.handleEditChange} class="form-control" id="exampleInputEmail1" />
-                                
-                                <label for="exampleInputEmail1">Event Date</label>
-                                <input className='form-control' type="date" id="exampleFormControlSelect1" value={this.state.editRaceDate} name='editRaceDate' onChange={this.handleEditChange} style={{ width: '100%' }} />
-                                
-                                <label>Limit of Riders</label>
-                                <input type='number' name='editNoOfRiders' value={this.state.editNoOfRiders} onChange={this.handleEditChange}  min='5'/>
+                                <div className='row'>
+                                    <div className='col'>
+                                        <label for="exampleInputEmail1">Event Name</label>
+                                        <input type="text" name='editRaceTitle' style={{backgroundColor: '#343A40', color: '#ffffff', borderColor: '#343A40'}} value={this.state.editRaceTitle} onChange={this.handleEditChange} class="form-control" id="exampleInputEmail1" />
+                                    </div>
+                                </div>
 
-                                <label>Race Description</label>
-                                <textarea name='editRaceDescription' value={this.state.editRaceDescription} onChange={this.handleEditChange} row='5'/>
+                                <div className='row'>
+                                    <div className='col'>
+                                        <label>Limit of Riders</label>
+                                        <input className='form-control' style={{backgroundColor: '#343A40', color: '#ffffff', borderColor: '#343A40'}} type='number' name='editNoOfRiders' value={this.state.editNoOfRiders} onChange={this.handleEditChange} min='5' />
+                                    </div>
 
+                                    <div className='col'>
+                                        <label for="exampleInputEmail1">Event Date</label>
+                                        <input className='form-control' type="date" id="exampleFormControlSelect1" value={this.state.editRaceDate} name='editRaceDate' onChange={this.handleEditChange} style={{ width: '100%' }} />
+                                    </div>
+                                </div>
+                                   
+                                <div className='row'>
+                                    <div style={{marginTop: '2%'}} className='col'>
+                                        <label>Race Description</label><br></br>
+                                        <textarea style={{width: '100%', marginTop: '0.2%', color: '#ffffff', backgroundColor: '#343A40', borderColor: '#343A40'}} name='editRaceDescription' value={this.state.editRaceDescription} onChange={this.handleEditChange} rows='5' />
 
-
-                                <input hidden name='editDatePosted' value={this.state.editDatePosted} onChange={this.handleEditChange}/>
-                                <input hidden name='editImageUrl' value={this.state.editImageUrl} onChange={this.handleEditChange}/>
-                                <input hidden name='editTrailID' value={this.state.editTrailID} onChange={this.handleEditChange}/>
-                                <input hidden name='editRaceType' value={this.state.editRaceType} onChange={this.handleEditChange}/>
-                                {/* <input  name='editRaceCategory' value={this.state.editRaceCategory[0].label} onChange={this.handleEditChange}/> */}
-                                
-                              
-                                
-                                <button onClick={()=>this.handleSaveEdit(this.state.idToBeEdited, this.state.editRaceTitle, this.state.editNoOfRiders, this.state.editRaceDescription, this.state.editRaceDate, this.state.editDatePosted, this.state.editImageUrl, this.state.editTrailID, this.state.editRaceType, this.state.editRaceCategory)}>Save Edit</button>
+                                        <button className='btn' style={{width: '30%', marginTop: '2%', float: 'right', backgroundColor: '#618930', color: '#ffffff', fontFamily: 'Poppins'}} onClick={() => this.handleSaveEdit(this.state.idToBeEdited, this.state.editRaceTitle, this.state.editNoOfRiders, this.state.editRaceDescription, this.state.editRaceDate, this.state.editDatePosted, this.state.editImageUrl, this.state.editTrailID, this.state.editRaceType, this.state.editRaceCategory)}>Save Edit</button>
+                                    </div>
+                                </div> 
                             </div>
                         </div>
                     </div>

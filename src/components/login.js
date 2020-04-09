@@ -1,22 +1,67 @@
 import React, { Component } from "react";
 import '../styles/login.css'
+import * as firebase from 'firebase';
+import Fire from '../config/fire';
+
+var db = firebase.database();
+var ref = db.ref('Users/');
 
 class landingPage extends Component {
+    constructor(props) {
+        super(props);
+
+        this.handleLogin = this.handleLogin.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+
+        this.state ={
+            email: '',
+            password: '',
+           
+        }
+    }
+
+    handleLogin(e) {
+        e.preventDefault();
+        Fire.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((u) => {
+        }).catch((error) => {
+            console.log(error);
+            alert(error)
+        });
+    }
+
+    // handleSignUp(e) {
+    //     e.preventDefault();
+    //     Fire.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((u)=>{
+    //     }).catch((error) => {
+    //         console.log(error);
+    //     })
+
+
+    // }
+
+    handleChange(e) {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
     render() {
         return(
             <div>
                 <div class="wrapper fadeInDown">
                     <div id="formContent">
                         <div class="fadeIn first">
-                            <img src="http://danielzawadzki.com/codepen/01/icon.svg" id="icon" alt="User Icon" />
+                            <h1 style={{color: 'white', fontFamily: 'Poppins', fontSize: '22px', marginBottom: '5%'}}>ENDURO-MTB-PH</h1>
                         </div>
 
                         <form>
-                            <div class="form-group">
-                                <label for="exampleInputPassword1">Passcode</label>
-                                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Passcode here..." />
+                            <div className="form-group">
+                                <input type="email" value={this.state.email} onChange={this.handleChange} className="form-control" name='email' id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Your Email" />
                             </div>
-                            <button type="submit" class="btn btn-primary">Log In</button>
+
+                            <div className="form-group">
+                                <input type="password" className="form-control" onChange={this.handleChange} name='password' id="exampleInputPassword1" placeholder="Password" />
+                            </div>
+
+                            <button type="submit" onClick={this.handleLogin} className="btn btn-primary">Login</button>&nbsp;
                         </form>
                     </div>
                 </div>
