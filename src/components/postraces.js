@@ -31,9 +31,7 @@ const options = [
     { value: 'Pros', label: 'Pros' }
     
   ]
-
   
-
 class postraces extends Component {
     
 
@@ -59,9 +57,8 @@ class postraces extends Component {
             disabled: true,
             trailValues: [],
             trailID: '',
-
-            options2: []
-
+            trailOptions:[],
+            raceTrails:[]
         };
     }
 
@@ -81,8 +78,8 @@ class postraces extends Component {
                 datePosted: this.state.datePosted,
                 trailID: this.state.trailID,
                 eventDate: this.state.raceDate,
-                raceCategory: [...this.state.raceCategory]
-
+                raceCategory: [...this.state.raceCategory],
+                raceTrails: [...this.state.raceTrails]
 
             }).then((data) => {
                 //success callback
@@ -102,7 +99,7 @@ class postraces extends Component {
             
         })
 
-        if (this.state.raceTitle == "" || this.state.selectedFile == null || this.state.trailID == "") {
+        if (this.state.raceTitle == "" || this.state.selectedFile == null ) {
             alert("Missing");
         } else {
             var imageURI = this.state.selectedFile.name
@@ -149,12 +146,16 @@ class postraces extends Component {
             raceNoOfStages: event.target.value
         })
     }
+    handleRaceTrailChange = (event) => {
+        this.setState({
+            raceTrails: event
+        })
+        // console.log(this.state.raceTrails)
+    }
 
     handleRaceCatChange = (event) => {
         this.setState({
-            raceCategory: [...event]
-        },function(){
-            alert(this.state.raceCategory.length)
+            raceCategory: event
         })
 
         //kung i push nimo sa database inani pag pasa => raceCaregory: [...this.state.raceCategory]
@@ -162,14 +163,6 @@ class postraces extends Component {
         // console.log(event)
         // alert(event.target.value)
         // alert(event)
-    }
-
-    handleRaceAddressChange = (event) => {
-        this.setState({
-            // raceAddress: event.target.value,
-            trailID: event.target.value
-        })
-        // alert(this.state.trailID)
     }
 
     handleRaceInfoChange = (event) => {
@@ -197,17 +190,19 @@ class postraces extends Component {
 
 
     componentDidMount() {
-        refss.on('value', snapshot => {
+        refss.once('value', snapshot => {
             let Datas = { ...snapshot.val() }
-            this.setState({ trailValues: Datas })
-        
+            let trails = []
+            Object.keys(Datas).map(igKey =>{
+                trails.push({value: igKey, label: Datas[igKey].trailTitle})
+            })
+            this.setState({ trailValues: trails },function(){
+                console.log(this.state.trailValues)
+                console.log(options)
+            })
         })
 
-        this.setState ({
-            options2: [{
-                
-            }]
-        })
+       
     }
 
     render() {
@@ -270,17 +265,16 @@ class postraces extends Component {
                             <Select
                                     closeMenuOnSelect={false}
                                     isMulti
-                                    options={this.state.options2}
+                                    options={this.state.trailValues}
                                     style={{backgroundColor: '#2E353B'}}
                                     // value={this.state.raceCategory} 
-                                    onChange={this.handleRaceCatChange}
+                                    onChange={this.handleRaceTrailChange}
                                     
                                 />
-                            {/* <select className="form-control" id="exampleFormControlSelect1" value={this.state.trailID} onChange={this.handleRaceAddressChange}   >
+                            {/* <select className="form-control" isMulti id="exampleFormControlSelect1" value={this.state.trailID} onChange={this.handleRaceAddressChange}   >
                                 {Object.keys(this.state.trailValues).map(igKey => {
                                     return (
                                         <option value={igKey}> {this.state.trailValues[igKey].trailTitle}</option>
-
                                         
                                     )
                                 })} 
