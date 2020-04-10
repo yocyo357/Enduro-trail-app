@@ -23,7 +23,8 @@ class RaceInfo extends Component {
             infos: [],
             raceCategory: [],
             btnJoin: [],
-            noParticipants: []
+            noParticipants: [],
+            trails:[]
         }
 
     }
@@ -76,7 +77,11 @@ class RaceInfo extends Component {
             this.setState({ btnJoin: [...btnJoin], noParticipants: [...noParticipants] })
         })
     }
-
+    onViewClicked(id){
+        firebase.database().ref('Trails/'+id).once('value', snapshot => {
+            console.log(snapshot.val())
+        })
+    }
 
     onJoinClick(status, index, cat) {
         var btnJoin = [...this.state.btnJoin]
@@ -94,11 +99,11 @@ class RaceInfo extends Component {
 
                         if (status == 'Join') {
                             firebase.database().ref('post_races/' + this.props.route.params.id + '/raceCategory/' + index + '/participants').once('value', snapshot => {
-                                let datas = {...snapshot.val()}
+                                let datas = { ...snapshot.val() }
                                 len = Object.keys(datas).length
-                                if (len > this.state.noParticipants[index]){
+                                if (len > this.state.noParticipants[index]) {
                                     alert('Unable to join event')
-                                }else{
+                                } else {
                                     var refLiked = firebase.database().ref('post_races/' + this.props.route.params.id + '/raceCategory/' + index + '/participants')
                                     refLiked.push(globalUserID).then(() => {
                                         // btnJoin[index] = 'Leave'
@@ -106,7 +111,7 @@ class RaceInfo extends Component {
                                         this.getData()
                                     })
                                 }
-                               
+
                             })
 
                         }
@@ -159,6 +164,7 @@ class RaceInfo extends Component {
                             margin: 15
                         }}
                     />
+                    <H2 style={{ marginLeft: 15, color: 'grey' }}>Categories</H2>
                     <List>
                         {this.state.raceCategory.map((cat, index) => {
                             return (
@@ -179,7 +185,7 @@ class RaceInfo extends Component {
                                 </ListItem>
                             )
                         })}
-
+                        <H2 style={{ marginLeft: 15,marginTop:15, color: 'grey' }}>Trails</H2>
                     </List>
                 </Content>
             </Container >

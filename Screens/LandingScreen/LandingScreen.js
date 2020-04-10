@@ -27,7 +27,9 @@ class LandingScreen extends Component {
 
                 globalUserData = { ...snapshot.val()}
                 globalReloadData="false"
-                // this.props.navigation.navigate('Tabs')
+                this.props.navigation.navigate('Tabs')
+            }).catch(error =>{
+                alert(error)
             })
         }
 

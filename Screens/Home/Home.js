@@ -27,7 +27,8 @@ class Home extends Component {
             trails: [],
             trailImages: [],
             likes: [],
-            races:[]
+            races: [],
+            notif: 0
         };
     }
     read() {
@@ -48,11 +49,11 @@ class Home extends Component {
 
                 globalUserID = userID
                 firebase.database().ref('Users/' + userID).once('value', async snapshot => {
-                    globalUserData = { ...snapshot.val()}
-                    
+                    globalUserData = { ...snapshot.val() }
+
                 })
             }
-            
+
         }
         console.log(globalUserID)
         console.log(globalUserData)
@@ -61,16 +62,9 @@ class Home extends Component {
             //console.log(snapshot.val())
 
             let datas = { ...snapshot.val() }
-            // var storage = firebase.storage();
-            //var revdatas = test.reverse()
-            // Object.keys(datas).map(async (igKey, index) => {
-            //     var ref = storage.ref().child("images/" + datas[igKey].mapImage)
-            //     const url = await ref.getDownloadURL();
-            //     var joined = this.state.trailImages.concat(url);
-            //     this.setState({ trailImages: joined })
-            // })
+
+            //getLikes
             var likes = {}
-  
             Object.keys(datas).map(igKey => {
                 let userLiked = datas[igKey].userLiked
                 if (userLiked != undefined) {
@@ -84,19 +78,38 @@ class Home extends Component {
                         }
 
                     })
-                }else{
+                } else {
                     likes[igKey] = 'grey'
                 }
             })
-            this.setState({likes: likes})
-         
+            this.setState({ likes: likes })
+
+            
+
+
             // console.log(this.reverseObject(datas))
             this.setState({ trails: this.reverseObject(datas) })
         })
         firebase.database().ref('post_races/').on('value', snapshot => {
-        let datas = {...snapshot.val()}
-        this.setState({races: this.reverseObject(datas)})
+            let datas = { ...snapshot.val() }
 
+            //get Notifications
+            let notif = 0
+            Object.keys(datas).map(igKey => {
+                let notifseen = datas[igKey].seen
+                if (notifseen != undefined) {
+                    notif++
+                    Object.keys(notifseen).some(igKey1 => {
+                        if (igKey1 == globalUserID) {
+                            notif--
+                            return true
+                        }
+                    })
+                } else {
+                    notif++
+                }
+            })
+            this.setState({ races: this.reverseObject(datas), notif: notif })
         })
 
     }
@@ -131,7 +144,7 @@ class Home extends Component {
             }
 
 
-        }).catch(error=>{
+        }).catch(error => {
             alert(error)
         })
     }
@@ -155,7 +168,7 @@ class Home extends Component {
 
         return (
             <Container style={styles.container}>
-                <HomeHeader navigation={this.props.navigation} title='FEED' />
+                <HomeHeader navigation={this.props.navigation} title='FEED' notif={this.state.notif} />
 
                 <Tabs tabContainerStyle={{ borderTopWidth: 0 }} tabBarUnderlineStyle={{ backgroundColor: '#6F952C' }}>
                     <Tab heading={<TabHeading style={{ backgroundColor: '#343A40' }} ><Text>Trails</Text></TabHeading>}>
@@ -165,7 +178,7 @@ class Home extends Component {
                     </Tab>
                     <Tab heading={<TabHeading style={{ backgroundColor: '#343A40' }}><Text>Races</Text></TabHeading>}>
                         <Content>
-                            <Races races={this.state.races} navigation={this.props.navigation}/>
+                            <Races races={this.state.races} navigation={this.props.navigation} />
                         </Content>
                     </Tab>
                 </Tabs>

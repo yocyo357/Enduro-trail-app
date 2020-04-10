@@ -28,15 +28,15 @@ function timeDifference(current, previous) {
     }
 
     else if (elapsed < msPerMonth) {
-        return 'approximately ' + Math.round(elapsed / msPerDay) + ' days ago';
+        return Math.round(elapsed / msPerDay) + ' days ago';
     }
 
     else if (elapsed < msPerYear) {
-        return 'approximately ' + Math.round(elapsed / msPerMonth) + ' months ago';
+        return Math.round(elapsed / msPerMonth) + ' months ago';
     }
 
     else {
-        return 'approximately ' + Math.round(elapsed / msPerYear) + ' years ago';
+        return Math.round(elapsed / msPerYear) + ' years ago';
     }
 }
 class CardPosts extends Component {
@@ -56,13 +56,13 @@ class CardPosts extends Component {
                                 </Body>
                             </Left>
                         </CardItem>
-                        <CardItem cardBody button onPress={() => this.props.navigation.navigate('TrailInfo', { trails: this.props.trails[igKey] })}>
+                        <CardItem cardBody button onPress={() => this.props.navigation.navigate('TrailInfo', { trails: this.props.trails[igKey], id: igKey })}>
                             <Image source={{ uri: this.props.trails[igKey].mapImage }} style={{ height: 200, width: null, flex: 1 }} />
                         </CardItem>
                         <CardItem>
                             <Left>
                                 <Button transparent>
-                                    <TouchableOpacity onPress={()=> this.props.onLikeClick(igKey)}>
+                                    <TouchableOpacity onPress={() => this.props.onLikeClick(igKey)}>
                                         <Icon style={{ color: this.props.likes[igKey] }} name="thumbs-up" />
                                     </TouchableOpacity>
                                     <Text>{this.props.trails[igKey].likes} Likes</Text>
