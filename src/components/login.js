@@ -46,10 +46,12 @@ class landingPage extends Component {
     render() {
         return(
             <div>
+                <h1 style={{color: '#618930', fontFamily: 'Poppins', fontSize: '34px', fontWeight: 'bold', marginTop: '2%', marginLeft: '2%'}}>ENDURO-MTB-PH</h1>
                 <div class="wrapper fadeInDown">
+                    
                     <div id="formContent">
                         <div class="fadeIn first">
-                            <h1 style={{color: 'white', fontFamily: 'Poppins', fontSize: '22px', marginBottom: '5%'}}>ENDURO-MTB-PH</h1>
+                            
                         </div>
 
                         <form>
@@ -61,7 +63,7 @@ class landingPage extends Component {
                                 <input type="password" className="form-control" onChange={this.handleChange} name='password' id="exampleInputPassword1" placeholder="Password" />
                             </div>
 
-                            <button type="submit" onClick={this.handleLogin} className="btn btn-primary">Login</button>&nbsp;
+                            <button type="submit" onClick={this.handleLogin} className="btn button-login">Login</button>&nbsp;
                         </form>
                     </div>
                 </div>

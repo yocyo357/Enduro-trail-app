@@ -29,11 +29,11 @@ const options = [
     { value: 'Executives', label: 'Executive' },
     { value: 'Semi-Pro', label: 'Semi-Pro' },
     { value: 'Pros', label: 'Pros' }
-    
-  ]
-  
+
+]
+
 class postraces extends Component {
-    
+
 
     constructor(props) {
         super(props);
@@ -53,12 +53,14 @@ class postraces extends Component {
             selectedFile: null,
             datePosted: currDate,
             url: '',
-            loading: false,
+            loading: true,
             disabled: true,
             trailValues: [],
             trailID: '',
-            trailOptions:[],
-            raceTrails:[]
+            trailOptions: [],
+            raceTrails: [],
+            disableSubmit: true,
+            submitType: '',
         };
     }
 
@@ -94,13 +96,19 @@ class postraces extends Component {
 
     handleOnclickSubmit = (event) => {
 
-        this.setState({
-            loading: true,
-            
-        })
+        if (this.state.raceTitle == "" || this.state.selectedFile == null || this.state.raceDate == '' ||  this.state.raceInfo == '' || this.state.raceCategory == '' || this.state.raceTrails == '') {
+            this.setState({
 
-        if (this.state.raceTitle == "" || this.state.selectedFile == null ) {
-            alert("Missing");
+                loading: true,
+    
+            })
+        }else {
+
+        }
+        
+
+        if (this.state.raceTitle == "" || this.state.selectedFile == null || this.state.raceDate == '' ||  this.state.raceInfo == '' || this.state.raceCategory == '' || this.state.raceTrails == '') {
+            alert("Missing Inputs. Please complete the details. Thank you");
         } else {
             var imageURI = this.state.selectedFile.name
             var datePosted = this.state.datePosted
@@ -109,6 +117,7 @@ class postraces extends Component {
 
             const { selectedFile } = this.state
             this.uploadImage(selectedFile)
+            
         }
     }
 
@@ -123,8 +132,6 @@ class postraces extends Component {
     handleRaceTypeChange = (event) => {
         this.setState({
             raceType: event.target.value
-
-
         })
 
         if (event.target.value == 'Series') {
@@ -141,34 +148,39 @@ class postraces extends Component {
     }
 
     handleRaceStagesChange = (event) => {
-       
+
         this.setState({
             raceNoOfStages: event.target.value
         })
     }
+
     handleRaceTrailChange = (event) => {
         this.setState({
             raceTrails: event
         })
-        // console.log(this.state.raceTrails)
+        
     }
 
     handleRaceCatChange = (event) => {
         this.setState({
-            raceCategory: event
+            raceCategory: event,
+            
         })
 
-        //kung i push nimo sa database inani pag pasa => raceCaregory: [...this.state.raceCategory]
-        // alert(event[0].value)
-        // console.log(event)
-        // alert(event.target.value)
-        // alert(event)
+        
     }
 
     handleRaceInfoChange = (event) => {
         this.setState({
             raceInfo: event.target.value
         })
+
+        if (this.state.raceInfo == '' ) {
+            this.setState({ raceTitle: "", disableSubmit:true, submitType: '', loading: true })
+
+        }else {
+            this.setState({ disableSubmit:false, loading: false })
+        }
     }
 
     handleRaceLimitChange = (event) => {
@@ -193,60 +205,60 @@ class postraces extends Component {
         refss.once('value', snapshot => {
             let Datas = { ...snapshot.val() }
             let trails = []
-            Object.keys(Datas).map(igKey =>{
-                trails.push({value: igKey, label: Datas[igKey].trailTitle})
+            Object.keys(Datas).map(igKey => {
+                trails.push({ value: igKey, label: Datas[igKey].trailTitle })
             })
-            this.setState({ trailValues: trails },function(){
+            this.setState({ trailValues: trails }, function () {
                 console.log(this.state.trailValues)
                 console.log(options)
             })
         })
 
-       
+
     }
 
     render() {
         const { loading } = this.state;
         return (
             <div className="postRaces_container container-fluid">
-                <div className="row">
-                    <div className="col">
-                        <div className="form-group">
-                            <label >Event Name:</label>
-                            <input id="exampleFormControlSelect1" type="text" value={this.state.raceTitle} onChange={this.handleTitleChange} className="form-control txt-input" placeholder="Add event's name here" />
-                        </div>
-                    </div>
-
-                    <div className="col">
-                        <div className="form-group">
-                            <label>Race Type:</label>
-                            <select className="form-control" id="exampleFormControlSelect1" value={this.state.raceType} onChange={this.handleRaceTypeChange}   >
-                                <option>Regular</option>
-                                <option>Series</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div className="col">
-                        <label>Specify No. of series:</label>
-                        <input type="text" id="exampleFormControlSelect1" disabled={this.state.disabled} className="form-control txt-input" value={this.state.raceNoOfStages} onChange={this.handleRaceStagesChange} /><br />
-
-                    </div>
-                </div>
-
                 <form>
                     <div className="row">
                         <div className="col">
                             <div className="form-group">
+                                <label >Event Name:</label>
+                                <input id="exampleFormControlSelect1" type="text" value={this.state.raceTitle} onChange={this.handleTitleChange} className="form-control txt-input" placeholder="Add event's name here" />
+                            </div>
+                        </div>
+
+                        <div className="col">
+                            <div className="form-group">
+                                <label>Race Type:</label>
+                                <select className="form-control" id="exampleFormControlSelect1" value={this.state.raceType} onChange={this.handleRaceTypeChange}   >
+                                    <option>Regular</option>
+                                    <option>Series</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="col">
+                            <label>Specify No. of series:</label>
+                            <input type="text" id="exampleFormControlSelect1" disabled={this.state.disabled} className="form-control txt-input" value={this.state.raceNoOfStages} onChange={this.handleRaceStagesChange} /><br />
+
+                        </div>
+                    </div>
+
+                    <div className="row">
+                        <div className="col">
+                            <div className="form-group">
                                 <label >Race Category:</label><br></br>
-                                
+
                                 <Select
                                     closeMenuOnSelect={false}
                                     isMulti
                                     options={options}
-                                    style={{backgroundColor: '#2E353B'}}
+                                    style={{ backgroundColor: '#2E353B' }}
                                     // value={this.state.raceCategory} 
                                     onChange={this.handleRaceCatChange}
-                                    
+
                                 />
                             </div>
                         </div>
@@ -263,14 +275,14 @@ class postraces extends Component {
                         <div className="col">
                             <label>Venue/Trail address:</label>
                             <Select
-                                    closeMenuOnSelect={false}
-                                    isMulti
-                                    options={this.state.trailValues}
-                                    style={{backgroundColor: '#2E353B'}}
-                                    // value={this.state.raceCategory} 
-                                    onChange={this.handleRaceTrailChange}
-                                    
-                                />
+                                closeMenuOnSelect={false}
+                                isMulti
+                                options={this.state.trailValues}
+                                style={{ backgroundColor: '#2E353B' }}
+                                // value={this.state.raceCategory} 
+                                onChange={this.handleRaceTrailChange}
+
+                            />
                             {/* <select className="form-control" isMulti id="exampleFormControlSelect1" value={this.state.trailID} onChange={this.handleRaceAddressChange}   >
                                 {Object.keys(this.state.trailValues).map(igKey => {
                                     return (
@@ -294,7 +306,7 @@ class postraces extends Component {
                     </div>
                     <br />
 
-                    <div className="row" style={{marginTop: '-5%'}}>
+                    <div className="row" style={{ marginTop: '-5%' }}>
 
                         <div className="col">
                             <label>Add Description:</label>
@@ -309,12 +321,13 @@ class postraces extends Component {
                             <button type="reset" className="btn btn-post" onClick={() => this.handleOnclickSubmit()} disabled={loading} style={{marginTop: '3%'}}>
                                 {loading && <i className='fa fa-refresh fa-spin'></i>}
                                 Post Now
-                                </button>
+                            </button>
                         </div>
                     </div>
                 </form>
                 <Prompt
-                    when={this.state.raceTitle !== "" ||  this.state.raceInfo !== "" || this.state.noOfRiders !== ""}
+                    
+                    when={this.state.raceTitle !== "" || this.state.raceInfo !== "" || this.state.noOfRiders !== ""}
                     message={(location) => {
                         return location.pathname.startsWith('/suggestionsbox' && '/') ? 'Not done posting yet. Are you sure? ' : true
                     }}

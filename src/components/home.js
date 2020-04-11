@@ -28,6 +28,8 @@ class home extends Component {
             myimage: '',
             trailname: '',
             modalTrailAdd: '',
+            modalTitle: '',
+            modalDesc: '',
             url: '',
             trailValues: [],
 
@@ -60,7 +62,8 @@ class home extends Component {
             editRaceType: '',
             editTrailID: '',
             editRaceCat: '',
-            editTrail: ''
+            editTrail: '',
+            raceStatus: 'Ongoing'
 
         }
     }
@@ -108,8 +111,8 @@ class home extends Component {
 
     }
 
-    trailClicked(image, trailName, address) {
-        this.setState({ myimage: image, trailName: trailName, modalTrailAdd: address })
+    trailClicked(image, trailName, address, title, description) {
+        this.setState({ myimage: image, trailName: trailName, modalTrailAdd: address, modalTitle: title, modalDesc: description })
     }
 
     handleRankCategoryChange=(event)=>{
@@ -186,7 +189,7 @@ class home extends Component {
             editImageUrl: imageURL,
             editTrailID: trailID,
             editRaceType: raceType,
-            editRaceCategory: raceCategory
+            editRaceCategory: raceCategory,
         })
     }
 
@@ -194,7 +197,7 @@ class home extends Component {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-    handleSaveEdit(id, title, limit, info, date, datePosted, url, trail, raceType, category) {
+    handleSaveEdit(id, title, limit, info, date, datePosted, url, trail, raceType, category, raceStatus) {
         //Updating several post details in Home page
         var updateRef = firebase.database().ref('post_races/');
         updateRef.child(id).update({
@@ -202,6 +205,7 @@ class home extends Component {
             'eventDate': date,
             'noOfRiders': limit,
             'raceInfo': info,
+            'raceStatus': raceStatus
         })
         
     }
@@ -240,13 +244,12 @@ class home extends Component {
                             {Object.keys(this.state.approvedTrails).map(igKey => {
                                 return (
                                     <ul className="list-group list-group-flush">
-                                        <li className='list-group-item list-group-item-action' onClick={() => this.trailClicked(this.state.approvedTrails[igKey].mapImage, this.state.approvedTrails[igKey].trailTitle, this.state.approvedTrails[igKey].trailAddress)} data-toggle="modal" data-target="#exampleModalScrollable4" style={{ cursor: 'pointer' }}><a  >{this.state.approvedTrails[igKey].trailTitle}&nbsp;<span class="badge badge-primary badge-pill" style={{ backgroundColor: '#618930', float: 'right' }}><AiFillLike />&nbsp;{this.state.approvedTrails[igKey].likes}</span></a></li>
+                                        <li className='list-group-item list-group-item-action' onClick={() => this.trailClicked(this.state.approvedTrails[igKey].mapImage, this.state.approvedTrails[igKey].trailTitle, this.state.approvedTrails[igKey].trailAddress, this.state.approvedTrails[igKey].trailTitle, this.state.approvedTrails[igKey].description)} data-toggle="modal" data-target="#exampleModalScrollable4" style={{ cursor: 'pointer' }}><a  >{this.state.approvedTrails[igKey].trailTitle}&nbsp;<span class="badge badge-primary badge-pill" style={{ backgroundColor: '#618930', float: 'right' }}><AiFillLike />&nbsp;{this.state.approvedTrails[igKey].likes}</span></a></li>
                                     </ul>
                                 )
                             })}
 
                         </div>
-
                     </div>
                 </div>
                 
@@ -313,6 +316,8 @@ class home extends Component {
                                 </button>
                             </div>
                             <div className="modal-body home-modal-body">
+                                <label style={{fontFamily: 'Poppins'}}>Trail Name: <span>{this.state.modalTitle }</span></label><br />
+                                <label>Description: {this.state.modalDesc}</label>
                                 <img src={this.state.myimage} style={{ width: '100%', height: '400px' }} />
                             </div>
                         </div>
@@ -325,11 +330,21 @@ class home extends Component {
                         <div className="modal-content modal-content-home">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="exampleModalScrollableTitle">Edit Post</h5>
+                                
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div className="modal-body home-modal-body">
+                                <div className='row'>
+                                    <div className='col'>
+                                        <select className='form-control' value={this.handleRaceStatus} onChange={this.handleEditChange} name='raceStatus' style={{width: '50%', marginLeft: '20px'}}>
+                                            <option>ONGOING</option>
+                                            <option>RACE COMPLETED</option>
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div className='row'>
                                     <div className='col'>
                                         <label for="exampleInputEmail1">Event Name</label>
@@ -354,7 +369,7 @@ class home extends Component {
                                         <label>Race Description</label><br></br>
                                         <textarea style={{width: '100%', marginTop: '0.2%', color: '#ffffff', backgroundColor: '#343A40', borderColor: '#343A40'}} name='editRaceDescription' value={this.state.editRaceDescription} onChange={this.handleEditChange} rows='5' />
 
-                                        <button className='btn' style={{width: '30%', marginTop: '2%', float: 'right', backgroundColor: '#618930', color: '#ffffff', fontFamily: 'Poppins'}} onClick={() => this.handleSaveEdit(this.state.idToBeEdited, this.state.editRaceTitle, this.state.editNoOfRiders, this.state.editRaceDescription, this.state.editRaceDate, this.state.editDatePosted, this.state.editImageUrl, this.state.editTrailID, this.state.editRaceType, this.state.editRaceCategory)}>Save Edit</button>
+                                        <button className='btn' style={{width: '30%', marginTop: '2%', float: 'right', backgroundColor: '#618930', color: '#ffffff', fontFamily: 'Poppins'}} onClick={() => this.handleSaveEdit(this.state.idToBeEdited, this.state.editRaceTitle, this.state.editNoOfRiders, this.state.editRaceDescription, this.state.editRaceDate, this.state.editDatePosted, this.state.editImageUrl, this.state.editTrailID, this.state.editRaceType, this.state.editRaceCategory, this.state.raceStatus)}>Save Edit</button>
                                     </div>
                                 </div> 
                             </div>
