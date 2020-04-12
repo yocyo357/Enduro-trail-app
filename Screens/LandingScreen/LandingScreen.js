@@ -5,30 +5,40 @@ import {
     StyleSheet,
     PermissionsAndroid,
     Platform,
-    AsyncStorage
+    AsyncStorage,
+    BackHandler,
 } from 'react-native';
 import firebase from 'firebase'
-import { Container, Header, Content, Button, Text } from 'native-base';
-
+import { Container, Header, Content, Button, Text,Spinner } from 'native-base';
+// import Spinner from 'react-native-loading-spinner-overlay';
 
 if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
 
 class LandingScreen extends Component {
-
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: true
+        };
+    }
 
     async componentDidMount() {
+
+       
+
         var userID = await AsyncStorage.getItem('userID')
         if (userID != null) {
             console.log(userID)
             globalUserID = userID
             firebase.database().ref('Users/' + userID).once('value', async snapshot => {
 
-                globalUserData = { ...snapshot.val()}
-                globalReloadData="false"
-                this.props.navigation.navigate('Tabs')
-            }).catch(error =>{
+                globalUserData = { ...snapshot.val() }
+                globalReloadData = "false"
+                this.setState({isLoading:false})
+                // this.props.navigation.navigate('Tabs')
+            }).catch(error => {
                 alert(error)
             })
         }
@@ -45,8 +55,15 @@ class LandingScreen extends Component {
         }
 
     }
-
+    
     render() {
+        // if (this.state.isLoading) {
+        //     return(
+        //         <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+        //     <Spinner/>
+        //     </View>
+        //     )
+        // }
         return (
             <Container style={{ backgroundColor: "#262626", alignItems: 'center' }}>
                 <Content>
@@ -56,28 +73,12 @@ class LandingScreen extends Component {
                     </Button>
                     <Text style={styles.Text}>-----Already a member?-----</Text>
                     <Button style={{ width: "100%" }} rounded large block success
-                        onPress={() => this.props.navigation.navigate('Login')}>
+                        onPress={() => this.props.navigation.navigate('Login',{username:''})}>
                         <Text>Login</Text>
                     </Button>
 
                 </Content>
             </Container>
-
-            //    <Button
-            //         style={styles.Button}
-            //         contentStyle={{ height: 80, width: 300 }}
-            //         color="#2E75B5" mode="contained"
-            //         onPress={() => this.props.navigation.navigate('Signup')}>
-            //         <Text style={styles.Text2}>Sign Up</Text>
-            //     </Button>
-            //     <Text style={styles.Text}>-----Already a member?-----</Text>
-            //     <Button
-            //         style={styles.Button}
-            //         contentStyle={{ height: 80, width: 300 }}
-            //         color="#00AF50" mode="contained"
-            //         onPress={() => this.props.navigation.navigate('Signup')}>
-            //         <Text style={styles.Text2}>Login</Text>
-            //     </Button> 
 
         )
     }

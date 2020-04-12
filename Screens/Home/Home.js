@@ -5,7 +5,8 @@ import {
     StatusBar,
     AsyncStorage,
     StyleSheet,
-    Image
+    Image,
+    BackHandler
 } from 'react-native';
 import HomeHeader from '../../Headers/HomeHeader'
 import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right, Tabs, Tab, TabHeading } from 'native-base';
@@ -18,7 +19,18 @@ if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
 
-
+function toTimestamp(datetime) {
+    var dateString = datetime,
+        dateTimeParts = dateString.split(' '),
+        timeParts = dateTimeParts[1].split(':'),
+        dateParts = dateTimeParts[0].split('-'),
+        date;
+    // console.log(timeParts)
+    date = new Date(dateParts[0], parseInt(dateParts[1], 10) - 1, dateParts[2], timeParts[0], timeParts[1]);
+    // console.log(date.getTime())
+    var d = date.getTime()
+    return d
+}
 
 class Home extends Component {
     constructor(props) {
@@ -42,7 +54,7 @@ class Home extends Component {
     }
 
     async componentDidMount() {
-
+        BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressed);
         if (globalReloadData == "true") {
             var userID = await AsyncStorage.getItem('userID')
             if (userID != null) {
@@ -71,7 +83,7 @@ class Home extends Component {
                     // alert(userLiked[igKey1] +" "+ igKey)
                     Object.keys(userLiked).some(igKey1 => {
                         if (userLiked[igKey1] == globalUserID) {
-                            likes[igKey] = 'blue'
+                            likes[igKey] = '#007AFF'
                             return true
                         } else {
                             likes[igKey] = 'grey'
@@ -90,6 +102,7 @@ class Home extends Component {
             // console.log(this.reverseObject(datas))
             this.setState({ trails: this.reverseObject(datas) })
         })
+
         firebase.database().ref('post_races/').on('value', snapshot => {
             let datas = { ...snapshot.val() }
 
@@ -97,8 +110,11 @@ class Home extends Component {
             let notif = 0
             Object.keys(datas).map(igKey => {
                 let notifseen = datas[igKey].seen
+                // alert(globalUserData.datecreated > toTimestamp(datas[igKey].datePosted))
+                // alert(toTimestamp(datas[igKey].datePosted))
+               if(globalUserData.datecreated< datas[igKey].datePosted){
                 if (notifseen != undefined) {
-                    notif++
+                    notif++ 
                     Object.keys(notifseen).some(igKey1 => {
                         if (igKey1 == globalUserID) {
                             notif--
@@ -108,6 +124,7 @@ class Home extends Component {
                 } else {
                     notif++
                 }
+            }
             })
             this.setState({ races: this.reverseObject(datas), notif: notif })
         })
@@ -115,9 +132,12 @@ class Home extends Component {
     }
     componentWillUnmount() {
         firebase.database().ref('Trails/').off()
+        BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed);
     }
 
-
+    onBackButtonPressed() {
+        return true;
+    }
     onLikeClick(id) {
         var exist = false
         var key = ""

@@ -5,7 +5,8 @@ import {
     StyleSheet,
     PermissionsAndroid,
     Platform,
-    Image
+    Image,
+    ToastAndroid
 } from 'react-native';
 import { Container, Header, Content, Button, Text, Icon, Left, Right, Body, Item, Input } from 'native-base';
 import MapView, { Marker, Polyline, AnimatedRegion, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -19,6 +20,9 @@ const LONGITUDE_DELTA = 0.009;
 const LATITUDE = 37.78825;
 const LONGITUDE = -122.4324;
 Geocoder.init("AIzaSyANqV6leq3SUf6UTIlNQiPEoNAMPU5yAgA")
+const showToast = (message) => {
+    ToastAndroid.showWithGravity(message, ToastAndroid.SHORT,ToastAndroid.TOP);
+  };
 class Record extends Component {
     constructor(props) {
         super(props);
@@ -57,6 +61,20 @@ class Record extends Component {
                 //  - ERR02 : If the popup has failed to open
                 alert(err)
             });
+
+
+        Geolocation.getCurrentPosition(
+            position => {
+                this.setState({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                });
+            },
+            error => Alert.alert('Error', JSON.stringify(error)),
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+        );
+
+
 
         Geolocation.watchPosition(position => {
 
@@ -152,81 +170,94 @@ class Record extends Component {
     btnOnpress = () => {
 
         var text = (this.state.recordText == 'RECORD') ? 'STOP' : 'RECORD'
+        // (text == 'STOP')? showToast('Recording'):showToast('Recording Stopped')
         if (text == 'RECORD') {
-            var Delta = this.getRegionForCoordinates(this.state.routeCoordinates)
-            // alert(Delta.latitudeDelta + " " + Delta.longitudeDelta)
-            this.setState({ longitudeDelta: Delta.longitudeDelta, latitudeDelta: Delta.latitudeDelta }, function () {
+            if (this.state.routeCoordinates.length != 0) {
+                var Delta = this.getRegionForCoordinates(this.state.routeCoordinates)
+                // alert(Delta.latitudeDelta + " " + Delta.longitudeDelta)
+                this.setState({ longitudeDelta: Delta.longitudeDelta, latitudeDelta: Delta.latitudeDelta }, function () {
 
 
-                const snapshot = this.map.takeSnapshot({
-                    // width: 300,      // optional, when omitted the view-width is used
-                    // height: 300,     // optional, when omitted the view-height is used
-                    region: {
-                    latitude: this.state.latitude,
-                    longitude: this.state.longitude,
-                    latitudeDelta: Delta.latitudeDelta,
-                    longitudeDelta: Delta.longitudeDelta,
-                    },    
-                    // iOS only, optional region to render
-                    format: 'jpg',   // image formats: 'png', 'jpg' (default: 'png')
-                    quality: 0.8,    // image quality: 0..1 (only relevant for jpg, default: 1)
-                    result: 'file'   // result types: 'file', 'base64' (default: 'file')
-                });
-                snapshot.then((uri) => {
-                    this.setState({ mapSnapshot: uri });
+                    const snapshot = this.map.takeSnapshot({
+                        // width: 300,      // optional, when omitted the view-width is used
+                        // height: 300,     // optional, when omitted the view-height is used
+                        region: {
+                            latitude: this.state.latitude,
+                            longitude: this.state.longitude,
+                            latitudeDelta: Delta.latitudeDelta,
+                            longitudeDelta: Delta.longitudeDelta,
+                        },
+                        // iOS only, optional region to render
+                        format: 'jpg',   // image formats: 'png', 'jpg' (default: 'png')
+                        quality: 0.8,    // image quality: 0..1 (only relevant for jpg, default: 1)
+                        result: 'file'   // result types: 'file', 'base64' (default: 'file')
+                    });
+                    snapshot.then((uri) => {
+                        this.setState({ mapSnapshot: uri });
 
 
-                    Geocoder.from(this.state.routeCoordinates[0].latitude, this.state.routeCoordinates[0].longitude)
-                        .then(json => {
-                            var addressComponent = json.results[0].formatted_address;
-                            console.log(addressComponent)
-                            var routeCoordinates = [...this.state.routeCoordinates]
-                            var distanceTravelled = this.state.distanceTravelled
-                            this.props.navigation.navigate('SaveActivity', { snapshoturi: uri, routeCoordinates: routeCoordinates, distance: distanceTravelled, address: addressComponent })
-                            this.clearStates()
-                        })
+                        Geocoder.from(this.state.routeCoordinates[0].latitude, this.state.routeCoordinates[0].longitude)
+                            .then(json => {
+                                var addressComponent = json.results[0].formatted_address;
+                                console.log(addressComponent)
+                                var routeCoordinates = [...this.state.routeCoordinates]
+                                var distanceTravelled = this.state.distanceTravelled
+                                this.props.navigation.navigate('SaveActivity', { snapshoturi: uri, routeCoordinates: routeCoordinates, distance: distanceTravelled, address: addressComponent })
+                                this.clearStates()
+                            })
 
-                });
-            })
+                    });
+                })
 
+            }else{
+                showToast('You need to move in order to proceed')
+            }
+        }else{
+            showToast('Recording')
         }
-
         this.setState({ recordText: text, recording: !this.state.recording })
+
 
     }
 
     getRegionForCoordinates(points) {
-        // points should be an array of { latitude: X, longitude: Y }
-        let minX, maxX, minY, maxY;
-      
-        // init first point
-        ((point) => {
-          minX = point.latitude;
-          maxX = point.latitude;
-          minY = point.longitude;
-          maxY = point.longitude;
-        })(points[0]);
-      
-        // calculate rect
-        points.map((point) => {
-          minX = Math.min(minX, point.latitude);
-          maxX = Math.max(maxX, point.latitude);
-          minY = Math.min(minY, point.longitude);
-          maxY = Math.max(maxY, point.longitude);
-        });
-      
-        const midX = (minX + maxX) / 2;
-        const midY = (minY + maxY) / 2;
-        const deltaX = (maxX - minX);
-        const deltaY = (maxY - minY);
-      
-        return {
-          latitude: midX,
-          longitude: midY,
-          latitudeDelta: deltaX,
-          longitudeDelta: deltaY
-        };
-      }
+        try {
+
+
+            // points should be an array of { latitude: X, longitude: Y }
+            let minX, maxX, minY, maxY;
+
+            // init first point
+            ((point) => {
+                minX = point.latitude;
+                maxX = point.latitude;
+                minY = point.longitude;
+                maxY = point.longitude;
+            })(points[0]);
+
+            // calculate rect
+            points.map((point) => {
+                minX = Math.min(minX, point.latitude);
+                maxX = Math.max(maxX, point.latitude);
+                minY = Math.min(minY, point.longitude);
+                maxY = Math.max(maxY, point.longitude);
+            });
+
+            const midX = (minX + maxX) / 2;
+            const midY = (minY + maxY) / 2;
+            const deltaX = (maxX - minX);
+            const deltaY = (maxY - minY);
+
+            return {
+                latitude: midX,
+                longitude: midY,
+                latitudeDelta: deltaX,
+                longitudeDelta: deltaY
+            };
+        } catch (error) {
+
+        }
+    }
     render() {
         return (
 
@@ -247,9 +278,12 @@ class Record extends Component {
                 >
                     <Polyline coordinates={this.state.routeCoordinates} strokeWidth={4} strokeColor={'blue'} />
                 </MapView>
-                <Button
+                <Button rounded
                     onPress={() => this.btnOnpress()}
-                    style={styles.button}><Text>{this.state.recordText}</Text></Button>
+                    style={styles.button}>
+                    {/* <Text style={{ color: 'black' }}>{this.state.recordText}</Text> */}
+                    <Icon style={{color:'#6F952C',fontSize:30}} name={(this.state.recordText == 'RECORD')?'ios-play':'ios-square'}></Icon>
+                </Button>
                 {/* <Button
                     onPress={() => this.geoCode()}
                     style={{position:"absolute",bottom:0}}><Text>{this.state.recordText}</Text></Button> */}
@@ -269,7 +303,12 @@ const styles = StyleSheet.create({
     },
     button: {
         position: 'absolute',
-        bottom: 500
+        bottom: 30,
+        width:65,
+        height:65,
+        alignItems:'center',
+        justifyContent:'center',
+        backgroundColor:'#343A40'
     }
 });
 export default Record

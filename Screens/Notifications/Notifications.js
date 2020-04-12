@@ -15,15 +15,15 @@ function timeDifference(current, previous) {
     var elapsed = current - previous;
 
     if (elapsed < msPerMinute) {
-        return Math.round(elapsed / 1000) + ' seconds ago';
+        return 'New';
     }
 
     else if (elapsed < msPerHour) {
-        return Math.round(elapsed / msPerMinute) + ' minutes ago';
+        return 'New';
     }
 
     else if (elapsed < msPerDay) {
-        return Math.round(elapsed / msPerHour) + ' hours ago';
+        return 'New';
     }
 
     else if (elapsed < msPerMonth) {
@@ -64,18 +64,21 @@ class Notifications extends Component {
             var backColor = []
             Object.keys(datas).map(igKey => {
                 var seen = datas[igKey].seen
-
-                if (seen != undefined) {
-                    Object.keys(seen).some(key => {
-                        if (key == globalUserID) {
-                            backColor.push("white")
-                            return true
-                        }else{
-                            backColor.push('#cde1f9')
-                        }
-                    })
-                } else {
-                    backColor.push('#cde1f9')
+                if (globalUserData.datecreated < datas[igKey].datePosted) {
+                    if (seen != undefined) {
+                        Object.keys(seen).some(key => {
+                            if (key == globalUserID) {
+                                backColor.push("white")
+                                return true
+                            } else {
+                                backColor.push('#cde1f9')
+                            }
+                        })
+                    } else {
+                        backColor.push('#cde1f9')
+                    }
+                }else{
+                    delete datas[igKey]
                 }
             })
 
@@ -102,13 +105,13 @@ class Notifications extends Component {
         if (str.length > 10) str = str.substring(0, 40) + "...";
         return str
     }
-    onPressList(igKey,index) {
+    onPressList(igKey, index) {
         var datas = firebase.database().ref('post_races/' + igKey + '/seen/' + globalUserID)
-        datas.set('true').then(()=>{
+        datas.set('true').then(() => {
             var bcolor = this.state.backColor
             bcolor[index] = 'white'
-            this.setState({backColor:bcolor})
-            this.props.navigation.navigate('RacesInfo', {raceinfo: this.state.races[igKey],id:igKey})
+            this.setState({ backColor: bcolor })
+            this.props.navigation.navigate('RacesInfo', { raceinfo: this.state.races[igKey], id: igKey })
         })
     }
 
@@ -117,17 +120,17 @@ class Notifications extends Component {
             <Container>
 
                 <Content>
-                    <NotificationHeader navigation={this.props.navigation}/>
+                    <NotificationHeader navigation={this.props.navigation} />
                     <List>
-                        {Object.keys(this.state.races).map((igKey,index) => {
+                        {Object.keys(this.state.races).map((igKey, index) => {
                             return (
-                                <ListItem noIndent style={{ backgroundColor: this.state.backColor[index] }} onPress={() => this.onPressList(igKey,index)}>
+                                <ListItem noIndent style={{ backgroundColor: this.state.backColor[index] }} onPress={() => this.onPressList(igKey, index)}>
                                     <Body >
                                         <Text>{this.state.races[igKey].raceTitle}</Text>
                                         <Text note>{this.wordLimitter(this.state.races[igKey].raceInfo)}</Text>
                                     </Body>
                                     <Right>
-                                        <Text note>{timeDifference(Date.now(), toTimestamp(this.state.races[igKey].datePosted))}</Text>
+                                        <Text note>{timeDifference(Date.now(), this.state.races[igKey].datePosted)}</Text>
                                     </Right>
                                 </ListItem>
                             )

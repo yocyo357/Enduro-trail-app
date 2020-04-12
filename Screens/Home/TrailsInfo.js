@@ -6,7 +6,8 @@ import {
     Dimensions,
     FlatList,
     TouchableOpacity,
-    ToastAndroid
+    ToastAndroid,
+    Modal as Modal1
 } from 'react-native';
 import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right, Item, H3, H2, H1 } from 'native-base';
 import TrailHeader from '../../Headers/TrailsHeader'
@@ -16,6 +17,7 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import firebase from 'firebase'
 import Spinner from 'react-native-loading-spinner-overlay';
+import ImageView from 'react-native-image-view';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenHeigth = Math.round(Dimensions.get('window').height);
 var userRate = 0
@@ -55,7 +57,10 @@ class TrailInfo extends Component {
             trailId: '',
             prevRating: '',
             isLoading: false,
-            totalRating: 0
+            totalRating: 0,
+            imageview: [],
+            imageviewVisible: false,
+            imageindex: 0
         };
     }
     componentDidMount() {
@@ -100,6 +105,14 @@ class TrailInfo extends Component {
             title: infos.trailTitle
         })
 
+        var imgdata = []
+        if (infos.Images != undefined) {
+            infos.Images.map(img => {
+                imgdata.push({ source: { uri: img } })
+            })
+        }
+        this.setState({ imageview: imgdata })
+
         var markers = []
         markers.push({ latitude: trail[0].latitude, longitude: trail[0].longitude, title: 'Start' })
         markers.push({ latitude: trail[trail.length - 1].latitude, longitude: trail[trail.length - 1].longitude, title: 'End' })
@@ -132,7 +145,7 @@ class TrailInfo extends Component {
     }
     getPrevRating(infos) {
         try {
-            var prev = infos.Ratings[globalUserID]
+            var prev = (infos.Ratings[globalUserID] != undefined)?infos.Ratings[globalUserID] :0
             this.setState({ prevRating: prev })
         } catch (error) {
             // alert(error)
@@ -145,7 +158,9 @@ class TrailInfo extends Component {
         return (
 
             <View style={{ flex: 1 / 2, flexDirection: 'column' }}>
-                <Image source={{ uri: item }} style={styles.itemImage} />
+                <TouchableOpacity onPress={() => this.onPressImage(index)}>
+                    <Image source={{ uri: item }} style={styles.itemImage} />
+                </TouchableOpacity>
             </View>
 
         )
@@ -181,13 +196,18 @@ class TrailInfo extends Component {
         })
 
     }
-
+    onPressImage(index) {
+        this.setState({
+            imageviewVisible: true,
+            imageindex: index
+        })
+    }
 
     render() {
 
         return (
             <Container>
-                <TrailHeader navigation={this.props.navigation} title={this.state.title} showRating={this.showRating} totalRating={this.state.totalRating}/>
+                <TrailHeader navigation={this.props.navigation} title={this.state.title} showRating={this.showRating} totalRating={this.state.totalRating} />
                 {/* <Text>{this.state.trails.routeCoordinates.length}}</Text> */}
                 <View style={styles.container}>
 
@@ -225,7 +245,7 @@ class TrailInfo extends Component {
                                 onFinishRating={this.ratingCompleted}
                             />
                             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 20, alignSelf: 'center' }}>
-                                <H2 style={{marginTop:5}}>{this.state.totalRating} </H2>
+                                <H2 style={{ marginTop: 5 }}>{this.state.totalRating} </H2>
                                 <Icon name="star" style={{ fontSize: 30, color: 'grey' }} />
                             </View>
                             <TouchableOpacity style={{ position: 'absolute', bottom: 20, right: 20 }}
@@ -234,7 +254,7 @@ class TrailInfo extends Component {
                             </TouchableOpacity>
                             <TouchableOpacity style={{ position: 'absolute', top: 15, right: 20 }}
                                 onPress={this.showRating} >
-                                <Icon name="close" style={{color:'grey'}}/>
+                                <Icon name="close" style={{ color: 'grey' }} />
                             </TouchableOpacity>
                         </View>
                     </Modal>
@@ -277,14 +297,14 @@ class TrailInfo extends Component {
                                                 <Row style={styles.row}>
                                                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                                         <Text style={{ color: 'grey' }}>Distance</Text>
-                                                        <H1>{(this.state.distance * 1.60934).toFixed(2)} KM</H1>
+                                                        <H1 style={{ marginTop: 5 }}>{(this.state.distance * 1.60934).toFixed(2)} KM</H1>
 
                                                     </View>
                                                 </Row>
                                                 <Row style={styles.row}>
                                                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                                         <Text style={{ color: 'grey' }}>Activity</Text>
-                                                        <H1>{this.state.activity}</H1>
+                                                        <H1 style={{ marginTop: 5 }}>{this.state.activity}</H1>
 
                                                     </View>
                                                 </Row>
@@ -294,13 +314,13 @@ class TrailInfo extends Component {
                                                 <Row style={styles.row}>
                                                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                                         <Text style={{ color: 'grey' }}>Difficulty</Text>
-                                                        <H1>{this.state.difficulty}</H1>
+                                                        <H1 style={{ marginTop: 5 }}>{this.state.difficulty}</H1>
                                                     </View>
                                                 </Row>
                                                 <Row style={styles.row}>
                                                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                                         <Text style={{ color: 'grey' }}>Type</Text>
-                                                        <H1>{this.state.type}</H1>
+                                                        <H1 style={{ marginTop: 5 }}>{this.state.type}</H1>
                                                     </View>
                                                 </Row>
                                             </Col>
@@ -335,6 +355,12 @@ class TrailInfo extends Component {
                     visible={this.state.isLoading}
                     textContent={'Loading...'}
                     textStyle={styles.spinnerTextStyle}
+                />
+                <ImageView
+                    images={this.state.imageview}
+                    imageIndex={this.state.imageindex}
+                    isVisible={this.state.imageviewVisible}
+                    onClose={() => this.setState({imageviewVisible: false})}
                 />
             </Container >
         )

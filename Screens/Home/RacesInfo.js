@@ -38,8 +38,10 @@ class RaceInfo extends Component {
         info.push({ title: 'No. of Riders:', value: datas.noOfRiders })
         info.push({ title: 'No. of Stages:', value: datas.raceNoOfStages })
         this.setState({ infos: [...info] })
+        
+        this.getTrail(datas.raceTrails)
 
-        this.setState({ raceInfo: this.props.route.params.raceinfo }, function () {
+        this.setState({ raceInfo: this.props.route.params.raceinfo}, function () {
             // console.log(this.state.raceInfo.raceCategory.length)
         })
         // console.log(this.props.route.params.raceinfo.raceCategory)
@@ -48,6 +50,24 @@ class RaceInfo extends Component {
         this.getData()
     }
 
+    getTrail(trailsid){
+        // console.log(trailsid)
+        var traildatas = []
+        firebase.database().ref('Trails/').once('value', snapshot => {
+            var datas= snapshot.val()
+            Object.keys(datas).map((igKey,index)=>{
+                if(trailsid.some(tid => tid.value === igKey)){
+                    datas[igKey].igKey = igKey
+                    traildatas.push(datas[igKey])
+                    var obj = {'igKey':igKey}
+                }
+            })
+            // alert(traildatas[0].igKey)
+            // traildatas[1].igK ='asdsad'
+            console.log(traildatas)
+            this.setState({trails: traildatas})
+        })
+    }
     getData() {
         firebase.database().ref('post_races/' + this.props.route.params.id + '/raceCategory').once('value', snapshot => {
             let btnJoin = []
@@ -151,7 +171,7 @@ class RaceInfo extends Component {
                             return (
                                 <Row style={{ margin: 5 }}>
                                     <Col><Text style={{ color: 'grey' }}>{info.title}</Text></Col>
-                                    <Col><Text>{info.value}</Text></Col>
+                                    <Col><Text style={{marginRight:15}}>{info.value}</Text></Col>
                                 </Row>
                             )
                         })}
@@ -185,7 +205,28 @@ class RaceInfo extends Component {
                                 </ListItem>
                             )
                         })}
-                        <H2 style={{ marginLeft: 15,marginTop:15, color: 'grey' }}>Trails</H2>
+                        
+                    </List>
+                    <H2 style={{ marginLeft: 15,marginTop:15, color: 'grey' }}>Trails</H2>
+                    <List>
+                        {this.state.trails.map(trail =>{
+                            return(
+                                <ListItem>
+                                <Left>
+                                    <Text>{trail.trailTitle}</Text>
+                                </Left>
+                                <Right>
+                                    <TouchableOpacity 
+                                    onPress={()=>this.props.navigation.navigate('TrailInfo', { trails: trail, id: trail.igKey })}
+                                    >
+                                        <Text style={{ color: 'blue' }}>
+                                           View
+                                        </Text>
+                                    </TouchableOpacity>
+                                </Right>
+                            </ListItem>
+                            )
+                        })}
                     </List>
                 </Content>
             </Container >
