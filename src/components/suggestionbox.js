@@ -94,7 +94,7 @@ class suggestionbox extends Component {
         return (
             <div className="suggestionBox-container">
                 <h2 className="header-text-suggestion">New Trails?</h2>
-                <div>
+                <div className='centerDiv'>
                     <div className="col-lg-12"></div>
                     <div>
                         <table className="table table-striped table-dark table-bordered">

@@ -246,7 +246,7 @@ class home extends Component {
                                     <div className="card" style={{ width: '100%', marginTop: '1.5%', marginBottom: '1.5%' }}>
                                         <div className="card-body" style={{ backgroundColor: '#343A40', borderRadius: '5px' }}>
                                             <h5 className="card-title" style={{ color: 'white' }}>{this.state.trailValues[igKey].raceTitle}<span data-toggle="modal" data-target="#edit" onClick={() => this.handleEditPost(this.state.trailValues[igKey].raceTitle, this.state.trailValues[igKey].eventDate, this.state.trailValues[igKey].raceInfo, this.state.trailValues[igKey].noOfRiders, igKey,this.state.trailValues[igKey].datePosted, this.state.trailValues[igKey].imageURL, this.state.trailValues[igKey].trailID, this.state.trailValues[igKey].raceType, this.state.trailValues[igKey].raceCategory )} style={{ float: 'right', color: '#618930', cursor: 'pointer' }}><FaEdit /></span></h5>
-                                            <p style={{ color: '#6F747C', fontFamily: 'Poppins', fontSize: '14px', marginTop: '-2%' }}>Posted on {this.state.trailValues[igKey].datePosted}</p>
+                                            <p className='postedOnCardTitleHome' style={{ color: '#6F747C', fontFamily: 'Poppins', fontSize: '14px'}}>Posted on {this.state.trailValues[igKey].datePosted}</p>
                                             <p style={{ color: 'white', fontFamily: 'Poppins', fontSize: '14px', marginTop: '1%' }}>When: <span style={{ color: '#6F747C', fontFamily: 'Poppins' }}>{this.state.trailValues[igKey].eventDate}</span></p>
                                             <p className="card-text" style={{ color: 'white', textAlign: 'justify'}}>{this.state.trailValues[igKey].raceInfo}</p>
                                             <img src={this.state.trailValues[igKey].imageURL} className="card-img-top" alt="..." style={{ width: '100%', marginBottom: '1.5%' }} />
@@ -279,7 +279,7 @@ class home extends Component {
                 
                 {/* New Scream Modal Area */}
                 <div className="modal fade homeModalContainer" id="exampleModalScrollable1" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-scrollable" role="document">
+                    <div className="modal-dialog modal-dialog-scrollable modalHome" role="document">
                         <div className="modal-content modal-content-home">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="exampleModalScrollableTitle">New Scream?</h5>
@@ -334,14 +334,14 @@ class home extends Component {
                             <div className="modal-header">
                                 <h5 className="modal-title" id="exampleModalScrollableTitle">{this.state.trailName}</h5>
 
-                                <h6 style={{ color: 'grey', fontSize: '12px', marginTop: '6%', marginLeft: '-22%' }}>{this.state.modalTrailAdd}</h6>
+                                <h6 className='trailAddressModal' style={{ color: 'grey', fontSize: '12px' }}>{this.state.modalTrailAdd}</h6>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div className="modal-body home-modal-body">
                                 <label style={{fontFamily: 'Poppins'}}>Trail Name: <span>{this.state.modalTitle }</span></label><br />
-                                <label>Description: {this.state.modalDesc}</label>
+                                <label>Description: <strong>{this.state.modalDesc}</strong></label>
                                 <img src={this.state.myimage} style={{ width: '100%', height: '400px' }} />
                             </div>
                         </div>

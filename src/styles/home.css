@@ -1,3 +1,100 @@
+@media (min-width: 1281px) {
+	.float{
+		position:fixed;
+		width:60px;
+		height:60px;
+		bottom:40px;
+		right:40px;
+		background-color:#618930;
+		color:#FFF;
+		border-radius:50px;
+		text-align:center;
+		box-shadow: 2px 2px 3px #999;
+	}
+	
+	.float-tooltip {
+		transition: all .2s ease-in-out;
+	}
+	
+	.float-tooltip:hover {
+		transform: scale(1.2);
+		color: white;
+	}
+	
+	.my-float{
+		margin-top:22px;
+	}
+	
+	.homeModalContainer {
+		height: 120% !important;
+		/* width: 1000px; */
+		
+		
+	}
+
+	.modalHome {
+		max-width: 40% !important;
+	}
+	
+	.modal-header {
+		border: 0px solid #0C0D0A !important;
+	}
+	
+	.modal-title{
+		font-size: 20px;
+		font-family: 'Poppins', sans-serif;
+		font-weight: bold;
+		
+	}
+	
+	.modal-content-home{
+		border: 3px solid #618930 !important;
+		background-color: #0C0D0A !important;
+	}
+	
+	.ExcelTable2007 {
+		color: #FFF;
+	}
+	
+	/* .button-enter {
+		transition: all 0.5s;
+		cursor: pointer;
+	} */
+
+	.postedOnCardTitleHome {
+		margin-top: -1% !important;
+	}
+	
+	.modal-title {
+		color: #FFF;
+	}
+
+	.modal-title {
+		width: 100%;
+	}
+
+	.trailAddressModal {
+		margin-top: '6%';
+		/* float: left; */
+		margin-left: -40% !important;
+	}
+	
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+	.postedOnCardTitleHome {
+		margin-top: -1% !important;
+	}
+	
+  }
+
+  .trailAddressModal {
+	margin-top: '6%';
+	/* float: left; */
+	margin-left: -60%;
+}
+
+
 .float{
 	position:fixed;
 	width:60px;
@@ -36,7 +133,8 @@
 .modal-title{
     font-size: 20px;
     font-family: 'Poppins', sans-serif;
-    font-weight: bold;
+	font-weight: bold;
+	color: #FFF;
     
 }
 
