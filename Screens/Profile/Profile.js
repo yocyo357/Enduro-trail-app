@@ -1,63 +1,18 @@
 import React, { Component } from 'react';
 import {
-<<<<<<< HEAD
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  FlatList
-
-
+  StyleSheet, View, Image, TouchableOpacity, ScrollView, FlatList, TextInput
 
 } from 'react-native';
-import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right } from 'native-base';
+import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right, H1, Item, Input } from 'native-base';
 
 import firebase, { storage } from 'firebase'
 import { config } from '../../Firebase/index'
+import Modal from 'react-native-modal';
+import { Col, Row, Grid } from 'react-native-easy-grid';
 
 if (!firebase.apps.length) {
   firebase.initializeApp(config())
 }
-
-age:
-"10"
-confirmPassword:
-"password"
-firstname:
-"userfirst"
-imagename:
-"userdefault"
-lastname:
-"userlast"
-password:
-"password"
-team:
-"Teamos"
-username:
-"user1"
-
-// Race Title, Date Posted, Race Description (info., location, reace difficulty, race category)
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'First Item',
-    Description: 'A race is a grouping of humans based on shared physical or social qualities into categories generally viewed as distinct by society',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-    Description: 'A race is a grouping of humans based on shared physical or social qualities into categories generally viewed as distinct by society',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-    Description: 'A race is a grouping of humans based on shared physical or social qualities into categories generally viewed as distinct by society',
-  },
-];
-
-
-
 
 export default class Profile extends Component {
 
@@ -65,165 +20,347 @@ export default class Profile extends Component {
     super(props);
 
     this.state = {
+      isModalVisible: false,
+
+      userfirstname: "",
+      userlastname: "",
+      userimageuri: "",
+      userteam: "",
+
+      key: "",
+      firstname: "",
+      lastname: "",
+      timestamp: "",
+      userimageuri: "",
+      activity: "",
+      trailAddress: "",
+      description: "",
+      difficulty: "",
+      trailTitle: "",
+      type: "",
+ 
+
       userdata: [],
-
-=======
-    View,
-    Text,
-} from 'react-native';
-
-class Profile extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            userdata: []
-        };
-    }
-    componentDidMount() {
-        console.log(globalUserData)
-        this.setState({ userdata:  globalUserData  })
-    }
-    render() {
-        let {userdata} = this.state
-        return (
-            <View>
-                <Text>{globalUserID}</Text>
-                <Text>{userdata.firstname}</Text>
-                <Text>{userdata.lastname}</Text>
-                <Text>{userdata.username}</Text>
-                <Text>{userdata.password}</Text>
-                <Text>{userdata.imageuri}</Text>
-                <Text>{userdata.age}</Text>
-            </View>
-        )
->>>>>>> 5c499b75a7b8187f12d273c0e65ebd97c0b12cc4
     }
 
   }
-
-  //  return (  
-
+ 
 
 
-  // );
+  showModal = (firstname, lastname, timestamp, userimageuri, activity, trailAddress, description, difficulty, trailTitle, type, key) => {
+
+    var date = new Date(timestamp).toLocaleDateString("en-US")
+    // var time = new Date(timestamp).toLocaleTimeString("en-US")
+
+    this.setState({
+      isModalVisible: true,
+      firstname: firstname,
+      lastname: lastname,
+      timestamp: date + " " + "",
+      userimageuri: userimageuri,
+      activity: activity,
+      trailAddress: trailAddress,
+      description: description,
+      difficulty: difficulty,
+      trailTitle: trailTitle,
+      type: type,
+      key: key
+ 
+    })
+    console.log(key +'  true  '+ globalUserID );
+    // alert(">>>"+firstname +"<<<"+lastname)
+  }
 
   async componentDidMount() {
-
     var that = this
-    firebase.database().ref('Users/').once('value', function (snapshot) {
+    firebase.database().ref('Trails/').on('value', function (snapshot) {
       var returnArray = [];
       snapshot.forEach(function (snap) {
         var item = snap.val();
-        item.key = snap.key;
-
-        returnArray.push(item);
+        if(globalUserID.includes(item.userId)){
+          item.key = snap.key;
+          // console.log(item.userId+ '  true  '+ globalUserID );
+          returnArray.push(item);
+        }
       });
       that.setState({ userdata: returnArray })
- 
     });
 
+ 
+
+    firebase.database().ref('Users/').once('value', function (snapshot) {
+      // var returnArray = [];
+      snapshot.forEach(function (snap) {
+        var item2 = snap.val();
+        if(globalUserID.includes(snap.key)){
+          console.log(snap.key+ '  true  '+ globalUserID );
+          that.setState({
+            userfirstname: item2.firstname,
+            userlastname: item2.lastname,
+            userimageuri: item2.imageuri,
+            userteam: item2.team
+          })
+          
+          // returnArray.push(item);
+        }
+      });
+      // that.setState({ userdata: returnArray })
+    });
 
   }
 
-  render() {
+  UpdateProfile() {
+    const {firstname, lastname, activity, description, trailAddress, difficulty, trailTitle, type,key } = this.state;
 
-    console.log(this.state.userdata);
-    console.log('swe');
+        console.log(firstname + '    '+key);
+    firebase.database().ref('Trails/'+key).update({
+      firstname: firstname,
+      lastname: lastname,
+      activity: activity,
+      description: description,
+      trailAddress: trailAddress,
+      difficulty: difficulty,
+      trailTitle: trailTitle,
+      type: type
+  });
+  alert('Updated Successfully')
+  this.setState({ isModalVisible: false })
+    
+}
+
+
+  render() {
+ 
+    // console.log('swe');
+    var date;
+ 
     return (
       <View style={styles.container}>
         <ScrollView>
           <View style={styles.header}></View>
-          <Image style={styles.avatar} source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar6.png' }} />
+          <Image style={styles.avatar} source={{ uri: this.state.userimageuri }} />
           <View style={styles.body}>
             <View style={styles.bodyContent}>
-              <Text style={styles.name}>John Doe</Text>
-              <Text style={styles.info}>UX Designer / Mobile developer</Text>
-              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
+            <Text style={styles.name}>{this.state.userfirstname+' '+this.state.userlastname} </Text>
+              <Text style={styles.info}>{this.state.userteam}</Text>
+              {/* <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text> */}
 
 
 
             </View>
           </View>
-
-          <View style={styles.bodyContent}>
-
-            <TouchableOpacity style={styles.buttonContainer}>
-              <Text>Opcion 1</Text>
-            </TouchableOpacity>
-          </View>
-
+ 
           <FlatList
             data={this.state.userdata}
             renderItem={({ item }) =>
-
-              // <Text>{item.firstname}</Text>
+ 
               <View style={{ margin: 25 }}>
                 <Content>
                   <Card style={{ flex: 0 }}>
-                    <CardItem>
+                  <CardItem>
                       <Left>
-                        <Thumbnail source={{ uri: 'https://reactjs.org/logo-og.png' }} />
+                        <Thumbnail source={{ uri: item.userimageuri }} style={{height:40, width: 40, borderRadius: 40/2}} />
                         <Body>
-                          <Text>{item.firstname}</Text>
-                          <Text note>April 15, 2016</Text>
+                          <Text style={styles.textMedium}>{item.firstname} {item.lastname}</Text>
+                          <Text style={styles.textSmall}>{date = new Date(item.timestamp).toLocaleDateString("en-US")}</Text>
                         </Body>
                       </Left>
-                    </CardItem>
-
-                    <CardItem>
-                      <Left>
-                        <Body>
-
-                          <Text>{item.firstname}</Text>
-                          <Text note>{item.lastname}</Text>
-                        </Body>
-                      </Left>
-                    </CardItem>
-
-                    <CardItem>
-                      <Left>
-                        <Body>
-
-                          <Text>{item.firstname}</Text>
-                          <Text note>{item.lastname}</Text>
-                        </Body>
-                      </Left>
+                      <Right style={{ width: 20, marginTop: -20, marginRight: -15}}>
+                        <Button transparent textStyle={{ color: '#87838B' }}>
+                          {/* <Icon name="logo-github" /> */}
+                          <TouchableOpacity onPress={() => this.showModal(item.firstname, item.lastname, item.timestamp, item.userimageuri, item.activity, item.trailAddress, item.description, item.difficulty, item.trailTitle, item.type, item.key)} ><Text>Edit</Text></TouchableOpacity>
+                        </Button>
+                      </Right>
                     </CardItem>
 
                     <CardItem cardBody>
-                      <Image source={{ uri: 'https://reactjs.org/logo-og.png' }} style={{ height: 200, width: null, flex: 1, marginLeft: 15, marginRight: 15 }} />
+                      <Image source={{ uri: item.mapImage }} style={{ height: 200, width: null, flex: 1, marginLeft: 8, marginRight: 8}} />
+                    </CardItem>
+                    
+                    <CardItem >
+                      <Left style={{ marginLeft: -10}} >
+                        <Body>
+                          <Text style={styles.textMedium}>{item.activity}</Text>
+                          <Text style={styles.textSmall} note>{item.description}</Text>
+                        </Body>
+                      </Left>
                     </CardItem>
                     <CardItem>
                       <Left>
                         {/* <Button transparent>
                   <Icon active name="thumbs-up" />
                   <Text>12 Likes</Text>
-                </Button> */}
+                  </Button> */}
                       </Left>
                       <Body>
                         {/* <Button transparent>
                   <Icon active name="chatbubbles" />
                   <Text>4 Comments</Text>
-                </Button> */}
+                  </Button> */}
                       </Body>
-                      <Right>
-                        <Button transparent textStyle={{ color: '#87838B' }}>
-                          <Icon name="logo-github" />
-                          <Text>View</Text>
-                        </Button>
-                      </Right>
+                      
                     </CardItem>
-
                   </Card>
                 </Content>
 
-
               </View>
-            
-          
-          }
+
+
+            }
             keyExtractor={item => item.id}
           />
+
+          <Modal
+            testID={'modal'}
+            isVisible={this.state.isModalVisible}
+            onSwipeComplete={this.close}
+            swipeDirection={['up', 'left', 'right', 'down']}
+            style={styles.view}>
+            <View style={styles.content}>
+              <View style={{ position: "absolute", top: 10, right: 10, zIndex: 50 }}>
+                <TouchableOpacity onPress={() => this.setState({ isModalVisible: false })} >
+                  <Icon name="close" />
+                </TouchableOpacity>
+              </View>
+              <Content>
+                {/* <Thumbnail style={{ width: 40, height: 40 }} source={{ uri: this.state.avatar }} /> */}
+                {/* <CardItem>
+                  <Left>
+                    <Thumbnail source={{ uri: this.state.userimageuri }} />
+                    <Body>
+                      <TextInput style={{ borderBottomColor: "black" }}>{this.state.firstname + " " + this.state.lastname}</TextInput>
+                      <Text note>{this.state.timestamp}</Text>
+                    </Body>
+                  </Left>
+                </CardItem>
+                <CardItem>
+                  <Body>
+                    <TextInput>{this.state.address}</TextInput>
+                  </Body>
+                </CardItem> */}
+                <CardItem>
+                  <Body>
+
+                    {/* Firstname */}
+                    <Text style={styles.textview}> First Name </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Firstname"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.firstname}
+                      onChangeText={firstname => this.setState({ firstname })}
+                    />
+
+                    {/* Lastname */}
+                    <Text style={styles.textview}> Lastname </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Lastname"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.lastname}
+                      onChangeText={lastname => this.setState({ lastname })}
+                    />
+
+                    {/* Activity */}
+                    <Text style={styles.textview}> Activity </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Activity"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.activity}
+                      onChangeText={activity => this.setState({ activity })}
+                    />
+
+                    {/* Description */}
+                    <Text style={styles.textview}> Description </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Description"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.description}
+                      onChangeText={description => this.setState({ description })}
+                    />
+
+                    {/* Trail Title */}
+                    <Text style={styles.textview}> Trail Title </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Trail Title"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.trailTitle}
+                      onChangeText={trailTitle => this.setState({ trailTitle })}
+                    />
+
+                    {/* Trail Address */}
+                    <Text style={styles.textview}> Trail Address </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Trail Address"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.trailAddress}
+                      onChangeText={trailAddress => this.setState({ trailAddress })}
+                    />
+
+                    {/* Difficulty */}
+                    <Text style={styles.textview}> Difficulty </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Difficulty"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.difficulty}
+                      onChangeText={difficulty => this.setState({ difficulty })}
+                    />
+
+                    {/* Type */}
+                    <Text style={styles.textview}> Type </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Type"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.type}
+                      onChangeText={type => this.setState({ type })}
+                    />
+
+                  </Body>
+                </CardItem>
+
+                <FlatList
+                  data={this.state.images}
+                  style={{ flex: 1 }}
+                  renderItem={this.renderRow}
+                  numColumns={5}>
+
+                </FlatList>
+              </Content>
+
+              <Button style={styles.button} onPress={() => this.UpdateProfile()}><Text> UPDATE </Text></Button>
+            </View>
+            {/* <DefaultModalContent onPress={this.close} /> */}
+          </Modal>
 
 
         </ScrollView>
@@ -235,8 +372,11 @@ class Profile extends Component {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: "#00BFFF",
+    backgroundColor: '#343A40',
     height: 200,
+  },
+  textview: {
+    color: '#a9a9a9',
   },
   avatar: {
     width: 130,
@@ -302,4 +442,75 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
   },
+  content: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 22,
+    borderRadius: 4,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  contentTitle: {
+    fontSize: 20,
+    marginBottom: 12,
+  },
+  view: {
+    justifyContent: 'flex-end',
+    margin: 0,
+  },
+  row: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 10
+  },
+
+  content: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 22,
+    borderRadius: 4,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  contentTitle: {
+    fontSize: 20,
+    marginBottom: 12,
+  },
+
+  view: {
+    justifyContent: 'flex-end',
+    margin: 0,
+  },
+  item: {
+    margin: 5,
+    backgroundColor: '#ADB8CA',
+    borderRadius: 10,
+    borderColor: 'transparent'
+  }, input: {
+    marginLeft: 5
+  }, button: {
+    borderRadius: 10,
+    marginTop: 30
+  },
+  inputBox: {
+    width: 280,
+    height: 45,
+    marginLeft: 20,
+    paddingHorizontal: 16, //padding left sa Email
+    marginVertical: 5, //margin between email and password
+    fontSize: 18,
+    color: '#696969'
+  },
+  textMedium: {
+    fontSize: 15,
+    width: 200,
+  },
+  textSmall: {
+    fontSize: 14,
+    color: '#757575' 
+  },
+  textLarge: {
+    fontSize: 25
+  }
+
+
+
 });
