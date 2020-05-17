@@ -1,17 +1,76 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet, View, Image, TouchableOpacity, ScrollView, FlatList, TextInput
+  StyleSheet, View, Image, TouchableOpacity, ScrollView, FlatList, TextInput, Picker
 
 } from 'react-native';
 import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right, H1, Item, Input } from 'native-base';
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase, { storage } from 'firebase'
 import { config } from '../../Firebase/index'
+import ImagePicker from 'react-native-image-picker';
 import Modal from 'react-native-modal';
-import { Col, Row, Grid } from 'react-native-easy-grid';
+
 
 if (!firebase.apps.length) {
   firebase.initializeApp(config())
+}
+
+var now = new Date();
+
+function uploadImage(uri, mime = 'image/png') {
+
+  return new Promise((resolve, reject) => {
+
+    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
+    const sessionId = new Date().getTime()
+    let uploadBlob = null
+
+    const imageRef = firebase.storage().ref().child('images/' + dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT"))
+
+    fs.readFile(uploadUri, 'base64')
+      .then((data) => {
+        return Blob.build(data, { type: `${mime};BASE64` })
+      })
+      .then((blob) => {
+        uploadBlob = blob
+
+        return imageRef.put(blob, { contentType: mime })
+      })
+      .then(() => {
+        uploadBlob.close()
+        return imageRef.getDownloadURL()
+      })
+      .then((url) => {
+
+        resolve(url)
+        // alert("uploaded reported")
+        storeReference(url)
+
+
+      })
+      .catch((error) => {
+        reject(error)
+        alert(error + "UPLOAD")
+      })
+  })
+
+  
+}
+ 
+const storeReference = (downloadUrl) => {
+  const { userfirstname, userlastname, uri, userteam, usergender, userUsername, userPassword, userkey } = this.state;
+  firebase.database().ref('Users/' + userkey).update({
+   firstname: userfirstname,
+   lastname: userlastname,
+   team: userteam,
+   gender: usergender,
+   username: userUsername,
+   password: userPassword,
+   confirmPassword: userPassword,
+   imageuri: downloadUrl,
+ });
+ alert('Updated Successfully')
+ this.setState({ isModalVisible2: false })
 }
 
 export default class Profile extends Component {
@@ -21,11 +80,21 @@ export default class Profile extends Component {
 
     this.state = {
       isModalVisible: false,
+      isModalVisible2: false,
+      uri: '',
 
       userfirstname: "",
       userlastname: "",
-      userimageuri: "",
+      imageuri: "",
       userteam: "",
+      userage: "",
+      usergender: "",
+      userUsername: "",
+      userPassword: "",
+      userConfirmPassword: "",
+      userkey: "",
+
+
 
       key: "",
       firstname: "",
@@ -38,13 +107,13 @@ export default class Profile extends Component {
       difficulty: "",
       trailTitle: "",
       type: "",
- 
+
 
       userdata: [],
     }
 
   }
- 
+
 
 
   showModal = (firstname, lastname, timestamp, userimageuri, activity, trailAddress, description, difficulty, trailTitle, type, key) => {
@@ -65,11 +134,42 @@ export default class Profile extends Component {
       trailTitle: trailTitle,
       type: type,
       key: key
- 
+
     })
-    console.log(key +'  true  '+ globalUserID );
+    console.log(key + '  true  ' + globalUserID);
     // alert(">>>"+firstname +"<<<"+lastname)
   }
+
+
+  showModal2 = () => {
+
+    this.setState({
+      isModalVisible2: true,
+ 
+    })
+ 
+  }
+
+  imagePickerHandler =  () => {
+
+    ImagePicker.showImagePicker((response) => {
+        // console.log('Response = ', response);
+
+        if (response.didCancel) {
+            console.log('User cancelled image picker');
+        } else if (response.error) {
+            console.log('ImagePicker Error: ', response.error);
+        } else {
+            const source = { uri: response.uri };
+
+            this.setState({
+              uri: source
+            })
+          
+        }
+    });
+}
+  
 
   async componentDidMount() {
     var that = this
@@ -77,7 +177,7 @@ export default class Profile extends Component {
       var returnArray = [];
       snapshot.forEach(function (snap) {
         var item = snap.val();
-        if(globalUserID.includes(item.userId)){
+        if (globalUserID.includes(item.userId)) {
           item.key = snap.key;
           // console.log(item.userId+ '  true  '+ globalUserID );
           returnArray.push(item);
@@ -86,34 +186,73 @@ export default class Profile extends Component {
       that.setState({ userdata: returnArray })
     });
 
- 
+
 
     firebase.database().ref('Users/').once('value', function (snapshot) {
       // var returnArray = [];
       snapshot.forEach(function (snap) {
         var item2 = snap.val();
-        if(globalUserID.includes(snap.key)){
-          console.log(snap.key+ '  true  '+ globalUserID );
+        if (globalUserID.includes(snap.key)) {
+
           that.setState({
             userfirstname: item2.firstname,
             userlastname: item2.lastname,
-            userimageuri: item2.imageuri,
-            userteam: item2.team
+            imageuri: item2.imageuri,
+            userteam: item2.team,
+            userage: item2.age,
+            usergender: item2.gender,
+            userUsername: item2.username,
+            userPassword: item2.password,
+            userConfirmPassword: item2.confirmpassword,
+            userkey: snap.key
           })
-          
-          // returnArray.push(item);
+
         }
       });
       // that.setState({ userdata: returnArray })
     });
 
   }
+  UpdateUserProfile() {
+    const { userfirstname, userlastname, uri, userteam, usergender, userUsername, userPassword, userkey } = this.state;
+
+
+    uploadImage(uri).then(url => this.setState({ 
+      // showme: true,
+      // showme2: true,
+      // Description: '',
+      // Contact: '',
+      // PickerSumbong: 'ye'
+
+    }))
+
+
+    storeReference(url)
+
+    // firebase.database().ref('Users/' + userkey).update({
+    //   firstname: userfirstname,
+    //   lastname: userlastname,
+    //   team: userteam,
+    //   gender: usergender,
+    //   username: userUsername,
+    //   password: userPassword,
+    //   confirmPassword: userPassword,
+    //   imageuri: downloadUrl,
+    // });
+    // alert('Updated Successfully')
+    // this.setState({ isModalVisible2: false })
+
+  }
+
+  
+
+
 
   UpdateProfile() {
-    const {firstname, lastname, activity, description, trailAddress, difficulty, trailTitle, type,key } = this.state;
+    const { firstname, lastname, activity, description, trailAddress, difficulty, trailTitle, type, key } = this.state;
 
-        console.log(firstname + '    '+key);
-    firebase.database().ref('Trails/'+key).update({
+    console.log(firstname + '    ' + key);
+    firebase.database().ref('Trails/' + key).update({
       firstname: firstname,
       lastname: lastname,
       activity: activity,
@@ -122,50 +261,59 @@ export default class Profile extends Component {
       difficulty: difficulty,
       trailTitle: trailTitle,
       type: type
-  });
-  alert('Updated Successfully')
-  this.setState({ isModalVisible: false })
-    
-}
+    });
+    alert('Updated Successfully')
+    this.setState({ isModalVisible: false })
+
+  }
 
 
   render() {
- 
+
     // console.log('swe');
     var date;
- 
+
     return (
       <View style={styles.container}>
         <ScrollView>
           <View style={styles.header}></View>
-          <Image style={styles.avatar} source={{ uri: this.state.userimageuri }} />
+
+          <View style={styles.avatarCont}>
+            <View style={styles.imgExtraLargeContainer}>
+              <Image style={styles.profileimage} source={{ uri: this.state.imageuri }} />
+            </View>
+            <TouchableOpacity style={styles.editButton2} onPress={() => this.showModal2()}>
+              <MaterialCommunityIcons name="pencil" size={12} style={styles.socialIcon} />
+            </TouchableOpacity>
+
+          </View>
           <View style={styles.body}>
             <View style={styles.bodyContent}>
-            <Text style={styles.name}>{this.state.userfirstname+' '+this.state.userlastname} </Text>
-              <Text style={styles.info}>{this.state.userteam}</Text>
+              <Text style={styles.name}>{this.state.userfirstname + ' ' + this.state.userlastname} </Text>
+              <Text style={styles.info}>{this.state.userteam}  </Text>
               {/* <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text> */}
 
 
 
             </View>
           </View>
- 
+
           <FlatList
             data={this.state.userdata}
             renderItem={({ item }) =>
- 
+
               <View style={{ margin: 25 }}>
                 <Content>
                   <Card style={{ flex: 0 }}>
-                  <CardItem>
+                    <CardItem>
                       <Left>
-                        <Thumbnail source={{ uri: item.userimageuri }} style={{height:40, width: 40, borderRadius: 40/2}} />
+                        <Thumbnail source={{ uri: item.userimageuri }} style={{ height: 40, width: 40, borderRadius: 40 / 2 }} />
                         <Body>
                           <Text style={styles.textMedium}>{item.firstname} {item.lastname}</Text>
                           <Text style={styles.textSmall}>{date = new Date(item.timestamp).toLocaleDateString("en-US")}</Text>
                         </Body>
                       </Left>
-                      <Right style={{ width: 20, marginTop: -20, marginRight: -15}}>
+                      <Right style={{ width: 20, marginTop: -20, marginRight: -15 }}>
                         <Button transparent textStyle={{ color: '#87838B' }}>
                           {/* <Icon name="logo-github" /> */}
                           <TouchableOpacity onPress={() => this.showModal(item.firstname, item.lastname, item.timestamp, item.userimageuri, item.activity, item.trailAddress, item.description, item.difficulty, item.trailTitle, item.type, item.key)} ><Text>Edit</Text></TouchableOpacity>
@@ -174,11 +322,11 @@ export default class Profile extends Component {
                     </CardItem>
 
                     <CardItem cardBody>
-                      <Image source={{ uri: item.mapImage }} style={{ height: 200, width: null, flex: 1, marginLeft: 8, marginRight: 8}} />
+                      <Image source={{ uri: item.mapImage }} style={{ height: 200, width: null, flex: 1, marginLeft: 8, marginRight: 8 }} />
                     </CardItem>
-                    
+
                     <CardItem >
-                      <Left style={{ marginLeft: -10}} >
+                      <Left style={{ marginLeft: -10 }} >
                         <Body>
                           <Text style={styles.textMedium}>{item.activity}</Text>
                           <Text style={styles.textSmall} note>{item.description}</Text>
@@ -198,7 +346,7 @@ export default class Profile extends Component {
                   <Text>4 Comments</Text>
                   </Button> */}
                       </Body>
-                      
+
                     </CardItem>
                   </Card>
                 </Content>
@@ -223,21 +371,7 @@ export default class Profile extends Component {
                 </TouchableOpacity>
               </View>
               <Content>
-                {/* <Thumbnail style={{ width: 40, height: 40 }} source={{ uri: this.state.avatar }} /> */}
-                {/* <CardItem>
-                  <Left>
-                    <Thumbnail source={{ uri: this.state.userimageuri }} />
-                    <Body>
-                      <TextInput style={{ borderBottomColor: "black" }}>{this.state.firstname + " " + this.state.lastname}</TextInput>
-                      <Text note>{this.state.timestamp}</Text>
-                    </Body>
-                  </Left>
-                </CardItem>
-                <CardItem>
-                  <Body>
-                    <TextInput>{this.state.address}</TextInput>
-                  </Body>
-                </CardItem> */}
+
                 <CardItem>
                   <Body>
 
@@ -362,6 +496,138 @@ export default class Profile extends Component {
             {/* <DefaultModalContent onPress={this.close} /> */}
           </Modal>
 
+          <Modal
+            testID={'modal'}
+            isVisible={this.state.isModalVisible2}
+            onSwipeComplete={this.close}
+            swipeDirection={['up', 'left', 'right', 'down']}
+            style={styles.view}>
+            <View style={styles.content}>
+              <View style={{ position: "absolute", top: 10, right: 10, zIndex: 50, }}>
+                <TouchableOpacity onPress={() => this.setState({ isModalVisible2: false })} >
+                  <Icon name="close" />
+                </TouchableOpacity>
+              </View>
+              <Content>
+
+              <TouchableOpacity onPress={() => this.imagePickerHandler()} >
+                  <Icon name="close" />
+                </TouchableOpacity>
+
+                <CardItem>
+                  <Body>
+                    <View style={styles.cont}>
+                      <View style={styles.avatarCont}>
+                        <View style={styles.imgExtraLargeContainer}>
+ 
+                         {this.state.uri == '' ? <Image style={styles.profileimage} source={{ uri: this.state.imageuri }}/> : <Image style={styles.profileimage} source={this.state.uri} />   }
+                        {/* <Image style={styles.profileimage} source={this.state.uri} />  showpicker */}
+                          {/* <Image style={styles.profileimage} source={{ uri: this.state.userimageuri }} /> from api */}
+                        </View>
+                      </View>
+
+                    </View>
+
+
+                    {/* Firstname */}
+                    <Text style={styles.textview}> Firstname </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Firstname"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.userfirstname}
+                      onChangeText={userfirstname => this.setState({ userfirstname })}
+                    />
+
+                    {/* Lastname */}
+                    <Text style={styles.textview}> Lastname </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Lastname"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.userlastname}
+                      onChangeText={userlastname => this.setState({ userlastname })}
+                    />
+
+
+                    {/* Trail Address */}
+                    <Text style={styles.textview}> Age </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Age"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.userage}
+                      onChangeText={userage => this.setState({ userage })}
+                    />
+
+                    {/* Difficulty */}
+                    <Text style={styles.textview}> Username </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Username"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.userUsername}
+                      onChangeText={userUsername => this.setState({ userUsername })}
+                    />
+
+                    {/* Type */}
+                    <Text style={styles.textview}> Password </Text>
+                    <TextInput style={styles.inputBox}
+                      underlineColorAndroid='a9a9a9'
+                      placeholder="Password"
+                      placeholderTextColor="#a9a9a9"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      ref={'text6'}
+                      value={this.state.userPassword}
+                      onChangeText={userPassword => this.setState({ userPassword })}
+                    />
+
+                    <Text style={styles.textview}>Gender</Text>
+                    <Picker
+                      // mode='dropdown'
+                      selectedValue={this.state.usergender}
+                      style={styles.inputBox}
+                      itemStyle={{ fontSize: 8 }}
+                      onValueChange={(itemValue, itemIndex) =>
+                        this.setState({
+                          usergender: itemValue
+                        })
+                      }>
+                      <Picker.Item label="Select Gender" value="n/a" />
+                      <Picker.Item label="Female" value="Female" />
+                      <Picker.Item label="Male" value="Male" />
+                    </Picker>
+
+
+                  </Body>
+                </CardItem>
+
+                <FlatList
+                  data={this.state.images}
+                  style={{ flex: 1 }}
+                  renderItem={this.renderRow}
+                  numColumns={5}>
+
+                </FlatList>
+              </Content>
+
+              <Button style={styles.button} onPress={() => this.UpdateUserProfile()}><Text> UPDATE </Text></Button>
+            </View>
+            {/* <DefaultModalContent onPress={this.close} /> */}
+          </Modal>
 
         </ScrollView>
       </View>
@@ -387,7 +653,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: 'center',
     position: 'absolute',
-    marginTop: 130
+    marginTop: 130,
+
   },
   name: {
     fontSize: 22,
@@ -433,6 +700,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
+  cont: {
+    flex: 1,
+    justifyContent: "center"
+  },
+
   item: {
     backgroundColor: '#f9c2ff',
     padding: 20,
@@ -505,11 +778,55 @@ const styles = StyleSheet.create({
   },
   textSmall: {
     fontSize: 14,
-    color: '#757575' 
+    color: '#757575'
   },
   textLarge: {
     fontSize: 25
-  }
+  },
+  socialIcon: {
+    justifyContent: "center"
+  },
+  avatarCont: {
+    justifyContent: "center",
+    marginTop: '3%',
+    flexDirection: 'row',
+    backgroundColor: 'red'
+  },
+  imgExtraLargeContainer: {
+    height: 130,
+    width: 130,
+    borderRadius: 90 / 2,
+    overflow: 'hidden',
+    marginTop: -80,
+    borderRadius: 63,
+    borderWidth: 4,
+    borderColor: "white",
+
+  },
+  profileimage: {
+    // flex: 1,
+    // width: null,
+    // height: null
+    width: 130,
+    height: 130,
+    alignSelf: 'center',
+    position: 'absolute',
+  },
+  editButton2: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 25,
+    height: 25,
+    borderRadius: 25 / 2,
+    backgroundColor: '#ffffff',
+    position: 'absolute',
+    left: 220,
+    bottom: 0,
+    shadowColor: '#000',
+    elevation: 1,
+  },
+
 
 
 
