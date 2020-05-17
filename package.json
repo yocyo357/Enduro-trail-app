@@ -31,11 +31,16 @@
     "react-native-geocoding": "^0.4.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-image-picker": "^2.3.1",
+    "react-native-image-view": "^2.1.9",
     "react-native-loading-spinner-overlay": "^1.1.0",
-    "react-native-maps": "^0.27.1",
+ 
+    "react-native-maps": "0.27.1",
+    "react-native-maps-directions": "^1.7.6",
     "react-native-modal": "^11.5.6",
     "react-native-push-notification": "^3.1.9",
-    "react-native-reanimated": "^1.7.1",
+    "react-native-ratings": "^6.5.0",
+    "react-native-reanimated": "^1.7.0",
+ 
     "react-native-safe-area-context": "^0.7.3",
     "react-native-screens": "^2.4.0",
     "react-native-table-component": "^1.2.1",

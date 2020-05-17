@@ -5,7 +5,8 @@ import {
     StatusBar,
     AsyncStorage,
     StyleSheet,
-    Image
+    Image,
+    BackHandler
 } from 'react-native';
 import HomeHeader from '../../Headers/HomeHeader'
 import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right, Tabs, Tab, TabHeading } from 'native-base';
@@ -18,7 +19,18 @@ if (!firebase.apps.length) {
     firebase.initializeApp(config())
 }
 
-
+function toTimestamp(datetime) {
+    var dateString = datetime,
+        dateTimeParts = dateString.split(' '),
+        timeParts = dateTimeParts[1].split(':'),
+        dateParts = dateTimeParts[0].split('-'),
+        date;
+    // console.log(timeParts)
+    date = new Date(dateParts[0], parseInt(dateParts[1], 10) - 1, dateParts[2], timeParts[0], timeParts[1]);
+    // console.log(date.getTime())
+    var d = date.getTime()
+    return d
+}
 
 class Home extends Component {
     constructor(props) {
@@ -27,7 +39,8 @@ class Home extends Component {
             trails: [],
             trailImages: [],
             likes: [],
-            races:[]
+            races: [],
+            notif: 0
         };
     }
     read() {
@@ -41,18 +54,18 @@ class Home extends Component {
     }
 
     async componentDidMount() {
-
+        BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressed);
         if (globalReloadData == "true") {
             var userID = await AsyncStorage.getItem('userID')
             if (userID != null) {
 
                 globalUserID = userID
                 firebase.database().ref('Users/' + userID).once('value', async snapshot => {
-                    globalUserData = { ...snapshot.val()}
-                    
+                    globalUserData = { ...snapshot.val() }
+
                 })
             }
-            
+
         }
         console.log(globalUserID)
         console.log(globalUserData)
@@ -61,50 +74,70 @@ class Home extends Component {
             //console.log(snapshot.val())
 
             let datas = { ...snapshot.val() }
-            // var storage = firebase.storage();
-            //var revdatas = test.reverse()
-            // Object.keys(datas).map(async (igKey, index) => {
-            //     var ref = storage.ref().child("images/" + datas[igKey].mapImage)
-            //     const url = await ref.getDownloadURL();
-            //     var joined = this.state.trailImages.concat(url);
-            //     this.setState({ trailImages: joined })
-            // })
+
+            //getLikes
             var likes = {}
-  
             Object.keys(datas).map(igKey => {
                 let userLiked = datas[igKey].userLiked
                 if (userLiked != undefined) {
                     // alert(userLiked[igKey1] +" "+ igKey)
                     Object.keys(userLiked).some(igKey1 => {
                         if (userLiked[igKey1] == globalUserID) {
-                            likes[igKey] = 'blue'
+                            likes[igKey] = '#007AFF'
                             return true
                         } else {
                             likes[igKey] = 'grey'
                         }
 
                     })
-                }else{
+                } else {
                     likes[igKey] = 'grey'
                 }
             })
-            this.setState({likes: likes})
-         
+            this.setState({ likes: likes })
+
+            
+
+
             // console.log(this.reverseObject(datas))
             this.setState({ trails: this.reverseObject(datas) })
         })
-        firebase.database().ref('post_races/').on('value', snapshot => {
-        let datas = {...snapshot.val()}
-        this.setState({races: this.reverseObject(datas)})
 
+        firebase.database().ref('post_races/').on('value', snapshot => {
+            let datas = { ...snapshot.val() }
+
+            //get Notifications
+            let notif = 0
+            Object.keys(datas).map(igKey => {
+                let notifseen = datas[igKey].seen
+                // alert(globalUserData.datecreated > toTimestamp(datas[igKey].datePosted))
+                // alert(toTimestamp(datas[igKey].datePosted))
+               if(globalUserData.datecreated< datas[igKey].datePosted){
+                if (notifseen != undefined) {
+                    notif++ 
+                    Object.keys(notifseen).some(igKey1 => {
+                        if (igKey1 == globalUserID) {
+                            notif--
+                            return true
+                        }
+                    })
+                } else {
+                    notif++
+                }
+            }
+            })
+            this.setState({ races: this.reverseObject(datas), notif: notif })
         })
 
     }
     componentWillUnmount() {
         firebase.database().ref('Trails/').off()
+        BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed);
     }
 
-
+    onBackButtonPressed() {
+        return true;
+    }
     onLikeClick(id) {
         var exist = false
         var key = ""
@@ -131,7 +164,7 @@ class Home extends Component {
             }
 
 
-        }).catch(error=>{
+        }).catch(error => {
             alert(error)
         })
     }
@@ -155,7 +188,7 @@ class Home extends Component {
 
         return (
             <Container style={styles.container}>
-                <HomeHeader navigation={this.props.navigation} title='FEED' />
+                <HomeHeader navigation={this.props.navigation} title='FEED' notif={this.state.notif} />
 
                 <Tabs tabContainerStyle={{ borderTopWidth: 0 }} tabBarUnderlineStyle={{ backgroundColor: '#6F952C' }}>
                     <Tab heading={<TabHeading style={{ backgroundColor: '#343A40' }} ><Text>Trails</Text></TabHeading>}>
@@ -165,7 +198,7 @@ class Home extends Component {
                     </Tab>
                     <Tab heading={<TabHeading style={{ backgroundColor: '#343A40' }}><Text>Races</Text></TabHeading>}>
                         <Content>
-                            <Races races={this.state.races} navigation={this.props.navigation}/>
+                            <Races races={this.state.races} navigation={this.props.navigation} />
                         </Content>
                     </Tab>
                 </Tabs>

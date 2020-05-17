@@ -24,12 +24,16 @@ class Login extends Component {
         super(props);
         this.state = {
             text: {
-                username: 'user1',
-                password: 'password'
+                username: '',
+                password: ''
             }
         };
     }
     
+    componentDidMount(){
+        var username = this.props.route.params.username
+        this.setState({username: username})
+    }
     textChangedHandler = (igKey, value) => {
         var text = { ...this.state.text }
         text[igKey] = value
