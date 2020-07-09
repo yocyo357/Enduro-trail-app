@@ -327,7 +327,6 @@ class suggestionbox extends Component {
                     </div>
 
                     <div className="row mapLblContainer">
-                      {/* <img src={this.state.modalUserImg} style={{width: '30%', height: '30%', borderRadius: "50%", float: "left"}} /> */}
                     </div>
                   </div>
 
