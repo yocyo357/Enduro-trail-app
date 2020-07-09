@@ -17,8 +17,6 @@ class signup extends Component {
            fname:''
             
         }
-    
-    
  
         this.BtnSubmitClicked = (event) => {
             

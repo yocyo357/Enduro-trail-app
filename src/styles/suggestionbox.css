@@ -28,6 +28,8 @@
         background-color: #70952C !important;
     }
 
+   
+
     .modal-header {
         background-color: #343A40;
         color: white;
@@ -83,7 +85,7 @@
     }
 }
 
-@media (min-width: 1281px) {
+@media (min-width: 1920px) {
     .table {
         width: 90% !important;
     }
@@ -94,7 +96,29 @@
         padding-top: 2%;
     }
 
-    .header-text-suggestion {
-
+    .modal-header {
+        background-color: #343A40;
     }
+
+    .suggestionModal {
+        max-width: 50% !important;
+        
+    }
+
+    .modal-footer {
+        background-color: #343A40;
+    }
+
+    .modal-content {
+        height: 683px;
+    }
+
+    .imageTrail {
+        margin-top: 5%;
+    }
+
+    .mapLblContainer {
+        text-align: center !important;
+    }
+
 }

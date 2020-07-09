@@ -73,7 +73,6 @@ class home extends Component {
 
     componentDidMount() {
 
-
         ref.on('value', snapshot => {
             let Datas = { ...snapshot.val() }
             this.setState({ trailValues: Datas })
@@ -222,6 +221,7 @@ class home extends Component {
 
     handleSaveEdit(id, title, limit, info, date, datePosted, url, trail, raceType, category, raceStatus) {
         //Updating several post details in Home page
+      
         var updateRef = firebase.database().ref('post_races/');
         updateRef.child(id).update({
             'raceTitle': title,
@@ -242,11 +242,12 @@ class home extends Component {
                         <h2 style={{ fontFamily: 'Poppins' }}>Event List</h2>
                         <div style={{ alignItems: 'center' }}>
                             {Object.keys(this.state.trailValues).map(igKey => {
+                                var ts = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit'}).format(this.state.trailValues[igKey].datePosted)
                                 return (
                                     <div className="card" style={{ width: '100%', marginTop: '1.5%', marginBottom: '1.5%' }}>
                                         <div className="card-body" style={{ backgroundColor: '#343A40', borderRadius: '5px' }}>
                                             <h5 className="card-title" style={{ color: 'white' }}>{this.state.trailValues[igKey].raceTitle}<span data-toggle="modal" data-target="#edit" onClick={() => this.handleEditPost(this.state.trailValues[igKey].raceTitle, this.state.trailValues[igKey].eventDate, this.state.trailValues[igKey].raceInfo, this.state.trailValues[igKey].noOfRiders, igKey,this.state.trailValues[igKey].datePosted, this.state.trailValues[igKey].imageURL, this.state.trailValues[igKey].trailID, this.state.trailValues[igKey].raceType, this.state.trailValues[igKey].raceCategory )} style={{ float: 'right', color: '#618930', cursor: 'pointer' }}><FaEdit /></span></h5>
-                                            <p className='postedOnCardTitleHome' style={{ color: '#6F747C', fontFamily: 'Poppins', fontSize: '14px'}}>Posted on {this.state.trailValues[igKey].datePosted}</p>
+                                            <p className='postedOnCardTitleHome' style={{ color: '#6F747C', fontFamily: 'Poppins', fontSize: '14px'}}>Posted on {ts}</p>
                                             <p style={{ color: 'white', fontFamily: 'Poppins', fontSize: '14px', marginTop: '1%' }}>When: <span style={{ color: '#6F747C', fontFamily: 'Poppins' }}>{this.state.trailValues[igKey].eventDate}</span></p>
                                             <p className="card-text" style={{ color: 'white', textAlign: 'justify'}}>{this.state.trailValues[igKey].raceInfo}</p>
                                             <img src={this.state.trailValues[igKey].imageURL} className="card-img-top" alt="..." style={{ width: '100%', marginBottom: '1.5%' }} />
@@ -359,11 +360,11 @@ class home extends Component {
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <form>
+                           
                                 <div className="modal-body home-modal-body">
                                     <div className='row'>
                                         <div className='col'>
-                                            <select className='form-control' value={this.handleRaceStatus} onChange={this.handleEditChange} name='raceStatus' style={{width: '50%', marginLeft: '20px'}}>
+                                            <select className='form-control' value={this.state.raceStatus} onChange={this.handleEditChange} name='raceStatus' style={{width: '50%', marginLeft: '20px'}}>
                                                 <option>ONGOING</option>
                                                 <option>RACE COMPLETED</option>
                                             </select>
@@ -383,7 +384,7 @@ class home extends Component {
                                             <Select
                                                 closeMenuOnSelect={false}
                                                 isMulti
-                                                // value={this.state.trailValues.val}
+                                                // value={this.state.raceTrails}
                                                 options={this.state.trailValuess}
                                                 style={{ backgroundColor: '#2E353B' }}
                                                 // value={this.state.raceCategory} 
@@ -392,8 +393,6 @@ class home extends Component {
 
                                         </div>
                                     </div>
-
-                                
 
                                     <div className='row'>
                                         <div className='col'>
@@ -416,7 +415,6 @@ class home extends Component {
                                         </div>
                                     </div> 
                                 </div>
-                            </form>
                         </div>
                     </div>
                 </div>

@@ -39,7 +39,7 @@ class postraces extends Component {
         super(props);
 
         var tempDate = new Date();
-        var date = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + tempDate.getDate() + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes();
+        var date = Date.now()
         const currDate = date;
 
         this.state = {
@@ -95,17 +95,6 @@ class postraces extends Component {
     }
 
     handleOnclickSubmit = (event) => {
-
-        if (this.state.raceTitle == "" || this.state.selectedFile == null || this.state.raceDate == '' ||  this.state.raceInfo == '' || this.state.raceCategory == '' || this.state.raceTrails == '') {
-            this.setState({
-
-                loading: true,
-    
-            })
-        }else {
-
-        }
-        
 
         if (this.state.raceTitle == "" || this.state.selectedFile == null || this.state.raceDate == '' ||  this.state.raceInfo == '' || this.state.raceCategory == '' || this.state.raceTrails == '') {
             alert("Missing Inputs. Please complete the details. Thank you");
@@ -175,12 +164,12 @@ class postraces extends Component {
             raceInfo: event.target.value
         })
 
-        if (this.state.raceInfo == '' ) {
-            this.setState({ raceTitle: "", disableSubmit:true, submitType: '', loading: true })
+        // if (this.state.raceInfo == '' ) {
+        //     this.setState({ raceTitle: "", disableSubmit:true, submitType: '', loading: true })
 
-        }else {
-            this.setState({ disableSubmit:false, loading: false })
-        }
+        // }else {
+        //     this.setState({ disableSubmit:false, loading: false })
+        // }
     }
 
     handleRaceLimitChange = (event) => {
@@ -318,7 +307,7 @@ class postraces extends Component {
                         <div className="col"></div>
 
                         <div className="col">
-                            <button type="reset" className="btn btn-post" onClick={() => this.handleOnclickSubmit()} disabled={loading} style={{marginTop: '3%'}}>
+                            <button type="reset" className="btn btn-post" onClick={() => this.handleOnclickSubmit()}  style={{marginTop: '3%'}}>
                                 {loading && <i className='fa fa-refresh fa-spin'></i>}
                                 Post Now
                             </button>

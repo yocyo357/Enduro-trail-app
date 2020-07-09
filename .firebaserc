@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "endurotrail-d806b"
+    "default": "endurotrail-d806b",
+    "enduroWeb": "endurotrail-d806b"
   }
 }
