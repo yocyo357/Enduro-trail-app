@@ -815,7 +815,6 @@ class home extends Component {
                 <h5 className="modal-title" id="exampleModalScrollableTitle">
                   Participants
                   {this.state.eventParticipantsID}
-                  {/* {this.state.eventParticipants[this.state.eventParticipantsID].raceTitle} */}
                 </h5>
               </div>
 
