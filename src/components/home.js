@@ -405,7 +405,7 @@ class home extends Component {
                             )
                           }
                         >
-                          See Participants
+                          See Participantsss
                         </a>
                       </div>
                     </div>
