@@ -64,6 +64,10 @@
 	.postedOnCardTitleHome {
 		margin-top: -1% !important;
 	}
+
+	.view-players {
+		margin-right: 1%;
+	}
 	
 	.modal-title {
 		color: #FFF;
