@@ -23,7 +23,7 @@ class home extends Component {
     super(props);
 
     this.handleEditChange = this.handleEditChange.bind(this);
-
+    this.handleViewSpecificEvent = this.handleViewSpecificEvent.bind(this)
     this.state = {
       myimage: "",
       trailname: "",
@@ -43,7 +43,9 @@ class home extends Component {
 
       eventParticipantsID: '',
       eventParticipants: "",
+      eventTitles: [],
       participantEventTitle: '',
+      eventParticipantsData: [],
 
       trailID: [],
       trailAdd: "",
@@ -70,6 +72,8 @@ class home extends Component {
       editTrail: "",
       raceStatus: "Ongoing",
     };
+
+
   }
 
   componentDidMount() {
@@ -116,20 +120,93 @@ class home extends Component {
     });
   }
 
-  handleViewSpecificEvent(eventID) {
-    var refsss = db.ref("post_races/").orderByChild(eventID);
-    refsss.on("value", (snapshot) => {
-      let Datum = { ...snapshot.val() };
-      this.setState({ eventParticipants: Datum });
+
+  handleViewSpecificEvent = (eventID,eventTitle) => {//diri ta
+    let currentComponent = this;
+    var participantsData = []
+    var refsss = db.ref("post_races/" + eventID + "/raceCategory");
+    refsss.once("value", function (data) {
+      const snapshot = data.val()
+
+      snapshot.forEach(async function (snap) {
+        var label = snap.label
+        // currentComponent.setState({eventTitles:[...this.state.eventTitles,label]})
+        if (snap.participants) {
+          var participants = snap.participants
+          Object.keys(participants).map(async (key) => {
+            var ref = db.ref("Users/" + participants[key].userid)
+            ref.once("value", function (pardata) {
+              participantsData.push({ title: label, ...pardata.val() })
+              currentComponent.setState({ eventParticipantsData: participantsData })
+            }).then(() => {
+
+            })
+          })
+        }
+
+
+        // item.map(race=>{
+        //   // console.log(race)
+        // })
+
+        // if (snap.key.includes(eventID)) {
+
+        //   console.log(JSON.stringify(item.raceCategory))
+
+        //   item.raceCategory.forEach((user) => {
+
+
+
+
+        //   });
+
+        // ["-MBhEjTCKOfJIhNNLKsl"]
+
+        //           for (var i = 0; i < item.raceCategory.length; i++) {
+        //           var getparticipants = item.raceCategory[i].participants;
+
+
+        //           console.log(JSON.stringify(getparticipants.shirtsize));
+
+        //           //   for (var z = 0; z < item.raceCategory[i].length; z++) {
+        //           // var getpart = item.participants[z];
+        //           //  alert(JSON.stringify(getpart));
+
+        //           // }
+
+        // }
+
+
+
+
+        // }
+
+      });
+
+
     });
 
-    this.setState({ eventParticipantsID: eventID })
+
+    // var refsss = db.ref("post_races/").orderByChild(eventID);
+    // refsss.on("value", (snapshot) => {
+    //   let Datum = { ...snapshot.val() };
+
+    //   // if(snapshot.key.includes(eventID)){
+    //     this.setState({ eventParticipants: Datum });
+    //   // }
+
+    // }); 
+
+
+    this.setState({ eventParticipantsID: eventID,
+      participantEventTitle: eventTitle,
+     })
   }
 
   getResults() {
     var results = [];
     this.state.rows.map((row) => {
-      this.state.cols.map((col) => {});
+      this.state.cols.map((col) => { });
     });
     console.log(this.state.rows);
     // console.log(this.state.cols)
@@ -399,13 +476,12 @@ class home extends Component {
                           }}
                           onClick={() =>
                             this.handleViewSpecificEvent(
-                              igKey,
-                            //   console.log(this.state.eventParticipants[igKey].raceCategory)
-                            console.log(igKey)
+                              igKey,this.state.trailValues[igKey].raceTitle
+                              //   console.log(this.state.eventParticipants[igKey].raceCategory)
                             )
                           }
                         >
-                          See Participantsss
+                          See Participants
                         </a>
                       </div>
                     </div>
@@ -811,17 +887,63 @@ class home extends Component {
           <div className="modal-dialog modal-dialog-scrollable" role="document">
             <div className="modal-content modal-content-home">
               <div className="modal-header">
-                
+
                 <h5 className="modal-title" id="exampleModalScrollableTitle">
-                  Participants
-                  {this.state.eventParticipantsID}
+                   {this.state.participantEventTitle}
+                   {/* Participants */}
+                   {/* {this.state.eventParticipantsID} */}
                 </h5>
+
+
               </div>
 
+
+
               <div className="modal-body home-modal-body">
-                
+                {/* {this.state.eventTitles.map((val,index)=>{
+                  return (
+                    <div>
+                      <text style={{ color: 'white' }}>{val}</text>
+                    </div>
+                  )
+                })} */}
+
+                <div className="modal-result">
+                  <div className="container-fluid">
+                    <div class="row">
+                      <div className="col-sm" style={{ color: 'white' }}><h3>Participants</h3></div>
+
+                      <div className="col-sm" style={{ color: 'white' }}><h3>Category</h3></div>
+                    </div>
+                  </div>
+ 
+
+                </div> 
+ 
+
+
+
+                {this.state.eventParticipantsData.map((val, index) => {
+                  return (
+                    <div>
+
+                <div className="modal-result">
+                  <div className="container-fluid">
+                    <div class="row">
+                      <div className="col-sm" style={{ color: 'white' }}>{" " + val.firstname}{" " + val.lastname}</div>
+
+                      <div className="col-sm" style={{ color: 'white' }}>{val.title}</div>
+                    </div>
+                   </div>
+                  </div>
+                      {/* <text style={{ color: 'white' }}> {" " + val.firstname}{" " + val.lastname} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{val.title}</text> */}
+                      {/* <text style={{ color: 'white' }}>{val.title}{" "+val.username}{" "+val.firstname}{" "+val.lastname}</text> */}
+                    </div>
+                  )
+                })}
+
                 {Object.keys(this.state.eventParticipants).map((igKey) => {
-                    // this.setState({ participantsEventTitle:  })
+                  // this.setState({ participantsEventTitle:  })
                   return (
                     <div>
                       <div
@@ -832,12 +954,15 @@ class home extends Component {
                           marginBottom: "1.5%",
                         }}
                       >
-                        {this.state.eventParticipants[this.state.eventParticipantsID].raceTitle}
+                        {/* {this.state.eventParticipants[this.state.eventParticipantsID].raceTitle} */}
                         {/* { this.setState({ participantEvent: this.state.eventParticipants[igKey].raceTitle }) } */}
+                        <text style={{ color: 'white' }}>tessst</text>
+
                       </div>
                     </div>
                   );
                 })}
+
               </div>
             </div>
           </div>
