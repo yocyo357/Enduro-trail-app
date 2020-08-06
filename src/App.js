@@ -27,7 +27,12 @@ class App extends Component {
 
   authListener() {
     Fire.auth().onAuthStateChanged((user) => {
+      console.log(JSON.stringify(user))
+      const messaging = Fire.messaging();
       if (user) {
+        user.getIdToken().then(function(idToken) {
+          // console.log(idToken);
+        });
         this.setState({ user });
       } else {
         this.setState({ user: null });

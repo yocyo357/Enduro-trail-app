@@ -85,6 +85,8 @@ class postraces extends Component {
 
             }).then((data) => {
                 //success callback
+
+                this.notifyUsers();
                 console.log('data ', data)
                 alert("You Added New Scream.")
             }).catch((error) => {
@@ -94,9 +96,31 @@ class postraces extends Component {
         })
     }
 
+    notifyUsers = () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'key=AAAA_tDGCIY:APA91bGT-DFQzTknbRRMGI-AL3s61yQHRr9_qMn_YpVOklf8vJ9KkFALwjJP-YklJrlbwxxXQBp-HXZLL4_zP06tE_vJSXW7Qq5RnaX9bCKFo4LxZzIjlljpMD1UeMbW0O14dMcoRXqR'
+            },
+            body: JSON.stringify({
+                to: "/topics/topic",
+                notification: { 
+                    title: "Heads up new trail!",
+                    text: 'Come and join the this ' +this.state.raceTitle
+                }
+            })
+        };
+        fetch('https://fcm.googleapis.com/fcm/send', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            });
+    }
+
     handleOnclickSubmit = (event) => {
 
-        if (this.state.raceTitle == "" || this.state.selectedFile == null || this.state.raceDate == '' ||  this.state.raceInfo == '' || this.state.raceCategory == '' || this.state.raceTrails == '') {
+        if (this.state.raceTitle == "" || this.state.selectedFile == null || this.state.raceDate == '' || this.state.raceInfo == '' || this.state.raceCategory == '' || this.state.raceTrails == '') {
             alert("Missing Inputs. Please complete the details. Thank you");
         } else {
             var imageURI = this.state.selectedFile.name
@@ -106,7 +130,7 @@ class postraces extends Component {
 
             const { selectedFile } = this.state
             this.uploadImage(selectedFile)
-            
+
         }
     }
 
@@ -147,16 +171,16 @@ class postraces extends Component {
         this.setState({
             raceTrails: event
         })
-        
+
     }
 
     handleRaceCatChange = (event) => {
         this.setState({
             raceCategory: event,
-            
+
         })
 
-        
+
     }
 
     handleRaceInfoChange = (event) => {
@@ -307,7 +331,7 @@ class postraces extends Component {
                         <div className="col"></div>
 
                         <div className="col">
-                            <button type="reset" className="btn btn-post" onClick={() => this.handleOnclickSubmit()}  style={{marginTop: '3%'}}>
+                            <button type="reset" className="btn btn-post" onClick={() => this.handleOnclickSubmit()} style={{ marginTop: '3%' }}>
                                 {loading && <i className='fa fa-refresh fa-spin'></i>}
                                 Post Now
                             </button>
@@ -315,7 +339,7 @@ class postraces extends Component {
                     </div>
                 </form>
                 <Prompt
-                    
+
                     when={this.state.raceTitle !== "" || this.state.raceInfo !== "" || this.state.noOfRiders !== ""}
                     message={(location) => {
                         return location.pathname.startsWith('/suggestionsbox' && '/') ? 'Not done posting yet. Are you sure? ' : true
